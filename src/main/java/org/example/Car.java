@@ -9,7 +9,9 @@ public class Car {
     private String model;
     private int year;
 
-    public Car(){}
+    public Car(){
+        this.id = UUID.randomUUID().toString();
+    }
 
     public Car(String make, String model, int year) {
         this.id = UUID.randomUUID().toString();
@@ -52,6 +54,6 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car{make='" + make + "', model='" + model + "', year=" + year + "}";
+        return "Car{id='" + id + "', make='" + make + "', model='" + model + "', year=" + year + "}";
     }
 }
