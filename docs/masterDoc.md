@@ -2,7 +2,7 @@
 
 ## Summary
 
-A console-based Java application for managing **Person**, **Car**, and **Dog** entities with support for car transactions between people. The application provides a menu-driven interface for CRUD operations and uses an in-memory repository for data storage.
+> A console-based Java application for managing **Person**, **Car**, and **Dog** entities with support for car transactions between people. The application provides a menu-driven interface for CRUD operations and uses an in-memory repository for data storage.
 
 ## Project
 
@@ -26,7 +26,29 @@ Project structure:
 | **Dog** | `id`, `name`, `breed`, `age` | Represents a dog |
 | **CarTransaction** | `id`, `buyer`, `seller`, `date`, `car`, `contract` | Records a car sale between two people |
 | **Service** | — | Business logic (e.g. `buyCar`) |
-| **Repository** | `id`, `people`, `cars`, `dogs`, `carTransactions` | In-memory data store with CRUD methods |
+| **Repository** | `id`, `people`, `cars`, `dogs`, `carTransactions` | In-memory fake database (see below) |
+
+### Repository — In-Memory Database
+
+`Repository` acts as a **fake database** that simulates persistent storage entirely in memory. Each `ArrayList` field works as a **database table**:
+
+| ArrayList (table) | Stores | Equivalent SQL table |
+|---|---|---|
+| `people` | `Person` objects | `PERSON` |
+| `cars` | `Car` objects | `CAR` |
+| `dogs` | `Dog` objects | `DOG` |
+| `carTransactions` | `CarTransaction` objects | `CAR_TRANSACTION` |
+
+Each table exposes four CRUD methods following the same pattern:
+
+| Method | SQL equivalent | Description |
+|---|---|---|
+| `add<Entity>(entity)` | `INSERT` | Appends the object to the list |
+| `get<Entity>ById(id)` | `SELECT WHERE id = ?` | Loops through the list and returns the matching object, or `null` |
+| `getAll<Entities>()` | `SELECT *` | Returns the entire list |
+| `remove<Entity>(id)` | `DELETE WHERE id = ?` | Removes the matching object using `removeIf`, returns `true`/`false` |
+
+> **Limitations:** Data lives only while the application is running — all data is lost when the program stops. There are no indexes, constraints, or relationships enforced at the repository level.
 
 ## UML
 
