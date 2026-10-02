@@ -9,6 +9,10 @@ public class Person {
     private int age;
     private Car car;
 
+    public Person(){
+        this.id = UUID.randomUUID().toString();
+    }
+
     public Person(String name, int age) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
