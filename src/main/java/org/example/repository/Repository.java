@@ -1,4 +1,9 @@
-package org.example;
+package org.example.repository;
+
+import org.example.model.Car;
+import org.example.model.CarTransaction;
+import org.example.model.Dog;
+import org.example.model.Person;
 
 import java.util.ArrayList;
 import java.util.UUID;

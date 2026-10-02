@@ -1,4 +1,9 @@
-package org.example;
+package org.example.service;
+
+import org.example.repository.Repository;
+import org.example.model.Car;
+import org.example.model.CarTransaction;
+import org.example.model.Person;
 
 import java.util.Date;
 

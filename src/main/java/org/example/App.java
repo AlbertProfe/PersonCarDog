@@ -1,6 +1,8 @@
 package org.example;
 
-public class App 
+import org.example.controller.Controller;
+
+public class App
 {
     public static void main( String[] args )
     {

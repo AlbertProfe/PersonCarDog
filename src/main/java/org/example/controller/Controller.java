@@ -1,4 +1,10 @@
-package org.example;
+package org.example.controller;
+
+import org.example.utils.Utils;
+import org.example.model.Car;
+import org.example.model.Person;
+import org.example.repository.Repository;
+import org.example.service.Service;
 
 import java.util.Scanner;
 

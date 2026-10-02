@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import java.util.Date;
 import java.util.UUID;
@@ -11,6 +11,7 @@ public class CarTransaction {
     private Date date;
     private Car car;
     private String contract;
+
 
     public CarTransaction(){}
 
