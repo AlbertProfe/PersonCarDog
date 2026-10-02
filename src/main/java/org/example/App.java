@@ -17,6 +17,7 @@ public class App
         repo.addPerson(a);
         repo.addPerson(b);
         repo.addCar(bmw);
+        a.setCar(bmw);
 
         Scanner scan = new Scanner(System.in);
 
@@ -36,7 +37,7 @@ public class App
                     System.out.println("Car - not implemented yet.");
                     break;
                 case "4":
-                    Service.buyCar(a, b , 100);
+                    Service.buyCar(b, a , 100, repo);
                     break;
                 case "5":
                     System.out.println("Goodbye!");
