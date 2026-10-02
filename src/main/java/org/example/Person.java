@@ -1,6 +1,8 @@
 package org.example;
 
 public class Person {
+
+    private String id;
     private String name;
     private int age;
     private Car car;
@@ -24,6 +26,22 @@ public class Person {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 
     @Override

@@ -1,9 +1,13 @@
 package org.example;
 
 public class Car {
+
+    private String id;
     private String make;
     private String model;
     private int year;
+
+    public Car(){}
 
     public Car(String make, String model, int year) {
         this.make = make;
@@ -33,6 +37,14 @@ public class Car {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
