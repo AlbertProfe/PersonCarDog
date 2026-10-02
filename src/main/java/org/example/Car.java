@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.UUID;
+
 public class Car {
 
     private String id;
@@ -10,6 +12,7 @@ public class Car {
     public Car(){}
 
     public Car(String make, String model, int year) {
+        this.id = UUID.randomUUID().toString();
         this.make = make;
         this.model = model;
         this.year = year;

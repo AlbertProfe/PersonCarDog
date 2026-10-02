@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class CarTransaction {
 
@@ -11,8 +12,10 @@ public class CarTransaction {
     private Car car;
     private String contract;
 
-    public CarTransaction(String id, Person buyer, Person seller, Date date, Car car, String contract) {
-        this.id = id;
+    public CarTransaction(){}
+
+    public CarTransaction(Person buyer, Person seller, Date date, Car car, String contract) {
+        this.id = UUID.randomUUID().toString();
         this.buyer = buyer;
         this.seller = seller;
         this.date = date;

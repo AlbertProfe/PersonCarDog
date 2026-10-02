@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.UUID;
+
 public class Person {
 
     private String id;
@@ -8,6 +10,7 @@ public class Person {
     private Car car;
 
     public Person(String name, int age) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.age = age;
     }

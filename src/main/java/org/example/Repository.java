@@ -1,14 +1,23 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Repository {
 
     private String id;
-    private ArrayList<Person> people = new ArrayList<>();
-    private ArrayList<Car> cars = new ArrayList<>();
-    private ArrayList<Dog> dogs = new ArrayList<>();
-    private ArrayList<CarTransaction> carTransactions = new ArrayList<>();
+    private ArrayList<Person> people;
+    private ArrayList<Car> cars;
+    private ArrayList<Dog> dogs;
+    private ArrayList<CarTransaction> carTransactions;
+
+    public Repository(){
+        this.id = UUID.randomUUID().toString();
+        this.people = new ArrayList<>();
+        this.cars = new ArrayList<>();
+        this.dogs = new ArrayList<>();
+        this.carTransactions = new ArrayList<>();
+    }
 
     // ===== Person =====
     public void addPerson(Person person) {
