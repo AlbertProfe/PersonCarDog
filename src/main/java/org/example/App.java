@@ -7,11 +7,13 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        System.out.println( "Hello to Transaction Cars Person to Person!" );
 
-        //Person a = new Person();
-        //Person b = new Person();
-        //Car bmw = new Car();
+        // Person a = new Person();
+        // Person b = new Person();
+        // Car bmw = new Car();
+        // Repository repo = new Repository();
+        // we need to set all objects ...
 
         Scanner scan = new Scanner(System.in);
 
@@ -47,7 +49,6 @@ public class App
         String option = scan.nextLine();
         return option;
     }
-
 
     public static void mainMenu(){
         System.out.println("\n===== MAIN MENU =====");
