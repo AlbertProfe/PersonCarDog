@@ -2,7 +2,7 @@
 
 ## Flow buyCar
 
-Here’s the flow for the use case `buyCar` with all operation being successful, so the user picks option #4 and both people can makecthe deal becausecthe car exists.:
+> Here’s the flow for the use case `buyCar` with all operations being successful, so the user picks option #4 and both people can make the deal because the car exists.:
 
 1. `App.main` → `Controller.run()`
 2. Inside the loop: `Utils.mainMenu()` + `Utils.askMenuOption(scan)`
@@ -39,4 +39,33 @@ src/
                 │   └── Service.java
                 └── utils/
                     └── Utils.java
+```
+
+## Sequence UML Diagram
+
+```mermaid 
+sequenceDiagram
+    participant App
+    participant Controller
+    participant Utils
+    participant Service
+    participant Repo as Repository
+    participant Model
+
+    App->>Controller: run()
+    loop while(true)
+        Controller->>Utils: mainMenu()
+        Controller->>Utils: askMenuOption(scan)
+        Utils-->>Controller: option = "4"
+
+        Controller->>Service: buyCar(b, a, 100, repo)
+
+        Service->>Model: buyer.setCar(car)
+        Service->>Model: seller.setCar(null)
+        Service->>Model: new CarTransaction(...)
+        Service->>Repo: addCarTransaction(transaction)
+        Service-->>Controller: true
+    end
+
+    Note over Controller: Waiting for next selection...
 ```
