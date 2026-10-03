@@ -16,3 +16,24 @@ Here’s the corrected numbering we’ll use:
 9. Inside the loop: `Utils.mainMenu()` + `Utils.askMenuOption(scan)`
 10. User must select option another time
 11. Waiting ...  
+
+
+src/
+└── main/
+    └── java/
+        └── org/
+            └── example/
+                ├── App.java
+                ├── controller/
+                │   └── Controller.java
+                ├── model/
+                │   ├── Car.java
+                │   ├── CarTransaction.java
+                │   ├── Dog.java
+                │   └── Person.java
+                ├── repository/
+                │   └── Repository.java
+                ├── service/
+                │   └── Service.java
+                └── utils/
+                    └── Utils.java
