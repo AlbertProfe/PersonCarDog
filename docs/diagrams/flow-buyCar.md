@@ -2,7 +2,7 @@
 
 ## Flow buyCar
 
-Here’s the corrected numbering we’ll use:
+Here’s the flow for the use case `buyCar` with all operation being successful, so the user picks option #4 and both people can makecthe deal becausecthe car exists.:
 
 1. `App.main` → `Controller.run()`
 2. Inside the loop: `Utils.mainMenu()` + `Utils.askMenuOption(scan)`
