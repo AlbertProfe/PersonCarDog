@@ -1,6 +1,6 @@
-# Flow buyCar
+# use case buyCar
 
-
+## Flow buyCar
 
 Here’s the corrected numbering we’ll use:
 
@@ -17,7 +17,9 @@ Here’s the corrected numbering we’ll use:
 10. User must select option another time
 11. Waiting ...  
 
+## Project Structure Tree
 
+```
 src/
 └── main/
     └── java/
@@ -37,3 +39,4 @@ src/
                 │   └── Service.java
                 └── utils/
                     └── Utils.java
+```
