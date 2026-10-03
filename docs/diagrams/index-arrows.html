@@ -1,364 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Tech View – Execution Flow: buyCar use case</title>
-<style>
-  :root{
-    --navy:#1b3a6b;
-    --card-head:#1b3a6b;
-    --green:#7ddc7d;
-    --green-soft:#d6f5d6;
-    --bg:#f4f6f9;
-    --code:#2d3748;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0; padding:40px 24px 80px;
-    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background:var(--bg); color:var(--navy);
-  }
-  h1{
-    text-align:center; font-size:34px; margin:0 0 40px;
-    font-weight:800; letter-spacing:.2px;
-  }
+<!-- ============== PURE SVG ARROWS (no JS) ============== -->
+<svg class="overlay" id="overlay"
+     xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1280 1400"
+     preserveAspectRatio="none">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1b3a6b"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f9e44"/>
+    </marker>
+  </defs>
 
-  .diagram{
-    position:relative;
-    max-width:1280px;
-    margin:0 auto;
-  }
+  <!-- ─── TOP ROW: App → Controller (step 1) ─── -->
+  <path d="M 300 130 L 360 130"
+        stroke="#1b3a6b" stroke-width="2.5" fill="none"
+        marker-end="url(#arrow)"/>
 
-  /* ---------- ROWS ---------- */
-  .row{
-    display:grid;
-    gap:22px;
-    margin-bottom:70px;          /* room for arrows between rows */
-    position:relative;
-  }
-  .row.top    { grid-template-columns:repeat(4,1fr); }
-  .row.middle { grid-template-columns:repeat(3,1fr); }
+  <!-- ─── TOP ROW: Controller → Service (step 3) ─── -->
+  <path d="M 620 130 L 680 130"
+        stroke="#1b3a6b" stroke-width="2.5" fill="none"
+        marker-end="url(#arrow)"/>
 
-  /* ---------- CARD ---------- */
-  .card{
-    background:#fff;
-    border-radius:10px;
-    box-shadow:0 4px 14px rgba(27,58,107,.10);
-    overflow:hidden;
-    position:relative;
-    min-height:230px;
-  }
-  .card .head{
-    background:var(--card-head);
-    color:#fff;
-    padding:10px 14px;
-    font-weight:600;
-    font-size:15px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .card .head .dot{
-    width:14px;height:14px;border-radius:4px;background:#fff;opacity:.85;
-  }
-  .card pre{
-    margin:0;
-    padding:16px 18px;
-    font-family: "JetBrains Mono", Consolas, Menlo, monospace;
-    font-size:13px;
-    line-height:1.55;
-    color:var(--code);
-    white-space:pre;
-    overflow:auto;
-  }
-  .hl     { background:var(--green-soft); display:inline-block; padding:0 3px; border-radius:3px; }
-  .hl-blue{ background:#dbe7ff; display:inline-block; padding:0 3px; border-radius:3px; }
+  <!-- ─── TOP ROW: Service → Repository (step 6, green: addCarTransaction) ─── -->
+  <path d="M 940 130 L 1000 130"
+        stroke="#2f9e44" stroke-width="2.5" fill="none"
+        marker-end="url(#arrow-green)"/>
 
-  /* ---------- NUMBER BADGES (flow steps) ---------- */
-  .step{
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-    width:34px;height:34px;border-radius:50%;
-    background:#57c957;color:#fff;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:15px;
-    box-shadow:0 2px 6px rgba(0,0,0,.15);
-    z-index:5;
-  }
-  .step.s1{ left:24.5%; }
-  .step.s3{ left:53.5%; }
-  .step.s4{ left:58.5%; }
-  .step.s6a{ left:79%; }
-  .step.s6b{ left:96%; }
+  <!-- ─── Controller → Utils (menu loop, curved down-left) ─── -->
+  <path d="M 450 320
+           C 450 420, 260 420, 260 520"
+        stroke="#1b3a6b" stroke-width="2" fill="none"
+        marker-end="url(#arrow)" stroke-dasharray="6 4"/>
 
-  /* ---------- LEGEND ROW ---------- */
-  .legend{
-    background:#fff;
-    border-radius:12px;
-    box-shadow:0 4px 14px rgba(27,58,107,.10);
-    padding:26px 30px;
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
-    align-items:center;
-  }
-  .legend .col{ display:flex; flex-direction:column; gap:14px; }
-  .legend .item{ display:flex; align-items:center; gap:10px; font-size:15px; }
-  .legend .badge{
-    width:26px;height:26px;border-radius:50%;
-    background:#57c957; flex:0 0 26px;
-  }
-  .legend .icon{
-    width:26px;height:26px;flex:0 0 26px;
-    display:flex;align-items:center;justify-content:center;
-    color:#1b3a6b; font-size:20px;
-  }
-  .legend .repo-block{ font-size:14px; line-height:1.5; }
-  .legend .repo-block b{ display:block; margin-bottom:4px; }
+  <!-- ─── Controller → Person (a.setCar / b.setCar) ─── -->
+  <path d="M 560 320
+           C 560 430, 640 430, 640 520"
+        stroke="#1b3a6b" stroke-width="2" fill="none"
+        marker-end="url(#arrow)" stroke-dasharray="6 4"/>
 
-  /* ---------- SVG OVERLAY ---------- */
-  .overlay{
-    position:absolute; inset:0;
-    width:100%; height:100%;
-    pointer-events:none;
-    z-index:10;
-    overflow:visible;
-  }
-</style>
-</head>
-<body>
+  <!-- ─── Service → CarTransaction (new CarTransaction) ─── -->
+  <path d="M 900 320
+           C 900 430, 940 430, 940 520"
+        stroke="#1b3a6b" stroke-width="2" fill="none"
+        marker-end="url(#arrow)" stroke-dasharray="6 4"/>
 
-<h1>Tech View – Execution Flow: buyCar use case</h1>
+  <!-- ─── Service ↔ Person (buyer.setCar / seller.setCar — green) ─── -->
+  <path d="M 780 260
+           C 720 380, 700 460, 660 540"
+        stroke="#2f9e44" stroke-width="2" fill="none"
+        marker-end="url(#arrow-green)"/>
 
-<div class="diagram" id="diagram">
-
-  <!-- ================= TOP ROW ================= -->
-  <div class="row top">
-
-    <div class="card" id="card-app">
-      <div class="head"><span class="dot"></span> App.java</div>
-<pre>package org.example;
-
-public class App {
-  public static void main(String[] a) {
-    <span class="hl">Controller.run();</span>
-  }
-}</pre>
-    </div>
-
-    <div class="card" id="card-controller">
-      <div class="head"><span class="dot"></span> Controller.java</div>
-<pre>public static void run() {
-  Person a = new Person();
-  Person b = new Person();
-  Car bmw = new Car();
-  Repository repo = new Repo();
-
-  repo.addPerson(a);
-  repo.addPerson(b);
-  repo.addCar(bmw);
-  a.setCar(bmw);
-
-  while(true) {
-    Utils.mainMenu();
-    String option = Utils.ask...
-
-    switch(option) {
-      case "4":
-        <span class="hl">Service.buyCar(b, a, bmw);</span>
-    }
-  }
-}</pre>
-    </div>
-
-    <div class="card" id="card-service">
-      <div class="head"><span class="dot"></span> Service.java</div>
-<pre>public static boolean buyCar(
-   Person seller, int price) {
-
-  // checks omitted for clarity
-
-  Car car = seller.getCar();
-  <span class="hl">buyer.setCar(car);</span>
-  <span class="hl">seller.setCar(null);</span>
-
-  CarTransaction transaction =
-     new CarTransaction(buyer, seller,
-        car, "Car sold for " + price);
-
-  repo.addCarTransaction(transaction);
-  return true;
-}</pre>
-    </div>
-
-    <div class="card" id="card-repository">
-      <div class="head"><span class="dot"></span> Repository.java</div>
-<pre>private ArrayList&lt;Person&gt; people;
-private ArrayList&lt;CarTransaction&gt;
-        carTransactions;
-
-public void addPerson(Person p) {
-  people.add(p);
-}
-
-public ArrayList&lt;Person&gt; getPeople() {
-  return people;
-}
-
-<span class="hl">public void addCarTransaction(</span>
-<span class="hl">   CarTransaction t) {</span>
-<span class="hl">  carTransactions.add(t);</span>
-}</pre>
-    </div>
-
-    <!-- numbered steps between top-row cards -->
-    <div class="step s1">1</div>
-    <div class="step s3">3</div>
-    <div class="step s4">4</div>
-    <div class="step s6a">6</div>
-    <div class="step s6b">6</div>
-  </div>
-
-  <!-- ================= MIDDLE ROW ================= -->
-  <div class="row middle">
-
-    <div class="card" id="card-utils">
-      <div class="head"><span class="dot"></span> Utils.java</div>
-<pre>public static void mainMenu() {
-  ...
-}
-
-public static String askMenuOption(Scanner sc) {
-  ...
-}</pre>
-    </div>
-
-    <div class="card" id="card-person">
-      <div class="head"><span class="dot"></span> Person.java + Car.java (grouped)</div>
-<pre>Person: private Car car; getCar() / setCar()
-Car: simple fields
-   - String model
-   - String licensePlate
-   - double price</pre>
-    </div>
-
-    <div class="card" id="card-transaction">
-      <div class="head"><span class="dot"></span> CarTransaction.java</div>
-<pre>public CarTransaction(Person buyer, Person seller,
-     Date date, Car car, String contract) { ... }
-
-// records the sale transaction</pre>
-    </div>
-  </div>
-
-  <!-- ================= LEGEND ROW ================= -->
-  <div class="legend">
-    <div class="col">
-      <div class="item"><span class="icon">👤</span> a : Person (seller)</div>
-      <div class="item"><span class="badge"></span> car = bmw</div>
-    </div>
-    <div class="col">
-      <div class="item"><span class="icon">👤</span> b : Person (buyer)</div>
-      <div class="item"><span class="badge"></span> car = null</div>
-    </div>
-    <div class="col">
-      <div class="item"><span class="icon">🚗</span> bmw : Car</div>
-      <div class="item"><span class="icon">🚗</span> bmw : Car (transferred)</div>
-    </div>
-    <div class="col">
-      <div class="repo-block">
-        <b>repo : Repository</b>
-        people : ArrayList&lt;Person&gt;<br>
-        carTransactions : ArrayList&lt;CarTransaction&gt;
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= SVG OVERLAY FOR ARROWS ================= -->
-  <svg class="overlay" id="overlay" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <!-- arrowhead -->
-      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
-              markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" fill="#1b3a6b"/>
-      </marker>
-      <!-- arrowhead green variant (for return flows) -->
-      <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5"
-              markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" fill="#2f9e44"/>
-      </marker>
-    </defs>
-    <!-- arrows are injected by JS below (LeaderLine handles the DOM-based ones) -->
-  </svg>
-
-</div>
-
-<!-- ============ LeaderLine library ============ -->
-<script src="https://cdn.jsdelivr.net/npm/leader-line@1.0.7/leader-line.min.js"></script>
-
-<script>
-/* ------------------------------------------------------------------
-   Draw arrows between cards using LeaderLine.
-   Coordinates are computed automatically from the DOM,
-   so you never have to measure anything.
------------------------------------------------------------------- */
-window.addEventListener('load', () => {
-
-  const arrowCommon = {
-    color: '#1b3a6b',
-    size: 4,
-    endPlug: 'arrow3',
-    startPlug: 'disc',
-    startPlugSize: 1,
-    endPlugSize: 1.4,
-    path: 'grid',           // nice orthogonal routing
-    cornerRadius: 6,
-  };
-
-  // Helper: draw line from A → B
-  const link = (aId, bId, opts = {}) =>
-    new LeaderLine(
-      document.getElementById(aId),
-      document.getElementById(bId),
-      { ...arrowCommon, ...opts }
-    );
-
-  /* --- Main flow across the top row --- */
-  link('card-app',        'card-controller');        // 1
-  link('card-controller', 'card-service');           // 3
-  link('card-service',    'card-repository', {
-      color:'#2f9e44'
-  });                                                // 6 (green: repo call)
-
-  /* --- Service also reads from Person (getCar) --- */
-  link('card-person', 'card-service', {
-    color:'#2f9e44',
-    path:'straight',
-  });
-
-  /* --- Service uses CarTransaction --- */
-  link('card-service', 'card-transaction', {
-    color:'#1b3a6b',
-    path:'arc',
-  });
-
-  /* --- Controller uses Utils --- */
-  link('card-controller', 'card-utils', {
-    color:'#1b3a6b',
-    path:'arc',
-  });
-
-  /* --- Controller uses Repository (addPerson, addCar) --- */
-  link('card-controller', 'card-repository', {
-    color:'#1b3a6b',
-    path:'arc',
-    // route over the top so it doesn't cross Service
-    startSocket:'top', endSocket:'top',
-  });
-
-});
-</script>
-
-</body>
-</html>
+  <!-- ─── Repository → legend repo block (data stored) ─── -->
+  <path d="M 1080 320
+           C 1120 480, 1120 620, 1080 720"
+        stroke="#1b3a6b" stroke-width="2" fill="none"
+        marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+</svg>
