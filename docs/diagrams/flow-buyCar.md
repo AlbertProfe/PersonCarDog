@@ -43,7 +43,7 @@ src/
 
 ## Sequence UML Diagram
 
-```mermaid 
+```mermaid
 sequenceDiagram
     participant App
     participant Controller
