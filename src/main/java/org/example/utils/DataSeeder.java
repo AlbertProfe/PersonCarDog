@@ -88,4 +88,21 @@ public class DataSeeder {
         System.out.println("TOTAL DE INSTANCIAS NUEVAS EN EL REPOSITORIO: 10");
         System.out.println("=============================");
     }
+
+    public static void createFakePerson(Repository repo) {
+        Faker faker = new Faker();
+
+        List<Car> temporaryCars = new ArrayList<>();
+        List<Person> temporaryPeople = new ArrayList<>();
+
+        //  Generar 3 Personas (Objetos 4, 5 y 6)
+
+        Person person = new Person(
+        faker.name().fullName(),
+        faker.number().numberBetween(18, 80));
+        temporaryPeople.add(person);
+        repo.addPerson(person);
+        System.out.println("Was created:" + person.toString());
+
+        }
 }
