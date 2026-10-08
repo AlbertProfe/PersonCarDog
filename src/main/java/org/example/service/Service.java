@@ -1,13 +1,66 @@
 package org.example.service;
-
+import java.util.ArrayList;
 import org.example.repository.Repository;
 import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Person;
 
 import java.util.Date;
-
+import java.util.ArrayList;
+import java.util.ArrayList;
 public class Service {
+
+    public Person createPerson(String name, int age, Repository repo){
+        if (name == null||name.isEmpty()){
+            System.out.println("Error");
+            return null;
+        }
+        if (age<0||age>110){
+            System.out.println("Error");
+            return null;
+        } else {
+            Person person = new Person (name, age);
+            repo.addPerson(person);
+            System.out.println("Person created!");
+            return person;
+
+        }
+    }
+
+    public Person getPersonById(String id, Repository repo){
+
+        if (id==null||id.isEmpty()){
+            System.out.println("Error");
+            return null;
+        }else {
+            return repo.getPersonById(id);
+        }
+    }
+
+    public ArrayList<Person> getAllPeople(Repository repo){
+        if (repo.getAllPeople() != null && !repo.getAllPeople().isEmpty()) {
+            return repo.getAllPeople();
+        }else {
+            return null;
+        }
+    }
+
+    public boolean deletePerson(String id, Repository repo){
+        if (id != null && !id.isEmpty()){
+            Person person = getPersonById(id,repo);
+
+            if (person != null){
+            return repo.removePerson(id);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+    }
+
+
 
 
     public static boolean buyCar(Person buyer, Person seller, int price, Repository repo){
