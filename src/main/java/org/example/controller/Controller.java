@@ -68,7 +68,11 @@ public class Controller {
                 case "1":
                     String name = Utils.askString(scan, "Enter name: ");
                     int age = Utils.askInt(scan, "Enter age: ");
-                    Service.createPerson(name, age, repo);
+                    if (Service.createPerson(name, age, repo) == null){
+                        if (Utils.askString(scan, "Do u wanna create fake Person?").equals("Yes")){
+                            DataSeeder.createFakePerson(repo);
+                        }
+                    };
                     break;
                 case "2":
                     Service.getAllPeople(repo);
