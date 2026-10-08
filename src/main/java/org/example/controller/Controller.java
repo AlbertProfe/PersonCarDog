@@ -1,13 +1,18 @@
 package org.example.controller;
 
-import org.example.utils.Utils;
+
 import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.Person;
+import org.example.model.Dog;
+
 import org.example.repository.Repository;
 import org.example.service.Service;
+import org.example.utils.DataSeeder;
+import org.example.utils.Utils;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Controller {
@@ -16,7 +21,11 @@ public class Controller {
 
         System.out.println("Hello to Transaction Cars Person to Person!");
 
+        // 1. Instanciamos el repositorio único vacío
         Repository repo = new Repository();
+
+        // 2. Poblamos el repositorio dinámicamente usando Java Faker (Exactamente 10 objetos en total)
+        DataSeeder.seedRepository(repo);
         Scanner scan = new Scanner(System.in);
 
         while (true) {
