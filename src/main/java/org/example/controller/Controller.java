@@ -153,7 +153,16 @@ public class Controller {
                     String make = Utils.askString(scan, "Enter make: ");
                     String model = Utils.askString(scan, "Enter model: ");
                     int year = Utils.askInt(scan, "Enter year: ");
-                    Service.createCar(make, model, year, repo);
+
+                    if (Service.createCar(make, model, year, repo) == null) {
+                        if (Utils.askString(scan, "Do u wanna create fake car?").toLowerCase().equals("yes")) {
+                            String id = Utils.askString(scan, "Which person need this car? Write ID ");
+                            DataSeeder.createFakeCar(id,repo);
+                            String pid = Utils.askString(scan, "Enter person ID: ");
+                            Service.getPersonById(pid, repo);
+                            System.out.println("Car assigned successfully!");
+                        }
+                    }
                     break;
                 case "2":
                     Service.getAllCars(repo);
