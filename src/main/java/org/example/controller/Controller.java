@@ -10,6 +10,7 @@ import org.example.model.Dog;
 import org.example.repository.Repository;
 import org.example.service.Service;
 import org.example.utils.DataSeeder;
+import org.example.utils.ResultUpdateOperation;
 import org.example.utils.Utils;
 
 import java.util.List;
@@ -21,10 +22,12 @@ public class Controller {
 
         System.out.println("Hello to Transaction Cars Person to Person!");
 
-        // 1. Instanciamos el repositorio único vacío
+        // 1. We create the repo object because we need it in the controller
+        //    and we need it in the service, so we create it here
         Repository repo = new Repository();
 
-        // 2. Poblamos el repositorio dinámicamente usando Java Faker (Exactamente 10 objetos en total)
+        // 2. We populate the repo with dummy data using DataSeeder and Java Faker
+        //    This is just for demo purposes
         DataSeeder.seedRepository(repo);
         Scanner scan = new Scanner(System.in);
 
@@ -81,7 +84,8 @@ public class Controller {
                     String uid = Utils.askString(scan, "Enter person ID to update: ");
                     String newName = Utils.askString(scan, "New name (leave blank to keep): ");
                     int newAge = Utils.askInt(scan, "New age (-1 to keep): ");
-                    Service.updatePerson(uid, newName, newAge, repo);
+                    ResultUpdateOperation resultUpdateOperation = Service.updatePerson(uid, newName, newAge, repo);
+                    System.out.println("resultUpdateOperation: " + resultUpdateOperation);
                     break;
                 case "5":
                     String did = Utils.askString(scan, "Enter person ID to delete: ");
