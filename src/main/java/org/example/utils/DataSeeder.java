@@ -109,5 +109,20 @@ public class DataSeeder {
         repo.addDog(dog);
         System.out.println("Was created:" + dog.toString());
     }
+    public static void createFakeCar(String id, Repository repo) {
+        Faker faker = new Faker();
 
+        Car car = new Car(
+                faker.company().name(),
+                faker.commerce().productName(),
+                faker.number().numberBetween(1995, 2025)
+        );
+        repo.addCar(car);
+
+        Person person = repo.getPersonById(id);
+        person.setCar (car);
+        System.out.println("Car assigned successfully!");
+
+    }
 }
+
