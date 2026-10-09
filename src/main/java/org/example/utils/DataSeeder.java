@@ -89,20 +89,25 @@ public class DataSeeder {
         System.out.println("=============================");
     }
 
-    public static void createFakePerson(Repository repo) {
+    public static void createFakePerson(Repository repo){
         Faker faker = new Faker();
-
-        List<Car> temporaryCars = new ArrayList<>();
-        List<Person> temporaryPeople = new ArrayList<>();
-
-        //  Generar 3 Personas (Objetos 4, 5 y 6)
-
         Person person = new Person(
         faker.name().fullName(),
         faker.number().numberBetween(18, 80));
-        temporaryPeople.add(person);
         repo.addPerson(person);
         System.out.println("Was created:" + person.toString());
-
         }
+
+        // this is the new faker for DOG
+    public static void createFakeDog(Repository repo) {
+        Faker faker = new Faker();
+
+        Dog dog = new Dog(
+                faker.dog().name(),
+                faker.dog().breed(),
+                faker.number().numberBetween(1, 15));
+        repo.addDog(dog);
+        System.out.println("Was created:" + dog.toString());
+    }
+
 }
