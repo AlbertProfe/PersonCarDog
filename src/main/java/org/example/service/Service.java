@@ -5,6 +5,7 @@ import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.Person;
+import org.example.utils.resultUpdateOperation;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,25 +55,45 @@ public class Service {
         return list;
     }
 
-    public static boolean updatePerson(String id, String newName, int newAge, Repository repo) {
+    public static resultUpdateOperation updatePerson(String id, String newName, int newAge, Repository repo) {
+        resultUpdateOperation result = new resultUpdateOperation();
+        // Welcome message
         System.out.println("Welcome to UPDATE PERSON");
+        // Input validation
+        // Defensive programming (null checks)
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return false;
+            result.setSuccess(false);
+            result.setMessage("ID cannot be empty.");
+            result.setType("Person");
+            result.setTimestamp(System.currentTimeMillis());
+            return result;
         }
-        Person p = repo.getPersonById(id.trim());
-        if (p == null) {
+        // Defensive programming (null checks)
+        Person personFromDB = repo.getPersonById(id.trim());
+        if (personFromDB == null) {
             System.out.println("Person not found.");
-            return false;
+            result.setSuccess(false);
+            result.setMessage("ID cannot be empty.");
+            result.setType("Person");
+            result.setTimestamp(System.currentTimeMillis());
+            return result;
         }
+        // Input validation for newName AND update newAge
         if (newName != null && !newName.trim().isEmpty()) {
-            p.setName(newName.trim());
+            personFromDB.setName(newName.trim());
         }
         if (newAge >= 0) {
-            p.setAge(newAge);
+            personFromDB.setAge(newAge);
         }
-        System.out.println("Person updated: " + p);
-        return true;
+        System.out.println("Person updated: " + personFromDB);
+        // Finally we return true to signal success
+        result.setSuccess(true);
+        result.setMessage("Person updated successfully.");
+        result.setType("Person");
+        result.setTimestamp(System.currentTimeMillis());
+        result.setUpdatedObject(personFromDB);
+        return result;
     }
 
     public static boolean deletePerson(String id, Repository repo) {
