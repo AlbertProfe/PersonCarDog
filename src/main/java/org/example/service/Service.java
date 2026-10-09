@@ -8,14 +8,12 @@ import org.example.model.Person;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 
 public class Service {
 
     // ========== PERSON CRUD ==========
 
     public static Person createPerson(String name, int age, Repository repo) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to CREATE PERSON");
         if (name == null || name.trim().isEmpty()) {
             System.out.println("Name cannot be empty.");
