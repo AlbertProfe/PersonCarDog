@@ -9,87 +9,90 @@ import org.example.model.Dog;
 import org.example.model.Person;
 import org.example.repository.Repository;
 import org.example.utils.ResultUpdateOperation;
+import org.example.utils.ResultOperation;
 
 public class Service {
 
-    // ========== PERSON CRUD ==========
+    // ========== PERSON CRUD (MIGRADO A V4) ==========
 
-    public static Person createPerson(String name, int age, Repository repo) {
-        System.out.println("Welcome to CREATE PERSON");
+    /**
+     * MOOC Helsinki - Parte 3 & 5: Validación de Strings (.trim(), .isEmpty())
+     * y encapsulación del estado del resultado de la creación.
+     */
+    public static ResultOperation createPerson(String name, int age, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis(); // Marca de tiempo en milisegundos
 
         if (name == null || name.trim().isEmpty()) {
-            System.out.println("Name cannot be empty.");
-            return null;
+            return result.setter(false, "Name cannot be empty.", "Person", now);
         }
 
         if (age < 0) {
-            System.out.println("Age cannot be negative.");
-            return null;
+            return result.setter(false, "Age cannot be negative.", "Person", now);
         }
 
         Person p = new Person(name.trim(), age);
         repo.addPerson(p);
 
-        System.out.println("Person created: " + p);
-        return p;
+        // Retornamos éxito pasando la entidad recién creada como payload (updatedObject)
+        return result.setter(true, "Welcome to CREATE PERSON\nPerson created successfully.", "Person", now, p);
     }
 
-    public static Person getPersonById(String id, Repository repo) {
-        System.out.println("Welcome to GET PERSON BY ID");
+    /**
+     * MOOC Helsinki - Parte 5: Búsqueda y retorno seguro de objetos usando IDs.
+     */
+    public static ResultOperation getPersonById(String id, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "Person", now);
         }
 
         Person p = repo.getPersonById(id.trim());
 
         if (p == null) {
-            System.out.println("Person not found with id: " + id);
-        } else {
-            System.out.println("Found: " + p);
+            return result.setter(false, "Welcome to GET PERSON BY ID\nPerson not found with id: " + id, "Person", now);
         }
 
-        return p;
+        return result.setter(true, "Welcome to GET PERSON BY ID\nFound: " + p, "Person", now, p);
     }
 
-    public static ArrayList<Person> getAllPeople(Repository repo) {
-        System.out.println("Welcome to LIST ALL PEOPLE");
+    /**
+     * MOOC Helsinki - Parte 3 & 6: Uso de ArrayList y bucles for-each para iterar colecciones.
+     */
+    public static ResultOperation getAllPeople(Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         ArrayList<Person> list = repo.getAllPeople();
 
-        System.out.println("Total people: " + list.size());
-
+        // Construimos el mensaje semántico de texto plano
+        StringBuilder sb = new StringBuilder("Welcome to LIST ALL PEOPLE\nTotal people: " + list.size());
         for (Person p : list) {
-            System.out.println(p);
+            sb.append("\n").append(p);
         }
 
-        return list;
+        // Devolvemos la lista completa empaquetada en el objeto de transporte
+        return result.setter(true, sb.toString(), "Person", now, list);
     }
 
-    public static ResultUpdateOperation updatePerson(
-            String id, String newName, int newAge, Repository repo) {
+    /**
+     * MOOC Helsinki - Parte 4 & 5: Modificación de los atributos de una instancia mediante setters.
+     * ¡ATENCIÓN EQUIPO!: Aquí cambiamos el antiguo ResultUpdateOperation por el ResultOperation oficial.
+     */
+    public static ResultOperation updatePerson(String id, String newName, int newAge, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            return new ResultUpdateOperation(
-                    "UPDATE_PERSON",
-                    System.currentTimeMillis(),
-                    false,
-                    "ID cannot be empty.",
-                    null
-            );
+            return result.setter(false, "ID cannot be empty.", "Person", now);
         }
 
         Person p = repo.getPersonById(id.trim());
 
         if (p == null) {
-            return new ResultUpdateOperation(
-                    "UPDATE_PERSON",
-                    System.currentTimeMillis(),
-                    false,
-                    "Person not found.",
-                    null
-            );
+            return result.setter(false, "Person not found.", "Person", now);
         }
 
         if (newName != null && !newName.trim().isEmpty()) {
@@ -100,45 +103,38 @@ public class Service {
             p.setAge(newAge);
         }
 
-        return new ResultUpdateOperation(
-                "UPDATE_PERSON",
-                System.currentTimeMillis(),
-                true,
-                "Person updated: " + p,
-                p
-        );
+        return result.setter(true, "Person updated: " + p, "Person", now, p);
     }
 
-    public static boolean deletePerson(String id, Repository repo) {
-        System.out.println("Welcome to DELETE PERSON");
+    /**
+     * MOOC Helsinki - Parte 5: Gestión de referencias cruzadas. Desvinculamos el coche antes de eliminar.
+     */
+    public static ResultOperation deletePerson(String id, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Person", now);
         }
 
         Person p = repo.getPersonById(id.trim());
 
         if (p == null) {
-            System.out.println("Person not found.");
-            return false;
+            return result.setter(false, "Person not found.", "Person", now);
         }
 
-        // Clear car reference if owns one
+        // Si la persona tiene coche asignado, rompemos el enlace para evitar inconsistencias
         if (p.getCar() != null) {
             p.setCar(null);
-            System.out.println(
-                    "Cleared car reference from person before delete."
-            );
         }
 
         boolean removed = repo.removePerson(id.trim());
 
         if (removed) {
-            System.out.println("Person deleted successfully.");
+            return result.setter(true, "Welcome to DELETE PERSON\nPerson deleted successfully.", "Person", now);
+        } else {
+            return result.setter(false, "Failed to remove person from storage.", "Person", now);
         }
-
-        return removed;
     }
 
     // ========== CAR CRUD ==========

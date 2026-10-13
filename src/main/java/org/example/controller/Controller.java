@@ -9,6 +9,7 @@ import org.example.service.Service;
 import org.example.utils.DataSeeder;
 import org.example.utils.ResultUpdateOperation;
 import org.example.utils.Utils;
+import org.example.utils.ResultOperation;
 
 public class Controller {
 
@@ -53,50 +54,51 @@ public class Controller {
         }
     }
 
-    // ===== PERSON SUBMENU =====
+    // ===== PERSON SUBMENU (ACTUALIZADO A V4) =====
     private static void personSubMenu(Scanner scan, Repository repo) {
         while (true) {
             Utils.personMenu();
             String opt = Utils.askMenuOption(scan);
 
+            // Declaramos la variable única de captura para cumplir con el estándar v4
+            ResultOperation res;
+
             switch (opt) {
                 case "1":
                     String name = Utils.askString(scan, "Enter name: ");
                     int age = Utils.askInt(scan, "Enter age: ");
-                    Service.createPerson(name, age, repo);
+                    res = Service.createPerson(name, age, repo);
+                    System.out.println(res); // Impresión uniforme obligatoria del wrapper
                     break;
 
                 case "2":
-                    Service.getAllPeople(repo);
+                    res = Service.getAllPeople(repo);
+                    System.out.println(res);
                     break;
 
                 case "3":
                     String pid = Utils.askString(scan, "Enter person ID: ");
-                    Service.getPersonById(pid, repo);
+                    res = Service.getPersonById(pid, repo);
+                    System.out.println(res);
                     break;
 
                 case "4":
-                    String uid = Utils.askString(
-                            scan, "Enter person ID to update: ");
-                    String newName = Utils.askString(
-                            scan, "New name (leave blank to keep): ");
-                    int newAge = Utils.askInt(
-                            scan, "New age (-1 to keep): ");
+                    String uid = Utils.askString(scan, "Enter person ID to update: ");
+                    String newName = Utils.askString(scan, "New name (leave blank to keep): ");
+                    int newAge = Utils.askInt(scan, "New age (-1 to keep): ");
 
-                    ResultUpdateOperation result = Service.updatePerson(
-                            uid, newName, newAge, repo);
-
-                    System.out.println(result.getMessage());
+                    res = Service.updatePerson(uid, newName, newAge, repo);
+                    System.out.println(res);
                     break;
 
                 case "5":
-                    String did = Utils.askString(
-                            scan, "Enter person ID to delete: ");
-                    Service.deletePerson(did, repo);
+                    String did = Utils.askString(scan, "Enter person ID to delete: ");
+                    res = Service.deletePerson(did, repo);
+                    System.out.println(res);
                     break;
 
                 case "6":
-                    return;
+                    return; // Regresa al menú principal (MOOC Parte 3)
 
                 default:
                     System.out.println("Invalid option.");
@@ -250,10 +252,18 @@ public class Controller {
             System.out.println(
                     "Need at least two people. Creating demo people...");
 
-            Person seller = Service.createPerson("DemoSeller", 30, repo);
-            Person buyer = Service.createPerson("DemoBuyer", 25, repo);
-            Car demoCar = Service.createCar(
-                    "DemoMake", "DemoModel", 2020, repo);
+            // Registramos la operación en el wrapper v4
+            ResultOperation resSeller = Service.createPerson("DemoSeller", 30, repo);
+            // MOOC Helsinki Parte 7: Extraemos el objeto con casteo explícito (Person) si la operación fue exitosa
+            Person seller = resSeller.isSuccess() ? (Person) resSeller.getUpdatedObject() : null;
+
+            ResultOperation resBuyer = Service.createPerson("DemoBuyer", 25, repo);
+            Person buyer = resBuyer.isSuccess() ? (Person) resBuyer.getUpdatedObject() : null;
+
+            // Temporalmente recibe un Car (se actualizará a ResultOperation en el STEP 3)
+            Car demoCar = Service.createCar("DemoMake", "DemoModel", 2020, repo);
+
+
 
             if (seller != null) {
                 seller.setCar(demoCar);
