@@ -2,18 +2,14 @@ package org.example.controller;
 
 
 import org.example.model.Car;
-import org.example.model.CarTransaction;
-import org.example.model.Dog;
 import org.example.model.Person;
-import org.example.model.Dog;
 
 import org.example.repository.Repository;
 import org.example.service.Service;
 import org.example.utils.DataSeeder;
-import org.example.utils.ResultUpdateOperation;
+import org.example.utils.ResultOperation;
 import org.example.utils.Utils;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Controller {
@@ -84,8 +80,8 @@ public class Controller {
                     String uid = Utils.askString(scan, "Enter person ID to update: ");
                     String newName = Utils.askString(scan, "New name (leave blank to keep): ");
                     int newAge = Utils.askInt(scan, "New age (-1 to keep): ");
-                    ResultUpdateOperation resultUpdateOperation = Service.updatePerson(uid, newName, newAge, repo);
-                    System.out.println("resultUpdateOperation: " + resultUpdateOperation);
+                    ResultOperation resultOperation = Service.updatePerson(uid, newName, newAge, repo);
+                    System.out.println("resultOperation: " + resultOperation);
                     break;
                 case "5":
                     String did = Utils.askString(scan, "Enter person ID to delete: ");

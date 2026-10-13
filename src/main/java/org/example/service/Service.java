@@ -5,7 +5,7 @@ import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.Person;
-import org.example.utils.ResultUpdateOperation;
+import org.example.utils.ResultOperation;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,14 +55,14 @@ public class Service {
         return list;
     }
 
-    public static ResultUpdateOperation updatePerson(String id, String newName, int newAge, Repository repo) {
+    public static ResultOperation updatePerson(String id, String newName, int newAge, Repository repo) {
         // introduction message
         System.out.println("Welcome to UPDATE PERSON");
         // create resultUpdateOperation object
         // it will contain the type of the object updated, the timestamp, the success status, the message and the updated object
         // we will use it to return the result of the update operation
         // it will be used in the controller to display the result of the update operation
-        ResultUpdateOperation result = new ResultUpdateOperation();
+        ResultOperation result = new ResultOperation();
         // Defensive programming (null checks)
         // if id is null or empty, return false and set the resultUpdateOperation object
         if (id == null || id.trim().isEmpty()) {

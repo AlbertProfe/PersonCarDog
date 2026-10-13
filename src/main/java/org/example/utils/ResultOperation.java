@@ -1,6 +1,6 @@
 package org.example.utils;
 
-public class ResultUpdateOperation {
+public class ResultOperation {
 
     private String type;
     private long timestamp;
@@ -8,7 +8,7 @@ public class ResultUpdateOperation {
     private String message;
     private Object updatedObject;
 
-    public ResultUpdateOperation(String type, long timestamp, boolean success, String message, Object updatedObject) {
+    public ResultOperation(String type, long timestamp, boolean success, String message, Object updatedObject) {
         this.type = type;
         this.timestamp = timestamp;
         this.success = success;
@@ -16,11 +16,11 @@ public class ResultUpdateOperation {
         this.updatedObject = updatedObject;
     }
 
-    public ResultUpdateOperation(){}
+    public ResultOperation(){}
 
 
      // Convenience setter to set all fields at once.
-    public ResultUpdateOperation setter(boolean success, String message, String type, long timestamp, Object updatedObject) {
+    public ResultOperation setter(boolean success, String message, String type, long timestamp, Object updatedObject) {
         this.success = success;
         this.message = message;
         this.type = type;
@@ -32,7 +32,7 @@ public class ResultUpdateOperation {
 
 
      // Convenience setter to set all fields at once (updatedObject defaults to null).
-    public ResultUpdateOperation setter(boolean success, String message, String type, long timestamp) {
+    public ResultOperation setter(boolean success, String message, String type, long timestamp) {
         setter(success, message, type, timestamp, null);
         return this;
     }
