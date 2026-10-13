@@ -1,0 +1,214 @@
+Hello to Transaction Cars Person to Person!
+=== DATA SEEDING COMPLETE ===
+Personas: 3 | Coches: 3 | Perros: 2 | Transacciones: 2
+TOTAL DE INSTANCIAS NUEVAS EN EL REPOSITORIO: 10
+=============================
+
+===== MAIN MENU =====
+1. Person operations
+2. Dog operations
+3. Car operations
+4. Buy a car (person to person)
+5. View car transactions (read only)
+6. Quit
+Select an option: 
+===== DOG MENU =====
+1. Create dog
+2. List all dogs
+3. Find dog by ID
+4. Update dog
+5. Delete dog
+6. Back
+Select an option: Welcome to LIST ALL DOGS
+Total dogs: 2
+Dog{id='cd83ab13-7c80-4036-8b45-1173a2dca0a2', name='Oscar', breed='Yorkshire Terrier', age=4}
+Dog{id='2937e01d-eea7-4fd8-8252-51caee822f3c', name='Lucy', breed='Border Collie', age=7}
+
+===== DOG MENU =====
+1. Create dog
+2. List all dogs
+3. Find dog by ID
+4. Update dog
+5. Delete dog
+6. Back
+Select an option: 
+===== MAIN MENU =====
+1. Person operations
+2. Dog operations
+3. Car operations
+4. Buy a car (person to person)
+5. View car transactions (read only)
+6. Quit
+Select an option: 
+===== CAR MENU =====
+1. Create car
+2. List all cars
+3. Find car by ID
+4. Update car
+5. Delete car
+6. Back
+Select an option: Welcome to LIST ALL CARS
+Total cars: 3
+Car{id='2b9d0956-fe34-4c7a-aa41-8bbf64072ea8', make='Schuster-Daugherty', model='Small Marble Wallet', year=2003}
+Car{id='e4b7b93e-3843-4a10-b59d-dcf7d1e9e895', make='Carroll, Witting and Anderson', model='Mediocre Silk Pants', year=2008}
+Car{id='a7cfdf2b-8c14-432a-903d-2340ac4e7151', make='Schuppe, Kunze and Schinner', model='Intelligent Bronze Pants', year=2020}
+
+===== CAR MENU =====
+1. Create car
+2. List all cars
+3. Find car by ID
+4. Update car
+5. Delete car
+6. Back
+Select an option: 
+===== MAIN MENU =====
+1. Person operations
+2. Dog operations
+3. Car operations
+4. Buy a car (person to person)
+5. View car transactions (read only)
+6. Quit
+Select an option: 
+===== PERSON MENU =====
+1. Create person
+2. List all people
+3. Find person by ID
+4. Update person
+5. Delete person
+6. Back
+Select an option: Enter name: Enter age: Welcome to CREATE PERSON
+Person created: Person{id='355baa60-e856-4aae-a3a4-431b8039794b', name='Laura Mendez', age=31}
+
+===== PERSON MENU =====
+1. Create person
+2. List all people
+3. Find person by ID
+4. Update person
+5. Delete person
+6. Back
+Select an option: 
+===== MAIN MENU =====
+1. Person operations
+2. Dog operations
+3. Car operations
+4. Buy a car (person to person)
+5. View car transactions (read only)
+6. Quit
+Select an option: 
+===== DOG MENU =====
+1. Create dog
+2. List all dogs
+3. Find dog by ID
+4. Update dog
+5. Delete dog
+6. Back
+Select an option: Enter dog name: Enter breed: Enter age: Welcome to CREATE DOG
+Dog created: Dog{id='d6576daa-1a9b-4d30-85e7-9ab6c8ece934', name='Rocky', breed='Beagle', age=4}
+
+===== DOG MENU =====
+1. Create dog
+2. List all dogs
+3. Find dog by ID
+4. Update dog
+5. Delete dog
+6. Back
+Select an option: 
+===== MAIN MENU =====
+1. Person operations
+2. Dog operations
+3. Car operations
+4. Buy a car (person to person)
+5. View car transactions (read only)
+6. Quit
+Select an option: 
+===== CAR MENU =====
+1. Create car
+2. List all cars
+3. Find car by ID
+4. Update car
+5. Delete car
+6. Back
+Select an option: Enter make: Enter model: Enter year: Welcome to CREATE CAR
+Car created: Car{id='c693a596-313e-4232-95ea-ff76580b6836', make='Toyota', model='Yaris', year=2022}
+
+===== CAR MENU =====
+1. Create car
+2. List all cars
+3. Find car by ID
+4. Update car
+5. Delete car
+6. Back
+Select an option: 
+===== MAIN MENU =====
+1. Person operations
+2. Dog operations
+3. Car operations
+4. Buy a car (person to person)
+5. View car transactions (read only)
+6. Quit
+Select an option: 
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Welcome to LIST ALL CAR TRANSACTIONS
+Total transactions: 2
+CarTransaction{id='ea634783-55e6-4e00-bc6f-3d4a1628a9b1', buyer=Person{id='44146062-1360-452f-8dd5-89978620f7e5', name='Norman Hermiston', age=37}, seller=Person{id='2adb7bc8-7364-49da-9ec4-40019f1df173', name='Mohamed Bauch', age=30}, date=Fri Oct 09 08:42:15 CEST 2026, car=Car{id='a7cfdf2b-8c14-432a-903d-2340ac4e7151', make='Schuppe, Kunze and Schinner', model='Intelligent Bronze Pants', year=2020}, contract='Mollitia est quod repellat facilis molestiae unde earum.'}
+CarTransaction{id='dc6a43e2-0f25-4e60-958c-09466296962a', buyer=Person{id='2adb7bc8-7364-49da-9ec4-40019f1df173', name='Mohamed Bauch', age=30}, seller=Person{id='f13aa1dd-d268-4618-8697-db81db09c519', name='Johnie Schmeler', age=63}, date=Fri Oct 09 08:42:15 CEST 2026, car=Car{id='a7cfdf2b-8c14-432a-903d-2340ac4e7151', make='Schuppe, Kunze and Schinner', model='Intelligent Bronze Pants', year=2020}, contract='Occaecati nihil voluptatem expedita.'}
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Invalid option.
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Invalid option.
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Invalid option.
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Invalid option.
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Welcome to LIST ALL CAR TRANSACTIONS
+Total transactions: 2
+CarTransaction{id='ea634783-55e6-4e00-bc6f-3d4a1628a9b1', buyer=Person{id='44146062-1360-452f-8dd5-89978620f7e5', name='Norman Hermiston', age=37}, seller=Person{id='2adb7bc8-7364-49da-9ec4-40019f1df173', name='Mohamed Bauch', age=30}, date=Fri Oct 09 08:42:15 CEST 2026, car=Car{id='a7cfdf2b-8c14-432a-903d-2340ac4e7151', make='Schuppe, Kunze and Schinner', model='Intelligent Bronze Pants', year=2020}, contract='Mollitia est quod repellat facilis molestiae unde earum.'}
+CarTransaction{id='dc6a43e2-0f25-4e60-958c-09466296962a', buyer=Person{id='2adb7bc8-7364-49da-9ec4-40019f1df173', name='Mohamed Bauch', age=30}, seller=Person{id='f13aa1dd-d268-4618-8697-db81db09c519', name='Johnie Schmeler', age=63}, date=Fri Oct 09 08:42:15 CEST 2026, car=Car{id='a7cfdf2b-8c14-432a-903d-2340ac4e7151', make='Schuppe, Kunze and Schinner', model='Intelligent Bronze Pants', year=2020}, contract='Occaecati nihil voluptatem expedita.'}
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Enter transaction ID: Welcome to GET CAR TRANSACTION BY ID
+CarTransaction not found with id: 6
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Invalid option.
+
+===== CAR TRANSACTIONS (READ ONLY) =====
+1. List all transactions
+2. Find transaction by ID
+3. Back
+Select an option: Exception in thread "main" java.util.NoSuchElementException: No line found
+	at java.base/java.util.Scanner.nextLine(Scanner.java:1660)
+	at org.example.utils.Utils.askMenuOption(Utils.java:9)
+	at org.example.controller.Controller.carTransactionSubMenu(Controller.java:178)
+	at org.example.controller.Controller.run(Controller.java:51)
+	at org.example.App.main(App.java:9)
