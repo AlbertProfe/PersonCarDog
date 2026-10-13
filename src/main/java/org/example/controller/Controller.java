@@ -106,49 +106,47 @@ public class Controller {
         }
     }
 
-    // ===== DOG SUBMENU =====
+    // ===== DOG SUBMENU (ACTUALIZADO A V4) =====
     private static void dogSubMenu(Scanner scan, Repository repo) {
         while (true) {
             Utils.dogMenu();
             String opt = Utils.askMenuOption(scan);
+            ResultOperation res;
 
             switch (opt) {
                 case "1":
                     String name = Utils.askString(scan, "Enter dog name: ");
                     String breed = Utils.askString(scan, "Enter breed: ");
                     int age = Utils.askInt(scan, "Enter age: ");
-                    Service.createDog(name, breed, age, repo);
+                    res = Service.createDog(name, breed, age, repo);
+                    System.out.println(res);
                     break;
 
                 case "2":
-                    Service.getAllDogs(repo);
+                    res = Service.getAllDogs(repo);
+                    System.out.println(res);
                     break;
 
                 case "3":
                     String did = Utils.askString(scan, "Enter dog ID: ");
-                    Service.getDogById(did, repo);
+                    res = Service.getDogById(did, repo);
+                    System.out.println(res);
                     break;
 
                 case "4":
-                    String uid = Utils.askString(
-                            scan, "Enter dog ID to update: ");
-                    String newName = Utils.askString(
-                            scan, "New name (blank=keep): ");
-                    String newBreed = Utils.askString(
-                            scan, "New breed (blank=keep): ");
-                    int newAge = Utils.askInt(
-                            scan, "New age (-1=keep): ");
+                    String uid = Utils.askString(scan, "Enter dog ID to update: ");
+                    String newName = Utils.askString(scan, "New name (blank=keep): ");
+                    String newBreed = Utils.askString(scan, "New breed (blank=keep): ");
+                    int newAge = Utils.askInt(scan, "New age (-1=keep): ");
 
-                    ResultUpdateOperation result = Service.updateDog(
-                            uid, newName, newBreed, newAge, repo);
-
-                    System.out.println(result.getMessage());
+                    res = Service.updateDog(uid, newName, newBreed, newAge, repo);
+                    System.out.println(res);
                     break;
 
                 case "5":
-                    String delId = Utils.askString(
-                            scan, "Enter dog ID to delete: ");
-                    Service.deleteDog(delId, repo);
+                    String delId = Utils.askString(scan, "Enter dog ID to delete: ");
+                    res = Service.deleteDog(delId, repo);
+                    System.out.println(res);
                     break;
 
                 case "6":
@@ -160,49 +158,47 @@ public class Controller {
         }
     }
 
-    // ===== CAR SUBMENU =====
+    // ===== CAR SUBMENU (ACTUALIZADO A V4) =====
     private static void carSubMenu(Scanner scan, Repository repo) {
         while (true) {
             Utils.carMenu();
             String opt = Utils.askMenuOption(scan);
+            ResultOperation res;
 
             switch (opt) {
                 case "1":
                     String make = Utils.askString(scan, "Enter make: ");
                     String model = Utils.askString(scan, "Enter model: ");
                     int year = Utils.askInt(scan, "Enter year: ");
-                    Service.createCar(make, model, year, repo);
+                    res = Service.createCar(make, model, year, repo);
+                    System.out.println(res);
                     break;
 
                 case "2":
-                    Service.getAllCars(repo);
+                    res = Service.getAllCars(repo);
+                    System.out.println(res);
                     break;
 
                 case "3":
                     String cid = Utils.askString(scan, "Enter car ID: ");
-                    Service.getCarById(cid, repo);
+                    res = Service.getCarById(cid, repo);
+                    System.out.println(res);
                     break;
 
                 case "4":
-                    String uid = Utils.askString(
-                            scan, "Enter car ID to update: ");
-                    String newMake = Utils.askString(
-                            scan, "New make (blank=keep): ");
-                    String newModel = Utils.askString(
-                            scan, "New model (blank=keep): ");
-                    int newYear = Utils.askInt(
-                            scan, "New year (-1=keep): ");
+                    String uid = Utils.askString(scan, "Enter car ID to update: ");
+                    String newMake = Utils.askString(scan, "New make (blank=keep): ");
+                    String newModel = Utils.askString(scan, "New model (blank=keep): ");
+                    int newYear = Utils.askInt(scan, "New year (-1=keep): ");
 
-                    ResultUpdateOperation result = Service.updateCar(
-                            uid, newMake, newModel, newYear, repo);
-
-                    System.out.println(result.getMessage());
+                    res = Service.updateCar(uid, newMake, newModel, newYear, repo);
+                    System.out.println(res);
                     break;
 
                 case "5":
-                    String delId = Utils.askString(
-                            scan, "Enter car ID to delete: ");
-                    Service.deleteCar(delId, repo);
+                    String delId = Utils.askString(scan, "Enter car ID to delete: ");
+                    res = Service.deleteCar(delId, repo);
+                    System.out.println(res);
                     break;
 
                 case "6":
@@ -260,8 +256,12 @@ public class Controller {
             ResultOperation resBuyer = Service.createPerson("DemoBuyer", 25, repo);
             Person buyer = resBuyer.isSuccess() ? (Person) resBuyer.getUpdatedObject() : null;
 
-            // Temporalmente recibe un Car (se actualizará a ResultOperation en el STEP 3)
-            Car demoCar = Service.createCar("DemoMake", "DemoModel", 2020, repo);
+            // 1. Invocamos al servicio unificado v4 y capturamos su ResultOperation
+            ResultOperation resCar = Service.createCar("DemoMake", "DemoModel", 2020, repo);
+
+            // 2. MOOC Helsinki Parte 7: Extraemos dinámicamente la entidad mediante Casting explícito
+            Car demoCar = resCar.isSuccess() ? (Car) resCar.getUpdatedObject() : null;
+
 
 
 

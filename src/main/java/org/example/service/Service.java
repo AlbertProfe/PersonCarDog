@@ -137,92 +137,81 @@ public class Service {
         }
     }
 
-    // ========== CAR CRUD ==========
+    // ========== CAR CRUD (MIGRADO A V4) ==========
 
-    public static Car createCar(
-            String make, String model, int year, Repository repo) {
+    /**
+     * MOOC Helsinki - Parte 1 & 3: Validaciones condicionales complejas y manejo de tipos primitivos (int).
+     */
+    public static ResultOperation createCar(String make, String model, int year, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
-        System.out.println("Welcome to CREATE CAR");
-
-        if (make == null || make.trim().isEmpty()) {
-            System.out.println("Make cannot be empty.");
-            return null;
+        if (make == null || make.trim().isEmpty() || model == null || model.trim().isEmpty()) {
+            return result.setter(false, "Make and Model cannot be empty.", "Car", now);
         }
 
-        if (model == null || model.trim().isEmpty()) {
-            System.out.println("Model cannot be empty.");
-            return null;
-        }
-
-        if (year < 1886) {
-            System.out.println("Year looks invalid.");
-            return null;
+        if (year < 1886) { // 1886: Invención del automóvil moderno
+            return result.setter(false, "Year looks invalid (must be 1886 or later).", "Car", now);
         }
 
         Car c = new Car(make.trim(), model.trim(), year);
         repo.addCar(c);
 
-        System.out.println("Car created: " + c);
-        return c;
+        return result.setter(true, "Welcome to CREATE CAR\nCar created successfully.", "Car", now, c);
     }
 
-    public static Car getCarById(String id, Repository repo) {
-        System.out.println("Welcome to GET CAR BY ID");
+    /**
+     * MOOC Helsinki - Parte 5: Búsqueda indexada en base a identificadores de objetos.
+     */
+    public static ResultOperation getCarById(String id, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "Car", now);
         }
 
         Car c = repo.getCarById(id.trim());
 
         if (c == null) {
-            System.out.println("Car not found with id: " + id);
-        } else {
-            System.out.println("Found: " + c);
+            return result.setter(false, "Welcome to GET CAR BY ID\nCar not found with id: " + id, "Car", now);
         }
 
-        return c;
+        return result.setter(true, "Welcome to GET CAR BY ID\nFound: " + c, "Car", now, c);
     }
 
-    public static ArrayList<Car> getAllCars(Repository repo) {
-        System.out.println("Welcome to LIST ALL CARS");
+    /**
+     * MOOC Helsinki - Parte 6: Composición de texto dinámico con bucles For-Each sobre listas dinámicas.
+     */
+    public static ResultOperation getAllCars(Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         ArrayList<Car> list = repo.getAllCars();
-
-        System.out.println("Total cars: " + list.size());
-
+        StringBuilder sb = new StringBuilder("Welcome to LIST ALL CARS\nTotal cars: " + list.size());
         for (Car c : list) {
-            System.out.println(c);
+            sb.append("\n").append(c);
         }
 
-        return list;
+        return result.setter(true, sb.toString(), "Car", now, list);
     }
 
-    public static ResultUpdateOperation updateCar(
-            String id, String newMake, String newModel,
-            int newYear, Repository repo) {
+    /**
+     * MOOC Helsinki - Parte 4 & 5: Modificación del estado interno de una entidad existente (Mutación).
+     * Reemplaza de forma definitiva el wrapper antiguo en la firma del método.
+     */
+    public static ResultOperation updateCar(String id, String newMake, String newModel, int newYear, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            return new ResultUpdateOperation(
-                    "UPDATE_CAR",
-                    System.currentTimeMillis(),
-                    false,
-                    "ID cannot be empty.",
-                    null
-            );
+            return result.setter(false, "ID cannot be empty.", "Car", now);
         }
 
         Car c = repo.getCarById(id.trim());
 
         if (c == null) {
-            return new ResultUpdateOperation(
-                    "UPDATE_CAR",
-                    System.currentTimeMillis(),
-                    false,
-                    "Car not found.",
-                    null
-            );
+            return result.setter(false, "Car not found.", "Car", now);
         }
 
         if (newMake != null && !newMake.trim().isEmpty()) {
@@ -237,135 +226,103 @@ public class Service {
             c.setYear(newYear);
         }
 
-        return new ResultUpdateOperation(
-                "UPDATE_CAR",
-                System.currentTimeMillis(),
-                true,
-                "Car updated: " + c,
-                c
-        );
+        return result.setter(true, "Car updated: " + c, "Car", now, c);
     }
 
-    public static boolean deleteCar(String id, Repository repo) {
-        System.out.println("Welcome to DELETE CAR");
+    /**
+     * MOOC Helsinki - Parte 5 & 6: Desvinculación de referencias en cascada en colecciones dinámicas.
+     */
+    public static ResultOperation deleteCar(String id, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Car", now);
         }
 
         Car c = repo.getCarById(id.trim());
 
         if (c == null) {
-            System.out.println("Car not found.");
-            return false;
+            return result.setter(false, "Car not found.", "Car", now);
         }
 
-        // Clear from any person owning it
+        // Antes de eliminar el coche, recorremos las personas para limpiar la propiedad compartida
         for (Person p : repo.getAllPeople()) {
-            if (p.getCar() != null
-                    && p.getCar().getId().equals(id.trim())) {
-
+            if (p.getCar() != null && p.getCar().getId().equals(id.trim())) {
                 p.setCar(null);
-                System.out.println("Removed car reference from owner: " + p);
             }
         }
 
         boolean removed = repo.removeCar(id.trim());
 
         if (removed) {
-            System.out.println("Car deleted successfully.");
+            return result.setter(true, "Welcome to DELETE CAR\nCar deleted successfully.", "Car", now);
         }
-
-        return removed;
+        return result.setter(false, "Failed to delete car from storage.", "Car", now);
     }
 
-    // ========== DOG CRUD ==========
+    // ========== DOG CRUD (MIGRADO A V4) ==========
 
-    public static Dog createDog(
-            String name, String breed, int age, Repository repo) {
+    public static ResultOperation createDog(String name, String breed, int age, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
-        System.out.println("Welcome to CREATE DOG");
-
-        if (name == null || name.trim().isEmpty()) {
-            System.out.println("Name cannot be empty.");
-            return null;
-        }
-
-        if (breed == null || breed.trim().isEmpty()) {
-            System.out.println("Breed cannot be empty.");
-            return null;
+        if (name == null || name.trim().isEmpty() || breed == null || breed.trim().isEmpty()) {
+            return result.setter(false, "Name and Breed cannot be empty.", "Dog", now);
         }
 
         if (age < 0) {
-            System.out.println("Age cannot be negative.");
-            return null;
+            return result.setter(false, "Age cannot be negative.", "Dog", now);
         }
 
         Dog d = new Dog(name.trim(), breed.trim(), age);
         repo.addDog(d);
 
-        System.out.println("Dog created: " + d);
-        return d;
+        return result.setter(true, "Welcome to CREATE DOG\nDog created successfully.", "Dog", now, d);
     }
 
-    public static Dog getDogById(String id, Repository repo) {
-        System.out.println("Welcome to GET DOG BY ID");
+    public static ResultOperation getDogById(String id, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "Dog", now);
         }
 
         Dog d = repo.getDogById(id.trim());
 
         if (d == null) {
-            System.out.println("Dog not found with id: " + id);
-        } else {
-            System.out.println("Found: " + d);
+            return result.setter(false, "Welcome to GET DOG BY ID\nDog not found with id: " + id, "Dog", now);
         }
 
-        return d;
+        return result.setter(true, "Welcome to GET DOG BY ID\nFound: " + d, "Dog", now, d);
     }
 
-    public static ArrayList<Dog> getAllDogs(Repository repo) {
-        System.out.println("Welcome to LIST ALL DOGS");
+    public static ResultOperation getAllDogs(Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         ArrayList<Dog> list = repo.getAllDogs();
-
-        System.out.println("Total dogs: " + list.size());
-
+        StringBuilder sb = new StringBuilder("Welcome to LIST ALL DOGS\nTotal dogs: " + list.size());
         for (Dog d : list) {
-            System.out.println(d);
+            sb.append("\n").append(d);
         }
 
-        return list;
+        return result.setter(true, sb.toString(), "Dog", now, list);
     }
 
-    public static ResultUpdateOperation updateDog(
-            String id, String newName, String newBreed,
-            int newAge, Repository repo) {
+    public static ResultOperation updateDog(String id, String newName, String newBreed, int newAge, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            return new ResultUpdateOperation(
-                    "UPDATE_DOG",
-                    System.currentTimeMillis(),
-                    false,
-                    "ID cannot be empty.",
-                    null
-            );
+            return result.setter(false, "ID cannot be empty.", "Dog", now);
         }
 
         Dog d = repo.getDogById(id.trim());
 
         if (d == null) {
-            return new ResultUpdateOperation(
-                    "UPDATE_DOG",
-                    System.currentTimeMillis(),
-                    false,
-                    "Dog not found.",
-                    null
-            );
+            return result.setter(false, "Dog not found.", "Dog", now);
         }
 
         if (newName != null && !newName.trim().isEmpty()) {
@@ -380,37 +337,29 @@ public class Service {
             d.setAge(newAge);
         }
 
-        return new ResultUpdateOperation(
-                "UPDATE_DOG",
-                System.currentTimeMillis(),
-                true,
-                "Dog updated: " + d,
-                d
-        );
+        return result.setter(true, "Dog updated: " + d, "Dog", now, d);
     }
 
-    public static boolean deleteDog(String id, Repository repo) {
-        System.out.println("Welcome to DELETE DOG");
+    public static ResultOperation deleteDog(String id, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Dog", now);
         }
 
         Dog d = repo.getDogById(id.trim());
 
         if (d == null) {
-            System.out.println("Dog not found.");
-            return false;
+            return result.setter(false, "Dog not found.", "Dog", now);
         }
 
         boolean removed = repo.removeDog(id.trim());
 
         if (removed) {
-            System.out.println("Dog deleted successfully.");
+            return result.setter(true, "Welcome to DELETE DOG\nDog deleted successfully.", "Dog", now);
         }
-
-        return removed;
+        return result.setter(false, "Failed to delete dog from storage.", "Dog", now);
     }
 
     // ========== CAR TRANSACTION (READ ONLY) ==========
