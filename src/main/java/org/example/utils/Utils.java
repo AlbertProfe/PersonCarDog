@@ -33,7 +33,8 @@ public class Utils {
         System.out.println("3. Find person by ID");
         System.out.println("4. Update person");
         System.out.println("5. Delete person");
-        System.out.println("6. Back");
+        System.out.println("6. Assign Car to Person"); // <-- NUEVA OPCIÓN: Enlace dinámico de modelos
+        System.out.println("7. Back");                  // <-- Desplazada al 7 para cerrar el submenú correctamente
     }
 
     public static void carMenu() {

@@ -17,9 +17,27 @@ public class Controller {
     public static void run() {
         System.out.println("Hello to Transaction Cars Person to Person!");
 
+        // 1. Inicializamos el repositorio (H2 creará o verificará las tablas en disco)
         Repository repo = new Repository();
-        DataSeeder.seedRepository(repo);
         Scanner scan = new Scanner(System.in);
+
+        // 2. MODO INTERACTIVO DE INICIALIZACIÓN
+        System.out.println("\n=========================================");
+        System.out.println("   SYSTEM INITIALIZATION ENVIRONMENT     ");
+        System.out.println("=========================================");
+        System.out.println("1. Production Mode (Start clean / Load saved disk data)");
+        System.out.println("2. Sandbox Mode (Populate database with Fake Demo Data)");
+        System.out.print("Select initialization mode (1-2): ");
+
+        String initOption = scan.nextLine();
+
+        if (initOption.equals("2")) {
+            // Ejecuta el seeder si el usuario lo solicita explícitamente.
+            // Gracias al control que pusimos antes, si ya hay datos, avisará en lugar de duplicar.
+            DataSeeder.seedRepository(repo);
+        } else {
+            System.out.println("ℹ️ Production Mode activated. Loading secure data from disk...");
+        }
 
         while (true) {
             Utils.mainMenu();
@@ -39,16 +57,50 @@ public class Controller {
                     manageCarMenu(scan, repo);
                     break;
                 case "4":
+                    // 1. Solicitamos los datos dinámicamente al usuario por consola
+                    String sellerId = Utils.askString(scan, "Enter Seller (Owner) Person ID: ");
+                    String buyerId = Utils.askString(scan, "Enter Buyer Person ID: ");
+                    int price = Utils.askInt(scan, "Enter car sale price: ");
+
+                    System.out.println("\n--- PROCESSING CAR TRANSACTION ---");
+
+                    // 2. Usamos los métodos READ (getPersonById) que ya programaste en tu Service
+                    Person seller = Service.getPersonById(sellerId, repo);
+                    Person buyer = Service.getPersonById(buyerId, repo);
+
+                    // 3. Validamos si ambos existen antes de intentar operar con ellos
+                    if (seller == null) {
+                        System.out.println("Transaction Cancelled: Seller with ID " + sellerId + " does not exist.");
+                    } else if (buyer == null) {
+                        System.out.println("Transaction Cancelled: Buyer with ID " + buyerId + " does not exist.");
+                    } else {
+                        // 4. Si ambos existen, ejecutamos tu lógica de negocio "buyCar" de manera 100% dinámica
+                        boolean success = Service.buyCar(buyer, seller, price, repo);
+                        if (success) {
+                            System.out.println("Transaction completed successfully!");
+                        } else {
+                            System.out.println("Transaction failed. Check business rules constraints.");
+                        }
+                    }
+                    break;
+                    /*
                     List<Person> people = repo.getAllPeople();
                     if (people.size() >= 2) {
+
                         Person seller = people.get(0);
                         Person buyer = people.get(1);
                         int fakePrice = 15000;
+
+
+
                         Service.buyCar(buyer, seller, fakePrice, repo);
                     } else {
                         System.out.println("No hay suficientes personas en el repositorio.");
                     }
                     break;
+
+                         */
+
                 case "5":
                     // Redirigimos el flujo hacia la lectura exclusiva de transacciones
                     manageTransactionMenu(scan, repo);
@@ -103,9 +155,17 @@ public class Controller {
                     Service.deletePerson(deleteId, repo);
                     break;
 
+                case "6": // CASO 6: Asignar Coche a Persona
+                    String pId = Utils.askString(scan, "Enter Person ID: ");
+                    String cId = Utils.askString(scan, "Enter Car ID to assign: ");
+                    Service.assignCarToPerson(pId, cId, repo);
+                    break;
+                case "7": // CASO 6: Volver atrás. El antiguo caso 6 pasa a ser 7
+                    return; // Rompe este bucle y regresa al Menú Principal
+                /*
                 case "6": // CASO 6: Volver atrás
                     return; // Rompe este bucle y regresa al Menú Principal
-
+                */
                 default:
                     System.out.println("Invalid option, try again.");
             }

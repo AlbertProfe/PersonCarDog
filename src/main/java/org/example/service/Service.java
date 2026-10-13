@@ -165,6 +165,32 @@ public class Service {
         return removed;
     }
 
+    // =========================================================================
+    // REGLA DE VÍNCULO: ASIGNACIÓN DE COCHE A UNA PERSONA
+    // =========================================================================
+    // Helsinki Cap. 5: Uso de referencias de objetos y métodos 'setter' para
+    // cambiar el estado interno de una entidad conectándola con otra.
+    public static boolean assignCarToPerson(String personId, String carId, Repository repo) {
+
+        // Reutilizamos nuestros métodos de lectura para verificar existencias en el Repository.
+        // Helsinki Cap. 4: Delegación de responsabilidades entre métodos de la misma clase.
+        Person person = getPersonById(personId, repo);
+        Car car = getCarById(carId, repo);
+
+        // VALIDACIÓN DE SEGURIDAD: Comprobamos que ninguna de las dos búsquedas haya devuelto 'null'.
+        if (person == null || car == null) {
+            System.out.println("Error: Person or Car not found.");
+            return false; // Frenamos la operación si alguno de los IDs introducidos no es válido.
+        }
+
+        // Intercambio en memoria (Helsinki Cap. 5 - "Objects on a list" & "Object references"):
+        // Pasamos la referencia del objeto 'Car' detectado al atributo privado del objeto 'Person'.
+        person.setCar(car);
+        System.out.println("Success: Assigned " + car.getMake() + " to " + person.getName());
+        return true;
+    }
+
+
 
     // =========================================================================
     // CAPÍTULO 2: OPERACIONES CRUD PARA COCHES (CAR)

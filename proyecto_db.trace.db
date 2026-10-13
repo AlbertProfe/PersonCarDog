@@ -1,0 +1,80 @@
+2026-10-12 18:12:19.009659+02:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "CREATE TABLE IF NOT EXISTS CAR (id VARCHAR(255) PRIMARY KEY, make VARCHAR(255), model VARCHAR(255), [*]year INT);"; se esperaba "identifier"
+Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS CAR (id VARCHAR(255) PRIMARY KEY, make VARCHAR(255), model VARCHAR(255), [*]year INT);"; expected "identifier"; SQL statement:
+CREATE TABLE IF NOT EXISTS CAR (id VARCHAR(255) PRIMARY KEY, make VARCHAR(255), model VARCHAR(255), year INT); [42001-224]
+2026-10-12 18:12:19.013664+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+SELECT * FROM CAR [42104-224]
+2026-10-12 18:12:19.138176+02:00 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+MERGE INTO CAR KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.140174+02:00 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+MERGE INTO CAR KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.141175+02:00 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+MERGE INTO CAR KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.145174+02:00 jdbc[8]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.145174+02:00 jdbc[9]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.146175+02:00 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.153176+02:00 jdbc[11]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "DOG" not found (this database is empty); SQL statement:
+MERGE INTO DOG KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.154175+02:00 jdbc[12]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "DOG" not found (this database is empty); SQL statement:
+MERGE INTO DOG KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.163180+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRANSACTION" not found (this database is empty); SQL statement:
+INSERT INTO TRANSACTION (id, buyer_id, seller_id, car_id, description, date) VALUES (?, ?, ?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:19.164179+02:00 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRANSACTION" not found (this database is empty); SQL statement:
+INSERT INTO TRANSACTION (id, buyer_id, seller_id, car_id, description, date) VALUES (?, ?, ?, ?, ?, ?) [42104-224]
+2026-10-12 18:12:56.226071+02:00 jdbc[15]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.013105+02:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "CREATE TABLE IF NOT EXISTS CAR (id VARCHAR(255) PRIMARY KEY, make VARCHAR(255), model VARCHAR(255), [*]year INT);"; se esperaba "identifier"
+Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS CAR (id VARCHAR(255) PRIMARY KEY, make VARCHAR(255), model VARCHAR(255), [*]year INT);"; expected "identifier"; SQL statement:
+CREATE TABLE IF NOT EXISTS CAR (id VARCHAR(255) PRIMARY KEY, make VARCHAR(255), model VARCHAR(255), year INT); [42001-224]
+2026-10-12 18:25:49.017105+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+SELECT * FROM CAR [42104-224]
+2026-10-12 18:25:49.146617+02:00 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+MERGE INTO CAR KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.147618+02:00 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+MERGE INTO CAR KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.148617+02:00 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CAR" not found (this database is empty); SQL statement:
+MERGE INTO CAR KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.151619+02:00 jdbc[8]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.152617+02:00 jdbc[9]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.152617+02:00 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.159619+02:00 jdbc[11]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "DOG" not found (this database is empty); SQL statement:
+MERGE INTO DOG KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.160618+02:00 jdbc[12]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "DOG" not found (this database is empty); SQL statement:
+MERGE INTO DOG KEY(id) VALUES (?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.168619+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRANSACTION" not found (this database is empty); SQL statement:
+INSERT INTO TRANSACTION (id, buyer_id, seller_id, car_id, description, date) VALUES (?, ?, ?, ?, ?, ?) [42104-224]
+2026-10-12 18:25:49.169617+02:00 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRANSACTION" not found (this database is empty); SQL statement:
+INSERT INTO TRANSACTION (id, buyer_id, seller_id, car_id, description, date) VALUES (?, ?, ?, ?, ?, ?) [42104-224]
+2026-10-12 18:26:31.355918+02:00 jdbc[15]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PERSON" not found (this database is empty); SQL statement:
+MERGE INTO PERSON KEY(id) VALUES (?, ?, ?, ?) [42104-224]

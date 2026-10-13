@@ -72,6 +72,10 @@ public class CarTransaction {
         this.contract = contract;
     }
 
+    public String getDescription() {
+        return this.contract; // nuevo añadido
+    }
+
     @Override
     public String toString() {
         return "CarTransaction{id='" + id + "', buyer=" + buyer + ", seller=" + seller + ", date=" + date + ", car=" + car + ", contract='" + contract + "'}";
