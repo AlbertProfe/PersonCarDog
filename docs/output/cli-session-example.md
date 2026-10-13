@@ -18,6 +18,28 @@ Provide a realistic, reproducible example of the running `PersonCarDog` applicat
 | **Input script** | The sequence of menu choices and data entry (what the user "types") | `/tmp/v3_demo_input.txt` |
 | **Output capture** | The actual console output produced by the application | `docs/output/output_v3.txt` |
 
+## Create JAR (Maven) and feed input file
+
+How to create a `JAR` and how to feed a file as standard input while recording the output:
+
+Most Java projects of this type use Maven. The easiest and most common ways:
+Simple `JAR` (no extra dependencies needed)
+In the project root (where `pom.xml` is):
+
+ ```bash
+mvn clean package
+```
+
+The JAR appears in `target/`
+Example: 
+
+`target/person-car-dog-1.0-SNAPSHOT.jar` (name depends on your <artifactId> and <version>).
+
+Run with the fat JAR
+
+```bash
+java -jar target/PersonCarDog-1.0-SNAPSHOT.jar < v3_demo_input.txt > output_v3.txt 2>&1
+```
 ## Approach (How it was generated)
 
 1. Created a plain text file (`/tmp/v3_demo_input.txt`) containing the exact sequence of numbers and text that a user would enter in the menus.
