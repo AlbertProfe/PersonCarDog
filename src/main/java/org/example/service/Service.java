@@ -8,7 +8,6 @@ import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.Person;
 import org.example.repository.Repository;
-import org.example.utils.ResultUpdateOperation;
 import org.example.utils.ResultOperation;
 
 public class Service {
@@ -362,91 +361,81 @@ public class Service {
         return result.setter(false, "Failed to delete dog from storage.", "Dog", now);
     }
 
-    // ========== CAR TRANSACTION (READ ONLY) ==========
+    // ========== CAR TRANSACTION (MIGRADO A V4 - READ ONLY) ==========
 
-    public static CarTransaction getCarTransactionById(
-            String id, Repository repo) {
-
-        System.out.println("Welcome to GET CAR TRANSACTION BY ID");
+    /**
+     * MOOC Helsinki - Parte 5: Búsqueda y recuperación de registros históricos inmutables.
+     */
+    public static ResultOperation getCarTransactionById(String id, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         if (id == null || id.trim().isEmpty()) {
-            System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "CarTransaction", now);
         }
 
         CarTransaction ct = repo.getCarTransactionById(id.trim());
 
         if (ct == null) {
-            System.out.println("CarTransaction not found with id: " + id);
-        } else {
-            System.out.println("Found: " + ct);
+            return result.setter(false, "Welcome to GET CAR TRANSACTION BY ID\nCarTransaction not found with id: " + id, "CarTransaction", now);
         }
 
-        return ct;
+        return result.setter(true, "Welcome to GET CAR TRANSACTION BY ID\nFound: " + ct, "CarTransaction", now, ct);
     }
 
-    public static ArrayList<CarTransaction> getAllCarTransactions(
-            Repository repo) {
-
-        System.out.println("Welcome to LIST ALL CAR TRANSACTIONS");
+    /**
+     * MOOC Helsinki - Parte 6: Recorrido y recolección de historiales complejos en listas dinámicas.
+     */
+    public static ResultOperation getAllCarTransactions(Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
         ArrayList<CarTransaction> list = repo.getAllCarTransactions();
-
-        System.out.println("Total transactions: " + list.size());
-
+        StringBuilder sb = new StringBuilder("Welcome to LIST ALL CAR TRANSACTIONS\nTotal transactions: " + list.size());
         for (CarTransaction ct : list) {
-            System.out.println(ct);
+            sb.append("\n").append(ct);
         }
 
-        return list;
+        return result.setter(true, sb.toString(), "CarTransaction", now, list);
     }
 
-    // ========== BUY CAR (PERSON TO PERSON) ==========
+    // ========== BUY CAR (MIGRADO A V4 - PERSON TO PERSON) ==========
 
-    public static boolean buyCar(
-            Person buyer, Person seller, int price, Repository repo) {
+    /**
+     * MOOC Helsinki - Parte 5 & 7: Caso de uso complejo. Validación de reglas de negocio cruzadas
+     * entre múltiples instancias y mutación segura de referencias de objetos.
+     */
+    public static ResultOperation buyCar(Person buyer, Person seller, int price, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        long now = System.currentTimeMillis();
 
-        System.out.println("Welcome to BUY MENU");
-
-        // Check buyer exists in repository
+        // 1. Validar que el comprador existe de forma real en el sistema
         if (!repo.getAllPeople().contains(buyer)) {
-            System.out.println("Buyer not found in repository.");
-            return false;
+            return result.setter(false, "Buyer not found in repository.", "CarTransaction", now);
         }
 
-        System.out.println("Buyer exists: " + buyer);
-
-        // Check seller exists in repository
+        // 2. Validar que el vendedor existe de forma real en el sistema
         if (!repo.getAllPeople().contains(seller)) {
-            System.out.println("Seller not found in repository.");
-            return false;
+            return result.setter(false, "Seller not found in repository.", "CarTransaction", now);
         }
 
-        System.out.println("Seller exists: " + seller);
-
-        // Check seller has a car
+        // 3. Regla de negocio: El vendedor debe poseer un automóvil para realizar la venta
         if (seller.getCar() == null) {
-            System.out.println("Seller does not have a car to sell.");
-            return false;
+            return result.setter(false, "Seller does not have a car to sell.", "CarTransaction", now);
+        }
+
+        // 4. Regla de negocio: El comprador NO debe poseer un automóvil asignado actualmente
+        if (buyer.getCar() != null) {
+            return result.setter(false, "Buyer already has a car.", "CarTransaction", now);
         }
 
         Car car = seller.getCar();
-        System.out.println("Seller can sell a car: " + car);
 
-        // Check buyer does not already have a car
-        if (buyer.getCar() != null) {
-            System.out.println("Buyer already has a car.");
-            return false;
-        }
-
-        System.out.println("Buyer can buy a car.");
-
-        // Transfer ownership
+        // 5. Transferencia de propiedad en memoria (MOOC Parte 5: Mutación de referencias cruzadas)
         buyer.setCar(car);
         seller.setCar(null);
 
-        System.out.println("Settings done, now creating CarTransaction ...");
-
+        // 6. Instanciación del registro transaccional inmutable (MOOC Parte 4: Clases nativas Date)
         CarTransaction transaction = new CarTransaction(
                 buyer,
                 seller,
@@ -457,7 +446,6 @@ public class Service {
 
         repo.addCarTransaction(transaction);
 
-        System.out.println(transaction);
-        return true;
+        return result.setter(true, "Welcome to BUY MENU\nTransaction complete successfully.", "CarTransaction", now, transaction);
     }
 }

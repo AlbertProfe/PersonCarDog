@@ -7,7 +7,6 @@ import org.example.model.Person;
 import org.example.repository.Repository;
 import org.example.service.Service;
 import org.example.utils.DataSeeder;
-import org.example.utils.ResultUpdateOperation;
 import org.example.utils.Utils;
 import org.example.utils.ResultOperation;
 
@@ -210,23 +209,23 @@ public class Controller {
         }
     }
 
-    // ===== CAR TRANSACTION (READ ONLY) SUBMENU =====
-    private static void carTransactionSubMenu(
-            Scanner scan, Repository repo) {
-
+    // ===== CAR TRANSACTION (ACTUALIZADO A V4 - READ ONLY) SUBMENU =====
+    private static void carTransactionSubMenu(Scanner scan, Repository repo) {
         while (true) {
             Utils.carTransactionMenu();
             String opt = Utils.askMenuOption(scan);
+            ResultOperation res;
 
             switch (opt) {
                 case "1":
-                    Service.getAllCarTransactions(repo);
+                    res = Service.getAllCarTransactions(repo);
+                    System.out.println(res);
                     break;
 
                 case "2":
-                    String tid = Utils.askString(
-                            scan, "Enter transaction ID: ");
-                    Service.getCarTransactionById(tid, repo);
+                    String tid = Utils.askString(scan, "Enter transaction ID: ");
+                    res = Service.getCarTransactionById(tid, repo);
+                    System.out.println(res);
                     break;
 
                 case "3":
@@ -294,6 +293,8 @@ public class Controller {
             price = 0;
         }
 
-        Service.buyCar(buyer, seller, price, repo);
+        // Captura e impresión obligatoria exigida por la especificación uniforme v4
+        ResultOperation finalRes = Service.buyCar(buyer, seller, price, repo);
+        System.out.println(finalRes);
     }
 }
