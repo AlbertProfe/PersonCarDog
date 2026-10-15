@@ -5,11 +5,11 @@ import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.Person;
-import org.example.model.Dog;
 
 import org.example.repository.Repository;
 import org.example.service.Service;
 import org.example.utils.DataSeeder;
+import org.example.utils.ResultOperation;
 import org.example.utils.Utils;
 
 import java.util.List;
@@ -51,6 +51,12 @@ public class Controller {
                     carTransactionSubMenu(scan, repo);
                     break;
                 case "6":
+                    adoptDogFlow(scan, repo);
+                    break;
+                case "7":
+                    dogAdoptionSubMenu(scan, repo);
+                    break;
+                case "8":
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -192,6 +198,42 @@ public class Controller {
         }
     }
 
+    // ===== DOG ADOPTION (READ ONLY) SUBMENU =====
+    private static void dogAdoptionSubMenu(Scanner scan, Repository repo) {
+        while (true) {
+            Utils.dogAdoptionMenu();
+            String opt = Utils.askMenuOption(scan);
+            switch (opt) {
+                case "1":
+                    ResultOperation resAll = Service.getAllDogAdoptions(repo);
+                    System.out.println("resultOperation: " + resAll);
+                    break;
+                case "2":
+                    String tid = Utils.askString(scan, "Enter adoption ID: ");
+                    ResultOperation resById = Service.getDogAdoptionById(tid, repo);
+                    System.out.println("resultOperation: " + resById);
+                    break;
+                case "3":
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private static void adoptDogFlow(Scanner scan, Repository repo) {
+        System.out.println("Welcome to ADOPT A DOG (person <- dog)");
+        String pid = Utils.askString(scan, "Enter person ID: ");
+        String did = Utils.askString(scan, "Enter dog ID: ");
+        int fee = Utils.askInt(scan, "Enter adoption fee: ");
+
+        Person adopter = repo.getPersonById(pid.trim());
+        Dog dog = repo.getDogById(did.trim());
+
+        ResultOperation res = Service.adoptDog(adopter, dog, fee, repo);
+        System.out.println("resultOperation: " + res);
+    }
+
     // Demo buyCar using two people from repo (or create minimal if none)
     private static void runBuyCarDemo(Scanner scan, Repository repo) {
         System.out.println("Welcome to BUY A CAR (person to person)");
@@ -226,6 +268,7 @@ public class Controller {
         int price = Utils.askInt(scan, "Enter price: ");
         if (price < 0) price = 0;
 
-        Service.buyCar(buyer, seller, price, repo);
+        ResultOperation buyRes = Service.buyCar(buyer, seller, price, repo);
+        System.out.println("resultOperation: " + buyRes);
     }
 }
