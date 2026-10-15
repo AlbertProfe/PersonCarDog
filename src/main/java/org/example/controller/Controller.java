@@ -2,17 +2,14 @@ package org.example.controller;
 
 
 import org.example.model.Car;
-import org.example.model.CarTransaction;
-import org.example.model.Dog;
 import org.example.model.Person;
-import org.example.model.Dog;
 
 import org.example.repository.Repository;
 import org.example.service.Service;
 import org.example.utils.DataSeeder;
+import org.example.utils.ResultOperation;
 import org.example.utils.Utils;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Controller {
@@ -21,10 +18,12 @@ public class Controller {
 
         System.out.println("Hello to Transaction Cars Person to Person!");
 
-        // 1. Instanciamos el repositorio único vacío
+        // 1. We create the repo object because we need it in the controller
+        //    and we need it in the service, so we create it here
         Repository repo = new Repository();
 
-        // 2. Poblamos el repositorio dinámicamente usando Java Faker (Exactamente 10 objetos en total)
+        // 2. We populate the repo with dummy data using DataSeeder and Java Faker
+        //    This is just for demo purposes
         DataSeeder.seedRepository(repo);
         Scanner scan = new Scanner(System.in);
 
@@ -68,29 +67,36 @@ public class Controller {
                 case "1":
                     String name = Utils.askString(scan, "Enter name: ");
                     int age = Utils.askInt(scan, "Enter age: ");
-                    if (Service.createPerson(name, age, repo) == null){
+                    ResultOperation resCreatePerson = Service.createPerson(name, age, repo);
+                    if (resCreatePerson == null){
                         if (Utils.askString(scan, "Do u wanna create fake Person?").toLowerCase().equals("yes")){
-                            DataSeeder.createFakePerson(repo);
+                            resCreatePerson = DataSeeder.createFakePerson(repo);
                         }
                     }
 
+                   
+                    System.out.println("resultOperation: " + resCreatePerson);
                     break;
                 case "2":
-                    Service.getAllPeople(repo);
+                    ResultOperation resAllPeople = Service.getAllPeople(repo);
+                    System.out.println("resultOperation: " + resAllPeople);
                     break;
                 case "3":
                     String pid = Utils.askString(scan, "Enter person ID: ");
-                    Service.getPersonById(pid, repo);
+                    ResultOperation resGetPerson = Service.getPersonById(pid, repo);
+                    System.out.println("resultOperation: " + resGetPerson);
                     break;
                 case "4":
                     String uid = Utils.askString(scan, "Enter person ID to update: ");
                     String newName = Utils.askString(scan, "New name (leave blank to keep): ");
                     int newAge = Utils.askInt(scan, "New age (-1 to keep): ");
-                    Service.updatePerson(uid, newName, newAge, repo);
+                    ResultOperation resultOperation = Service.updatePerson(uid, newName, newAge, repo);
+                    System.out.println("resultOperation: " + resultOperation);
                     break;
                 case "5":
                     String did = Utils.askString(scan, "Enter person ID to delete: ");
-                    Service.deletePerson(did, repo);
+                    ResultOperation resDeletePerson = Service.deletePerson(did, repo);
+                    System.out.println("resultOperation: " + resDeletePerson);
                     break;
                 case "6":
                     return;
@@ -111,29 +117,35 @@ public class Controller {
                     String breed = Utils.askString(scan, "Enter breed: ");
                     int age = Utils.askInt(scan, "Enter age: ");
 
-                    if (Service.createDog(name, breed, age, repo) == null) {
+                    ResultOperation resCreateDog = Service.createDog(name, breed, age, repo);
+                    if (resCreateDog == null) {
                         if (Utils.askString(scan, "Do u wanna create fake dog?").toLowerCase().equals("yes")) {
-                            DataSeeder.createFakeDog(repo);
+                            resCreatePerson= DataSeeder.createFakeDog(repo);
                         }
                     }
+                    System.out.println("resultOperation: " + resCreateDog);
                     break;
                 case "2":
-                    Service.getAllDogs(repo);
+                    ResultOperation resAllDogs = Service.getAllDogs(repo);
+                    System.out.println("resultOperation: " + resAllDogs);
                     break;
                 case "3":
                     String did = Utils.askString(scan, "Enter dog ID: ");
-                    Service.getDogById(did, repo);
+                    ResultOperation resGetDog = Service.getDogById(did, repo);
+                    System.out.println("resultOperation: " + resGetDog);
                     break;
                 case "4":
                     String uid = Utils.askString(scan, "Enter dog ID to update: ");
                     String newName = Utils.askString(scan, "New name (blank=keep): ");
                     String newBreed = Utils.askString(scan, "New breed (blank=keep): ");
                     int newAge = Utils.askInt(scan, "New age (-1=keep): ");
-                    Service.updateDog(uid, newName, newBreed, newAge, repo);
+                    ResultOperation resUpdateDog = Service.updateDog(uid, newName, newBreed, newAge, repo);
+                    System.out.println("resultOperation: " + resUpdateDog);
                     break;
                 case "5":
                     String delId = Utils.askString(scan, "Enter dog ID to delete: ");
-                    Service.deleteDog(delId, repo);
+                    ResultOperation resDeleteDog = Service.deleteDog(delId, repo);
+                    System.out.println("resultOperation: " + resDeleteDog);
                     break;
                 case "6":
                     return;
@@ -153,34 +165,40 @@ public class Controller {
                     String make = Utils.askString(scan, "Enter make: ");
                     String model = Utils.askString(scan, "Enter model: ");
                     int year = Utils.askInt(scan, "Enter year: ");
-
-                    if (Service.createCar(make, model, year, repo) == null) {
+                    ResultOperation resCreateCar = Service.createCar(make, model, year, repo);
+                    if (resCreateCar == null) {
                         if (Utils.askString(scan, "Do u wanna create fake car?").toLowerCase().equals("yes")) {
                             String id = Utils.askString(scan, "Which person need this car? Write ID ");
-                            DataSeeder.createFakeCar(id,repo);
+                            resCreatePerson = DataSeeder.createFakeCar(id,repo);
                             String pid = Utils.askString(scan, "Enter person ID: ");
                             Service.getPersonById(pid, repo);
                             System.out.println("Car assigned successfully!");
                         }
                     }
+
+                    System.out.println("resultOperation: " + resCreateCar);
                     break;
                 case "2":
-                    Service.getAllCars(repo);
+                    ResultOperation resAllCars = Service.getAllCars(repo);
+                    System.out.println("resultOperation: " + resAllCars);
                     break;
                 case "3":
                     String cid = Utils.askString(scan, "Enter car ID: ");
-                    Service.getCarById(cid, repo);
+                    ResultOperation resGetCar = Service.getCarById(cid, repo);
+                    System.out.println("resultOperation: " + resGetCar);
                     break;
                 case "4":
                     String uid = Utils.askString(scan, "Enter car ID to update: ");
                     String newMake = Utils.askString(scan, "New make (blank=keep): ");
                     String newModel = Utils.askString(scan, "New model (blank=keep): ");
                     int newYear = Utils.askInt(scan, "New year (-1=keep): ");
-                    Service.updateCar(uid, newMake, newModel, newYear, repo);
+                    ResultOperation resUpdateCar = Service.updateCar(uid, newMake, newModel, newYear, repo);
+                    System.out.println("resultOperation: " + resUpdateCar);
                     break;
                 case "5":
                     String delId = Utils.askString(scan, "Enter car ID to delete: ");
-                    Service.deleteCar(delId, repo);
+                    ResultOperation resDeleteCar = Service.deleteCar(delId, repo);
+                    System.out.println("resultOperation: " + resDeleteCar);
                     break;
                 case "6":
                     return;
@@ -197,11 +215,13 @@ public class Controller {
             String opt = Utils.askMenuOption(scan);
             switch (opt) {
                 case "1":
-                    Service.getAllCarTransactions(repo);
+                    ResultOperation resAllTx = Service.getAllCarTransactions(repo);
+                    System.out.println("resultOperation: " + resAllTx);
                     break;
                 case "2":
                     String tid = Utils.askString(scan, "Enter transaction ID: ");
-                    Service.getCarTransactionById(tid, repo);
+                    ResultOperation resGetTx = Service.getCarTransactionById(tid, repo);
+                    System.out.println("resultOperation: " + resGetTx);
                     break;
                 case "3":
                     return;
@@ -218,10 +238,13 @@ public class Controller {
         java.util.ArrayList<Person> people = repo.getAllPeople();
         if (people.size() < 2) {
             System.out.println("Need at least two people. Creating demo people...");
-            Person seller = Service.createPerson("DemoSeller", 30, repo);
-            Person buyer = Service.createPerson("DemoBuyer", 25, repo);
-            Car demoCar = Service.createCar("DemoMake", "DemoModel", 2020, repo);
-            if (seller != null) seller.setCar(demoCar);
+            ResultOperation resSeller = Service.createPerson("DemoSeller", 30, repo);
+            ResultOperation resBuyer = Service.createPerson("DemoBuyer", 25, repo);
+            ResultOperation resDemoCar = Service.createCar("DemoMake", "DemoModel", 2020, repo);
+            Person sellerDemo = resSeller.isSuccess() ? (Person) resSeller.getUpdatedObject() : null;
+            Person buyerDemo = resBuyer.isSuccess() ? (Person) resBuyer.getUpdatedObject() : null;
+            Car demoCar = resDemoCar.isSuccess() ? (Car) resDemoCar.getUpdatedObject() : null;
+            if (sellerDemo != null) sellerDemo.setCar(demoCar);
             people = repo.getAllPeople();
         }
 
@@ -241,6 +264,7 @@ public class Controller {
         int price = Utils.askInt(scan, "Enter price: ");
         if (price < 0) price = 0;
 
-        Service.buyCar(buyer, seller, price, repo);
+        ResultOperation resBuyCar = Service.buyCar(buyer, seller, price, repo);
+        System.out.println("resultOperation: " + resBuyCar);
     }
 }

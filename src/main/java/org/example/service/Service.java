@@ -5,6 +5,7 @@ import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.Person;
+import org.example.utils.ResultOperation;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,78 +14,97 @@ public class Service {
 
     // ========== PERSON CRUD ==========
 
-    public static Person createPerson(String name, int age, Repository repo) {
+    public static ResultOperation createPerson(String name, int age, Repository repo) {
         System.out.println("Welcome to CREATE PERSON");
+        ResultOperation result = new ResultOperation();
         if (name == null || name.trim().isEmpty()) {
             System.out.println("Name cannot be empty.");
-            return null;
+            return result.setter(false, "Name cannot be empty.", "Person", System.currentTimeMillis());
         }
         if (age < 0) {
             System.out.println("Age cannot be negative.");
-            return null;
+            return result.setter(false, "Age cannot be negative.", "Person", System.currentTimeMillis());
         }
         Person p = new Person(name.trim(), age);
         repo.addPerson(p);
         System.out.println("Person created: " + p);
-        return p;
+        return result.setter(true, "Person created successfully.", "Person", System.currentTimeMillis(), p);
     }
 
-    public static Person getPersonById(String id, Repository repo) {
+    public static ResultOperation getPersonById(String id, Repository repo) {
         System.out.println("Welcome to GET PERSON BY ID");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "Person", System.currentTimeMillis());
         }
         Person p = repo.getPersonById(id.trim());
         if (p == null) {
             System.out.println("Person not found with id: " + id);
-        } else {
-            System.out.println("Found: " + p);
+            return result.setter(false, "Person not found.", "Person", System.currentTimeMillis());
         }
-        return p;
+        System.out.println("Found: " + p);
+        return result.setter(true, "Person found.", "Person", System.currentTimeMillis(), p);
     }
 
-    public static ArrayList<Person> getAllPeople(Repository repo) {
+    public static ResultOperation getAllPeople(Repository repo) {
         System.out.println("Welcome to LIST ALL PEOPLE");
+        ResultOperation result = new ResultOperation();
         ArrayList<Person> list = repo.getAllPeople();
         System.out.println("Total people: " + list.size());
         for (Person p : list) {
             System.out.println(p);
         }
-        return list;
+        return result.setter(true, "Retrieved all people.", "Person", System.currentTimeMillis(), list);
     }
 
-    public static boolean updatePerson(String id, String newName, int newAge, Repository repo) {
+    public static ResultOperation updatePerson(String id, String newName, int newAge, Repository repo) {
+        // introduction message
         System.out.println("Welcome to UPDATE PERSON");
+        // create resultUpdateOperation object
+        // it will contain the type of the object updated, the timestamp, the success status, the message and the updated object
+        // we will use it to return the result of the update operation
+        // it will be used in the controller to display the result of the update operation
+        ResultOperation result = new ResultOperation();
+        // Defensive programming (null checks)
+        // if id is null or empty, return false and set the resultUpdateOperation object
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return false;
+            // return the set resultUpdateOperation object
+            return result.setter(false, "ID cannot be empty.", "Person", System.currentTimeMillis());
         }
-        Person p = repo.getPersonById(id.trim());
-        if (p == null) {
+
+        Person personFromDB = repo.getPersonById(id.trim());
+        if (personFromDB == null) {
             System.out.println("Person not found.");
-            return false;
+            // return the set resultUpdateOperation object
+            return result.setter(false, "Person not found.", "Person", System.currentTimeMillis());
         }
+
+        // update the person
         if (newName != null && !newName.trim().isEmpty()) {
-            p.setName(newName.trim());
+            personFromDB.setName(newName.trim());
         }
         if (newAge >= 0) {
-            p.setAge(newAge);
+            personFromDB.setAge(newAge);
         }
-        System.out.println("Person updated: " + p);
-        return true;
+
+        System.out.println("Person updated: " + personFromDB);
+        // return the set resultUpdateOperation object
+        return result.setter(true, "Person updated successfully.", "Person", System.currentTimeMillis(), personFromDB);
     }
 
-    public static boolean deletePerson(String id, Repository repo) {
+    public static ResultOperation deletePerson(String id, Repository repo) {
         System.out.println("Welcome to DELETE PERSON");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Person", System.currentTimeMillis());
         }
         Person p = repo.getPersonById(id.trim());
         if (p == null) {
             System.out.println("Person not found.");
-            return false;
+            return result.setter(false, "Person not found.", "Person", System.currentTimeMillis());
         }
         // Clear car reference if owns one
         if (p.getCar() != null) {
@@ -94,67 +114,72 @@ public class Service {
         boolean removed = repo.removePerson(id.trim());
         if (removed) {
             System.out.println("Person deleted successfully.");
+            return result.setter(true, "Person deleted successfully.", "Person", System.currentTimeMillis());
         }
-        return removed;
+        return result.setter(false, "Failed to delete person.", "Person", System.currentTimeMillis());
     }
 
     // ========== CAR CRUD ==========
 
-    public static Car createCar(String make, String model, int year, Repository repo) {
+    public static ResultOperation createCar(String make, String model, int year, Repository repo) {
         System.out.println("Welcome to CREATE CAR");
+        ResultOperation result = new ResultOperation();
         if (make == null || make.trim().isEmpty()) {
             System.out.println("Make cannot be empty.");
-            return null;
+            return result.setter(false, "Make cannot be empty.", "Car", System.currentTimeMillis());
         }
         if (model == null || model.trim().isEmpty()) {
             System.out.println("Model cannot be empty.");
-            return null;
+            return result.setter(false, "Model cannot be empty.", "Car", System.currentTimeMillis());
         }
         if (year < 1886) {
             System.out.println("Year looks invalid.");
-            return null;
+            return result.setter(false, "Year looks invalid.", "Car", System.currentTimeMillis());
         }
         Car c = new Car(make.trim(), model.trim(), year);
         repo.addCar(c);
         System.out.println("Car created: " + c);
-        return c;
+        return result.setter(true, "Car created successfully.", "Car", System.currentTimeMillis(), c);
     }
 
-    public static Car getCarById(String id, Repository repo) {
+    public static ResultOperation getCarById(String id, Repository repo) {
         System.out.println("Welcome to GET CAR BY ID");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "Car", System.currentTimeMillis());
         }
         Car c = repo.getCarById(id.trim());
         if (c == null) {
             System.out.println("Car not found with id: " + id);
-        } else {
-            System.out.println("Found: " + c);
+            return result.setter(false, "Car not found.", "Car", System.currentTimeMillis());
         }
-        return c;
+        System.out.println("Found: " + c);
+        return result.setter(true, "Car found.", "Car", System.currentTimeMillis(), c);
     }
 
-    public static ArrayList<Car> getAllCars(Repository repo) {
+    public static ResultOperation getAllCars(Repository repo) {
         System.out.println("Welcome to LIST ALL CARS");
+        ResultOperation result = new ResultOperation();
         ArrayList<Car> list = repo.getAllCars();
         System.out.println("Total cars: " + list.size());
         for (Car c : list) {
             System.out.println(c);
         }
-        return list;
+        return result.setter(true, "Retrieved all cars.", "Car", System.currentTimeMillis(), list);
     }
 
-    public static boolean updateCar(String id, String newMake, String newModel, int newYear, Repository repo) {
+    public static ResultOperation updateCar(String id, String newMake, String newModel, int newYear, Repository repo) {
         System.out.println("Welcome to UPDATE CAR");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Car", System.currentTimeMillis());
         }
         Car c = repo.getCarById(id.trim());
         if (c == null) {
             System.out.println("Car not found.");
-            return false;
+            return result.setter(false, "Car not found.", "Car", System.currentTimeMillis());
         }
         if (newMake != null && !newMake.trim().isEmpty()) {
             c.setMake(newMake.trim());
@@ -166,19 +191,20 @@ public class Service {
             c.setYear(newYear);
         }
         System.out.println("Car updated: " + c);
-        return true;
+        return result.setter(true, "Car updated successfully.", "Car", System.currentTimeMillis(), c);
     }
 
-    public static boolean deleteCar(String id, Repository repo) {
+    public static ResultOperation deleteCar(String id, Repository repo) {
         System.out.println("Welcome to DELETE CAR");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Car", System.currentTimeMillis());
         }
         Car c = repo.getCarById(id.trim());
         if (c == null) {
             System.out.println("Car not found.");
-            return false;
+            return result.setter(false, "Car not found.", "Car", System.currentTimeMillis());
         }
         // Clear from any person owning it
         for (Person p : repo.getAllPeople()) {
@@ -190,67 +216,72 @@ public class Service {
         boolean removed = repo.removeCar(id.trim());
         if (removed) {
             System.out.println("Car deleted successfully.");
+            return result.setter(true, "Car deleted successfully.", "Car", System.currentTimeMillis());
         }
-        return removed;
+        return result.setter(false, "Failed to delete car.", "Car", System.currentTimeMillis());
     }
 
     // ========== DOG CRUD ==========
 
-    public static Dog createDog(String name, String breed, int age, Repository repo) {
+    public static ResultOperation createDog(String name, String breed, int age, Repository repo) {
         System.out.println("Welcome to CREATE DOG");
+        ResultOperation result = new ResultOperation();
         if (name == null || name.trim().isEmpty()) {
             System.out.println("Name cannot be empty.");
-            return null;
+            return result.setter(false, "Name cannot be empty.", "Dog", System.currentTimeMillis());
         }
         if (breed == null || breed.trim().isEmpty()) {
             System.out.println("Breed cannot be empty.");
-            return null;
+            return result.setter(false, "Breed cannot be empty.", "Dog", System.currentTimeMillis());
         }
         if (age < 0) {
             System.out.println("Age cannot be negative.");
-            return null;
+            return result.setter(false, "Age cannot be negative.", "Dog", System.currentTimeMillis());
         }
         Dog d = new Dog(name.trim(), breed.trim(), age);
         repo.addDog(d);
         System.out.println("Dog created: " + d);
-        return d;
+        return result.setter(true, "Dog created successfully.", "Dog", System.currentTimeMillis(), d);
     }
 
-    public static Dog getDogById(String id, Repository repo) {
+    public static ResultOperation getDogById(String id, Repository repo) {
         System.out.println("Welcome to GET DOG BY ID");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "Dog", System.currentTimeMillis());
         }
         Dog d = repo.getDogById(id.trim());
         if (d == null) {
             System.out.println("Dog not found with id: " + id);
-        } else {
-            System.out.println("Found: " + d);
+            return result.setter(false, "Dog not found.", "Dog", System.currentTimeMillis());
         }
-        return d;
+        System.out.println("Found: " + d);
+        return result.setter(true, "Dog found.", "Dog", System.currentTimeMillis(), d);
     }
 
-    public static ArrayList<Dog> getAllDogs(Repository repo) {
+    public static ResultOperation getAllDogs(Repository repo) {
         System.out.println("Welcome to LIST ALL DOGS");
+        ResultOperation result = new ResultOperation();
         ArrayList<Dog> list = repo.getAllDogs();
         System.out.println("Total dogs: " + list.size());
         for (Dog d : list) {
             System.out.println(d);
         }
-        return list;
+        return result.setter(true, "Retrieved all dogs.", "Dog", System.currentTimeMillis(), list);
     }
 
-    public static boolean updateDog(String id, String newName, String newBreed, int newAge, Repository repo) {
+    public static ResultOperation updateDog(String id, String newName, String newBreed, int newAge, Repository repo) {
         System.out.println("Welcome to UPDATE DOG");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Dog", System.currentTimeMillis());
         }
         Dog d = repo.getDogById(id.trim());
         if (d == null) {
             System.out.println("Dog not found.");
-            return false;
+            return result.setter(false, "Dog not found.", "Dog", System.currentTimeMillis());
         }
         if (newName != null && !newName.trim().isEmpty()) {
             d.setName(newName.trim());
@@ -262,77 +293,82 @@ public class Service {
             d.setAge(newAge);
         }
         System.out.println("Dog updated: " + d);
-        return true;
+        return result.setter(true, "Dog updated successfully.", "Dog", System.currentTimeMillis(), d);
     }
 
-    public static boolean deleteDog(String id, Repository repo) {
+    public static ResultOperation deleteDog(String id, Repository repo) {
         System.out.println("Welcome to DELETE DOG");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return false;
+            return result.setter(false, "ID cannot be empty.", "Dog", System.currentTimeMillis());
         }
         Dog d = repo.getDogById(id.trim());
         if (d == null) {
             System.out.println("Dog not found.");
-            return false;
+            return result.setter(false, "Dog not found.", "Dog", System.currentTimeMillis());
         }
         boolean removed = repo.removeDog(id.trim());
         if (removed) {
             System.out.println("Dog deleted successfully.");
+            return result.setter(true, "Dog deleted successfully.", "Dog", System.currentTimeMillis());
         }
-        return removed;
+        return result.setter(false, "Failed to delete dog.", "Dog", System.currentTimeMillis());
     }
 
     // ========== CAR TRANSACTION (READ ONLY) ==========
 
-    public static CarTransaction getCarTransactionById(String id, Repository repo) {
+    public static ResultOperation getCarTransactionById(String id, Repository repo) {
         System.out.println("Welcome to GET CAR TRANSACTION BY ID");
+        ResultOperation result = new ResultOperation();
         if (id == null || id.trim().isEmpty()) {
             System.out.println("ID cannot be empty.");
-            return null;
+            return result.setter(false, "ID cannot be empty.", "CarTransaction", System.currentTimeMillis());
         }
         CarTransaction ct = repo.getCarTransactionById(id.trim());
         if (ct == null) {
             System.out.println("CarTransaction not found with id: " + id);
-        } else {
-            System.out.println("Found: " + ct);
+            return result.setter(false, "CarTransaction not found.", "CarTransaction", System.currentTimeMillis());
         }
-        return ct;
+        System.out.println("Found: " + ct);
+        return result.setter(true, "CarTransaction found.", "CarTransaction", System.currentTimeMillis(), ct);
     }
 
-    public static ArrayList<CarTransaction> getAllCarTransactions(Repository repo) {
+    public static ResultOperation getAllCarTransactions(Repository repo) {
         System.out.println("Welcome to LIST ALL CAR TRANSACTIONS");
+        ResultOperation result = new ResultOperation();
         ArrayList<CarTransaction> list = repo.getAllCarTransactions();
         System.out.println("Total transactions: " + list.size());
         for (CarTransaction ct : list) {
             System.out.println(ct);
         }
-        return list;
+        return result.setter(true, "Retrieved all car transactions.", "CarTransaction", System.currentTimeMillis(), list);
     }
 
     // ========== BUYCAR (PERSON TO PERSON > CARTRANSACTION) ==========
 
-    public static boolean buyCar(Person buyer, Person seller, int price, Repository repo){
+    public static ResultOperation buyCar(Person buyer, Person seller, int price, Repository repo){
 
         System.out.println("Welcome to BUY MENU");
+        ResultOperation result = new ResultOperation();
         // person buyer a exists at array
         if (!repo.getAllPeople().contains(buyer)) {
             System.out.println("Buyer not found in repository.");
-            return false;
+            return result.setter(false, "Buyer not found in repository.", "CarTransaction", System.currentTimeMillis());
         }
         System.out.println("Buyer exits: " + buyer);
 
         // person seller b exists at array
         if (!repo.getAllPeople().contains(seller)) {
             System.out.println("Seller not found in repository.");
-            return false;
+            return result.setter(false, "Seller not found in repository.", "CarTransaction", System.currentTimeMillis());
         }
         System.out.println("Seller exits: " + seller);
 
         // car exists??
         if (seller.getCar() == null) {
             System.out.println("Seller does not have a car to sell.");
-            return false;
+            return result.setter(false, "Seller does not have a car to sell.", "CarTransaction", System.currentTimeMillis());
         }
 
         // person a has a car
@@ -342,7 +378,7 @@ public class Service {
         // person b does not have a car
         if (buyer.getCar() != null) {
             System.out.println("Buyer already has a car.");
-            return false;
+            return result.setter(false, "Buyer already has a car.", "CarTransaction", System.currentTimeMillis());
         }
 
         System.out.println("Buyer can buy a car.");
@@ -362,6 +398,6 @@ public class Service {
         // PRINT
         System.out.println(transaction);
 
-        return true;
+        return result.setter(true, "Car purchased successfully.", "CarTransaction", System.currentTimeMillis(), transaction);
     }
 }
