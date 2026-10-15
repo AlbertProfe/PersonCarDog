@@ -8,6 +8,8 @@ public class Dog {
     private String name;
     private String breed;
     private int age;
+    // Back-reference to the adopter (bidirectional with Person.dog)
+    private Person owner;
 
     public Dog() {}
 
@@ -50,8 +52,18 @@ public class Dog {
         this.id = id;
     }
 
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
     @Override
     public String toString() {
-        return "Dog{id='" + id + "', name='" + name + "', breed='" + breed + "', age=" + age + "}";
+        // Print only the owner's name, never the full Person, to avoid infinite recursion
+        String ownerName = (owner == null) ? "none" : owner.getName();
+        return "Dog{id='" + id + "', name='" + name + "', breed='" + breed + "', age=" + age + ", owner='" + ownerName + "'}";
     }
 }

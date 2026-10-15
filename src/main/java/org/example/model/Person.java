@@ -8,6 +8,8 @@ public class Person {
     private String name;
     private int age;
     private Car car;
+    // One person owns at most one dog (bidirectional with Dog.owner)
+    private Dog dog;
 
     public Person(){
         this.id = UUID.randomUUID().toString();
@@ -49,6 +51,14 @@ public class Person {
 
     public void setCar(Car car) {
         this.car = car;
+    }
+
+    public Dog getDog() {
+        return dog;
+    }
+
+    public void setDog(Dog dog) {
+        this.dog = dog;
     }
 
     @Override
