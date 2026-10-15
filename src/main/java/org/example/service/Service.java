@@ -4,6 +4,7 @@ import org.example.repository.Repository;
 import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
+import org.example.model.DogAdoption;
 import org.example.model.Person;
 import org.example.utils.ResultOperation;
 
@@ -110,6 +111,12 @@ public class Service {
         if (p.getCar() != null) {
             p.setCar(null);
             System.out.println("Cleared car reference from person before delete.");
+        }
+        // Cascade: the dog loses its owner so both sides of the relation stay consistent
+        if (p.getDog() != null) {
+            p.getDog().setOwner(null);
+            p.setDog(null);
+            System.out.println("Cleared dog ownership before delete.");
         }
         boolean removed = repo.removePerson(id.trim());
         if (removed) {
@@ -308,6 +315,12 @@ public class Service {
             System.out.println("Dog not found.");
             return result.setter(false, "Dog not found.", "Dog", System.currentTimeMillis());
         }
+        // Cascade: the owner no longer has a dog so both sides of the relation stay consistent
+        if (d.getOwner() != null) {
+            d.getOwner().setDog(null);
+            d.setOwner(null);
+            System.out.println("Removed dog reference from owner before delete.");
+        }
         boolean removed = repo.removeDog(id.trim());
         if (removed) {
             System.out.println("Dog deleted successfully.");
@@ -399,5 +412,94 @@ public class Service {
         System.out.println(transaction);
 
         return result.setter(true, "Car purchased successfully.", "CarTransaction", System.currentTimeMillis(), transaction);
+    }
+
+    // ========== DOG ADOPTION (READ ONLY) ==========
+
+    public static ResultOperation getDogAdoptionById(String id, Repository repo) {
+        System.out.println("Welcome to GET DOG ADOPTION BY ID");
+        ResultOperation result = new ResultOperation();
+        if (id == null || id.trim().isEmpty()) {
+            System.out.println("ID cannot be empty.");
+            return result.setter(false, "ID cannot be empty.", "DogAdoption", System.currentTimeMillis());
+        }
+        DogAdoption da = repo.getDogAdoptionById(id.trim());
+        if (da == null) {
+            System.out.println("DogAdoption not found with id: " + id);
+            return result.setter(false, "DogAdoption not found.", "DogAdoption", System.currentTimeMillis());
+        }
+        System.out.println("Found: " + da);
+        return result.setter(true, "DogAdoption found.", "DogAdoption", System.currentTimeMillis(), da);
+    }
+
+    public static ResultOperation getAllDogAdoptions(Repository repo) {
+        System.out.println("Welcome to LIST ALL DOG ADOPTIONS");
+        ResultOperation result = new ResultOperation();
+        ArrayList<DogAdoption> list = repo.getAllDogAdoptions();
+        System.out.println("Total adoptions: " + list.size());
+        for (DogAdoption da : list) {
+            System.out.println(da);
+        }
+        return result.setter(true, "Retrieved all dog adoptions.", "DogAdoption", System.currentTimeMillis(), list);
+    }
+
+    // ========== ADOPTDOG (PERSON <- DOG > DOGADOPTION) ==========
+
+    public static ResultOperation adoptDog(Person adopter, Dog dog, int fee, Repository repo) {
+
+        System.out.println("Welcome to ADOPT A DOG");
+        ResultOperation result = new ResultOperation();
+
+        // 1. adopter exists in repo
+        if (adopter == null || !repo.getAllPeople().contains(adopter)) {
+            System.out.println("Adopter not found in repository.");
+            return result.setter(false, "Adopter not found in repository.", "DogAdoption", System.currentTimeMillis());
+        }
+        System.out.println("Adopter exists: " + adopter);
+
+        // 2. dog exists in repo
+        if (dog == null || !repo.getAllDogs().contains(dog)) {
+            System.out.println("Dog not found in repository.");
+            return result.setter(false, "Dog not found in repository.", "DogAdoption", System.currentTimeMillis());
+        }
+        System.out.println("Dog exists: " + dog);
+
+        // 3. one dog per person
+        if (adopter.getDog() != null) {
+            System.out.println("Adopter already owns a dog.");
+            return result.setter(false, "Adopter already owns a dog.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 4. one owner per dog
+        if (dog.getOwner() != null) {
+            System.out.println("Dog already has an owner.");
+            return result.setter(false, "Dog already has an owner.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 5. business rule: only adults can adopt
+        if (adopter.getAge() < 18) {
+            System.out.println("Adopter must be an adult.");
+            return result.setter(false, "Adopter must be an adult.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 6. fee validation
+        if (fee < 0) {
+            System.out.println("Fee cannot be negative.");
+            return result.setter(false, "Fee cannot be negative.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        System.out.println("All checks passed, linking person and dog ...");
+
+        // Set BOTH sides of the bidirectional relation
+        adopter.setDog(dog);
+        dog.setOwner(adopter);
+
+        // Record the adoption (read-only afterwards), same role as CarTransaction in buyCar
+        DogAdoption adoption = new DogAdoption(adopter, dog, new Date(), fee, "Dog adopted for " + fee);
+        repo.addDogAdoption(adoption);
+
+        System.out.println(adoption);
+
+        return result.setter(true, "Dog adopted successfully.", "DogAdoption", System.currentTimeMillis(), adoption);
     }
 }

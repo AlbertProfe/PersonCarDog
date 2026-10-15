@@ -2,6 +2,7 @@ package org.example.controller;
 
 
 import org.example.model.Car;
+import org.example.model.Dog;
 import org.example.model.Person;
 
 import org.example.repository.Repository;
@@ -50,6 +51,12 @@ public class Controller {
                     carTransactionSubMenu(scan, repo);
                     break;
                 case "6":
+                    runAdoptDog(scan, repo);
+                    break;
+                case "7":
+                    dogAdoptionSubMenu(scan, repo);
+                    break;
+                case "8":
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -243,5 +250,44 @@ public class Controller {
 
         ResultOperation resBuyCar = Service.buyCar(buyer, seller, price, repo);
         System.out.println("resultOperation: " + resBuyCar);
+    }
+
+    // ===== DOG ADOPTION (READ ONLY) SUBMENU =====
+    private static void dogAdoptionSubMenu(Scanner scan, Repository repo) {
+        while (true) {
+            Utils.dogAdoptionMenu();
+            String opt = Utils.askMenuOption(scan);
+            switch (opt) {
+                case "1":
+                    ResultOperation resAllAdoptions = Service.getAllDogAdoptions(repo);
+                    System.out.println("resultOperation: " + resAllAdoptions);
+                    break;
+                case "2":
+                    String aid = Utils.askString(scan, "Enter adoption ID: ");
+                    ResultOperation resGetAdoption = Service.getDogAdoptionById(aid, repo);
+                    System.out.println("resultOperation: " + resGetAdoption);
+                    break;
+                case "3":
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    // Adopt a dog: unlike runBuyCarDemo, the user picks person and dog BY ID
+    private static void runAdoptDog(Scanner scan, Repository repo) {
+        System.out.println("Welcome to ADOPT A DOG (person <- dog)");
+
+        String personId = Utils.askString(scan, "Enter adopter (person) ID: ");
+        String dogId = Utils.askString(scan, "Enter dog ID: ");
+        int fee = Utils.askInt(scan, "Enter adoption fee: ");
+
+        // Resolve objects here; Service validates nulls/ownership/age/fee
+        Person adopter = repo.getPersonById(personId.trim());
+        Dog dog = repo.getDogById(dogId.trim());
+
+        ResultOperation resAdopt = Service.adoptDog(adopter, dog, fee, repo);
+        System.out.println("resultOperation: " + resAdopt);
     }
 }
