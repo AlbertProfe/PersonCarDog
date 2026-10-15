@@ -97,6 +97,11 @@ public class Service {
         if (p.getCar() != null) {
             p.setCar(null);
         }
+        // Clear dog relation if owns one
+        if (p.getDog() != null) {
+            p.getDog().setOwner(null);
+            p.setDog(null);
+        }
 
         boolean removed = repo.removePerson(id.trim());
         if (!removed) {
@@ -286,6 +291,12 @@ public class Service {
             return result.setter(false, "Dog not found with id: " + id, "Dog", System.currentTimeMillis());
         }
 
+        // Clear owner relation if dog has owner
+        if (d.getOwner() != null) {
+            d.getOwner().setDog(null);
+            d.setOwner(null);
+        }
+
         boolean removed = repo.removeDog(id.trim());
         if (!removed) {
             return result.setter(false, "Dog could not be deleted.", "Dog", System.currentTimeMillis());
@@ -363,8 +374,54 @@ public class Service {
 
     // ========== DOG ADOPTION ==========
     public static ResultOperation adoptDog(org.example.model.Person adopter, org.example.model.Dog dog, int fee, Repository repo) {
+        System.out.println("Welcome to ADOPT DOG");
         ResultOperation result = new ResultOperation();
-        return result.setter(false, "Not implemented yet", "DogAdoption", System.currentTimeMillis());
+
+        // 1. adopter exists in repo
+        if (adopter == null || !repo.getAllPeople().contains(adopter)) {
+            return result.setter(false, "Adopter not found in repository.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 2. dog exists in repo
+        if (dog == null || !repo.getAllDogs().contains(dog)) {
+            return result.setter(false, "Dog not found in repository.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 3. adopter must not already own a dog
+        if (adopter.getDog() != null) {
+            return result.setter(false, "Adopter already owns a dog.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 4. dog must not already have an owner
+        if (dog.getOwner() != null) {
+            return result.setter(false, "Dog already has an owner.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 5. adopter must be an adult
+        if (adopter.getAge() < 18) {
+            return result.setter(false, "Adopter must be an adult.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // 6. fee >= 0
+        if (fee < 0) {
+            return result.setter(false, "Fee cannot be negative.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // On success: establish bidirectional relation
+        adopter.setDog(dog);
+        dog.setOwner(adopter);
+
+        // Create and persist DogAdoption
+        org.example.model.DogAdoption adoption = new org.example.model.DogAdoption(
+                adopter,
+                dog,
+                new java.util.Date(),
+                fee,
+                "Dog adopted for " + fee
+        );
+        repo.addDogAdoption(adoption);
+
+        return result.setter(true, "Dog adopted successfully.", "DogAdoption", System.currentTimeMillis(), adoption);
     }
 
     public static ResultOperation getDogAdoptionById(String id, Repository repo) {
