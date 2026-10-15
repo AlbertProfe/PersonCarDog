@@ -31,7 +31,9 @@ public class Utils {
         System.out.println("3. Car operations");
         System.out.println("4. Buy a car (person to person)");
         System.out.println("5. View car transactions (read only)");
-        System.out.println("6. Quit");
+        System.out.println("6. Adopt a dog (person <- dog)");
+        System.out.println("7. View dog adoptions (read only)");
+        System.out.println("8. Quit");
     }
 
     public static void personMenu() {
@@ -68,6 +70,13 @@ public class Utils {
         System.out.println("\n===== CAR TRANSACTIONS (READ ONLY) =====");
         System.out.println("1. List all transactions");
         System.out.println("2. Find transaction by ID");
+        System.out.println("3. Back");
+    }
+
+    public static void dogAdoptionMenu() {
+        System.out.println("\n===== DOG ADOPTIONS (READ ONLY) =====");
+        System.out.println("1. List all adoptions");
+        System.out.println("2. Find adoption by ID");
         System.out.println("3. Back");
     }
 }
