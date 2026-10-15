@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Java Stack Pyramid – From Hardware to Spring Boot</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -33,7 +29,7 @@
     .subtitle {
       font-size: 0.95rem;
       color: #64748b;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       text-align: center;
     }
 
@@ -61,8 +57,6 @@
       transform: scale(0.97);
       transition: all 0.45s ease;
       box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-      position: relative;
-      overflow: hidden;
     }
 
     .layer.active {
@@ -70,20 +64,13 @@
       transform: scale(1);
     }
 
-    /* Widths – pyramid shape */
-    .layer-7 { width: 28%; background: linear-gradient(135deg, #22c55e, #16a34a); } /* Boot */
-    .layer-6 { width: 40%; background: linear-gradient(135deg, #14b8a6, #0d9488); } /* Spring */
-    .layer-5 { width: 52%; background: linear-gradient(135deg, #0ea5e9, #0284c7); } /* Maven */
-    .layer-4 { width: 64%; background: linear-gradient(135deg, #3b82f6, #2563eb); } /* Java SE */
-    .layer-3 { width: 76%; background: linear-gradient(135deg, #6366f1, #4f46e5); } /* JVM */
-    .layer-2 { width: 88%; background: linear-gradient(135deg, #8b5cf6, #7c3aed); } /* OS */
-    .layer-1 { width: 100%; background: linear-gradient(135deg, #64748b, #475569); } /* Hardware */
-
-    .layer span {
-      position: relative;
-      z-index: 2;
-      letter-spacing: 0.3px;
-    }
+    .layer-7 { width: 28%; background: linear-gradient(135deg, #22c55e, #16a34a); }
+    .layer-6 { width: 40%; background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .layer-5 { width: 52%; background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+    .layer-4 { width: 64%; background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .layer-3 { width: 76%; background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .layer-2 { width: 88%; background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .layer-1 { width: 100%; background: linear-gradient(135deg, #64748b, #475569); }
 
     /* ===== CONTROLS ===== */
     .controls {
@@ -91,10 +78,12 @@
       display: flex;
       gap: 12px;
       align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn {
-      padding: 12px 26px;
+      padding: 12px 24px;
       font-size: 0.95rem;
       font-weight: 600;
       border: none;
@@ -103,53 +92,55 @@
       transition: all 0.2s ease;
     }
 
-    .btn-execute {
+    .btn-start {
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: #f8fafc;
       box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
     }
-
-    .btn-execute:hover {
+    .btn-start:hover {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
     }
+    .btn-start:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .btn-execute:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
+    .btn-advance {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      color: #f8fafc;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
     }
+    .btn-advance:hover {
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      transform: translateY(-1px);
+    }
+    .btn-advance:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
     .btn-reset {
       background: #f8fafc;
       color: #475569;
       border: 1.5px solid #cbd5e1;
     }
-
     .btn-reset:hover {
       background: #f1f5f9;
       border-color: #94a3b8;
     }
 
     .status {
-      margin-top: 16px;
+      margin-top: 14px;
       font-size: 0.9rem;
       color: #64748b;
       min-height: 22px;
       text-align: center;
       font-weight: 500;
     }
+    .status.done { color: #475569; }
 
-    .status.done {
-      color: #475569;
-    }
-
-    /* ===== INFO CARDS ===== */
+    /* ===== INFO CARDS – newest on top ===== */
     .info-section {
       width: 100%;
       max-width: 720px;
       margin-top: 28px;
+      display: flex;
+      flex-direction: column;
     }
 
     .info-card {
@@ -157,11 +148,11 @@
       border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 20px 24px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       box-shadow: 0 2px 8px rgba(148, 163, 184, 0.12);
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.4s ease;
+      transform: translateY(-12px);
+      transition: all 0.5s ease;
       display: none;
     }
 
@@ -169,6 +160,11 @@
       display: block;
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .info-card.current {
+      border-color: #94a3b8;
+      box-shadow: 0 4px 16px rgba(100, 116, 139, 0.18);
     }
 
     .info-card h3 {
@@ -188,7 +184,6 @@
       color: #475569;
       padding: 3px 9px;
       border-radius: 20px;
-      letter-spacing: 0.3px;
     }
 
     .info-grid {
@@ -212,13 +207,8 @@
       letter-spacing: 0.4px;
     }
 
-    .info-item p {
-      color: #64748b;
-    }
-
-    .info-item.full {
-      grid-column: 1 / -1;
-    }
+    .info-item p { color: #64748b; }
+    .info-item.full { grid-column: 1 / -1; }
 
     .note {
       margin-top: 24px;
@@ -242,7 +232,6 @@
   <h1>Java Technology Stack</h1>
   <p class="subtitle">Pyramid of layers – from Hardware up to Spring Boot</p>
 
-  <!-- Pyramid -->
   <div class="pyramid" id="pyramid">
     <div class="layer layer-7" id="layer7"><span>Spring Boot</span></div>
     <div class="layer layer-6" id="layer6"><span>Spring</span></div>
@@ -253,148 +242,16 @@
     <div class="layer layer-1" id="layer1"><span>Hardware</span></div>
   </div>
 
-  <!-- Controls -->
   <div class="controls">
-    <button class="btn btn-execute" id="executeBtn" onclick="executeStack()">
-      ▶ Build the Stack
-    </button>
-    <button class="btn btn-reset" id="resetBtn" onclick="resetStack()">
-      Reset
-    </button>
+    <button class="btn btn-start" id="startBtn" onclick="startStack()">▶ Start Auto (10s)</button>
+    <button class="btn btn-advance" id="advanceBtn" onclick="advanceStep()" disabled>Next →</button>
+    <button class="btn btn-reset" id="resetBtn" onclick="resetStack()">Reset</button>
   </div>
 
-  <div class="status" id="status">Click “Build the Stack” to see each layer appear from the bottom up</div>
+  <div class="status" id="status">Click “Start Auto” or use “Next” to advance manually</div>
 
-  <!-- Info Cards (grey) -->
-  <div class="info-section">
-
-    <div class="info-card" id="card1">
-      <h3>Hardware <span class="badge">Base Layer</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>The physical computer: CPU, RAM, disk, network card. Everything above ultimately runs on this silicon.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it matters</strong>
-          <p>Without hardware there is nothing. All higher layers are software abstractions that use the hardware’s resources.</p>
-        </div>
-        <div class="info-item full">
-          <strong>Relation</strong>
-          <p>The Operating System sits directly on top of the hardware and controls it.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-card" id="card2">
-      <h3>Operating System <span class="badge">OS</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>Windows, Linux, macOS… The software that manages hardware resources, processes, memory and files.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it matters</strong>
-          <p>It provides a stable platform so programs don’t have to talk to hardware directly.</p>
-        </div>
-        <div class="info-item full">
-          <strong>Relation</strong>
-          <p>The JVM runs as a process on top of the Operating System.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-card" id="card3">
-      <h3>JVM <span class="badge">Java Virtual Machine</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>The engine that executes Java bytecode. It provides memory management (GC), security and platform independence.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it matters</strong>
-          <p>“Write once, run anywhere.” The same .class files run on any OS that has a JVM.</p>
-        </div>
-        <div class="info-item full">
-          <strong>Relation</strong>
-          <p>Java SE (the language + standard libraries) runs on top of the JVM.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-card" id="card4">
-      <h3>Java SE <span class="badge">Standard Edition</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>The core Java language + standard libraries (collections, I/O, concurrency, etc.).</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it matters</strong>
-          <p>This is the foundation every Java developer must master before using any framework.</p>
-        </div>
-        <div class="info-item full">
-          <strong>Relation</strong>
-          <p>Maven is a tool that builds and manages projects written in Java SE.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-card" id="card5">
-      <h3>Maven <span class="badge">Build Tool</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>A build and dependency management tool. You describe the project in pom.xml; Maven downloads libraries, compiles, tests and packages.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it matters</strong>
-          <p>Almost every professional Java project uses Maven (or Gradle). It standardises project structure and solves dependency management.</p>
-        </div>
-        <div class="info-item full">
-          <strong>Relation</strong>
-          <p>Spring projects are normally built and managed with Maven.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-card" id="card6">
-      <h3>Spring <span class="badge">Framework</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>A powerful application framework that provides Dependency Injection, AOP, data access, web MVC and much more.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it matters</strong>
-          <p>It is the most widely used framework in the Java enterprise world.</p>
-        </div>
-        <div class="info-item full">
-          <strong>Relation</strong>
-          <p>Spring Boot is built on top of the Spring Framework and makes it dramatically easier to use.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-card" id="card7">
-      <h3>Spring Boot <span class="badge">Top Layer</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>An opinionated layer on top of Spring. It adds auto-configuration, starters, embedded servers and production-ready features.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it matters</strong>
-          <p>It is the fastest and most common way to build modern Java applications (APIs, microservices, web apps).</p>
-        </div>
-        <div class="info-item full">
-          <strong>Relation</strong>
-          <p>Spring Boot sits at the very top of this stack. It rests on Spring, which rests on Maven/Java SE/JVM/OS/Hardware.</p>
-        </div>
-      </div>
-    </div>
-
-  </div>
+  <!-- Cards container – newest inserted at top -->
+  <div class="info-section" id="infoSection"></div>
 
   <p class="note">
     Each layer depends on the ones below it.<br>
@@ -402,61 +259,172 @@
   </p>
 
   <script>
-    let isRunning = false;
-
-    const layerIds = ['layer1','layer2','layer3','layer4','layer5','layer6','layer7'];
-    const cardIds  = ['card1','card2','card3','card4','card5','card6','card7'];
-    const messages = [
-      '① Hardware — the physical foundation',
-      '② Operating System — manages the hardware',
-      '③ JVM — runs Java bytecode',
-      '④ Java SE — the language & standard libraries',
-      '⑤ Maven — build & dependency management',
-      '⑥ Spring — the powerful application framework',
-      '⑦ Spring Boot — the top, production-ready layer'
+    const STEPS = [
+      {
+        layer: 'layer1',
+        title: 'Hardware',
+        badge: 'Base Layer',
+        status: '① Hardware — the physical foundation',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>The physical computer: CPU, RAM, disk, network card. Everything above ultimately runs on this silicon.</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>Without hardware there is nothing. All higher layers are software abstractions that use the hardware’s resources.</p></div>
+            <div class="info-item full"><strong>Relation</strong><p>The Operating System sits directly on top of the hardware and controls it.</p></div>
+          </div>`
+      },
+      {
+        layer: 'layer2',
+        title: 'Operating System',
+        badge: 'OS',
+        status: '② Operating System — manages the hardware',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>Windows, Linux, macOS… The software that manages hardware resources, processes, memory and files.</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>It provides a stable platform so programs don’t have to talk to hardware directly.</p></div>
+            <div class="info-item full"><strong>Relation</strong><p>The JVM runs as a process on top of the Operating System.</p></div>
+          </div>`
+      },
+      {
+        layer: 'layer3',
+        title: 'JVM',
+        badge: 'Java Virtual Machine',
+        status: '③ JVM — runs Java bytecode',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>The engine that executes Java bytecode. It provides memory management (GC), security and platform independence.</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>“Write once, run anywhere.” The same .class files run on any OS that has a JVM.</p></div>
+            <div class="info-item full"><strong>Relation</strong><p>Java SE (the language + standard libraries) runs on top of the JVM.</p></div>
+          </div>`
+      },
+      {
+        layer: 'layer4',
+        title: 'Java SE',
+        badge: 'Standard Edition',
+        status: '④ Java SE — the language & standard libraries',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>The core Java language + standard libraries (collections, I/O, concurrency, etc.).</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>This is the foundation every Java developer must master before using any framework.</p></div>
+            <div class="info-item full"><strong>Relation</strong><p>Maven is a tool that builds and manages projects written in Java SE.</p></div>
+          </div>`
+      },
+      {
+        layer: 'layer5',
+        title: 'Maven',
+        badge: 'Build Tool',
+        status: '⑤ Maven — build & dependency management',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>A build and dependency management tool. You describe the project in pom.xml; Maven downloads libraries, compiles, tests and packages.</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>Almost every professional Java project uses Maven (or Gradle). It standardises project structure and solves dependency management.</p></div>
+            <div class="info-item full"><strong>Relation</strong><p>Spring projects are normally built and managed with Maven.</p></div>
+          </div>`
+      },
+      {
+        layer: 'layer6',
+        title: 'Spring',
+        badge: 'Framework',
+        status: '⑥ Spring — the powerful application framework',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>A powerful application framework that provides Dependency Injection, AOP, data access, web MVC and much more.</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>It is the most widely used framework in the Java enterprise world.</p></div>
+            <div class="info-item full"><strong>Relation</strong><p>Spring Boot is built on top of the Spring Framework and makes it dramatically easier to use.</p></div>
+          </div>`
+      },
+      {
+        layer: 'layer7',
+        title: 'Spring Boot',
+        badge: 'Top Layer',
+        status: '⑦ Spring Boot — the top, production-ready layer',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>An opinionated layer on top of Spring. It adds auto-configuration, starters, embedded servers and production-ready features.</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>It is the fastest and most common way to build modern Java applications (APIs, microservices, web apps).</p></div>
+            <div class="info-item full"><strong>Relation</strong><p>Spring Boot sits at the very top of this stack. It rests on Spring, which rests on Maven / Java SE / JVM / OS / Hardware.</p></div>
+          </div>`
+      }
     ];
 
-    function executeStack() {
-      if (isRunning) return;
-      isRunning = true;
+    let currentStep = -1;
+    let autoTimer = null;
 
-      const btn = document.getElementById('executeBtn');
-      const status = document.getElementById('status');
+    function showStep(index) {
+      if (index < 0 || index >= STEPS.length) return;
 
-      // Reset first
-      layerIds.forEach(id => document.getElementById(id).classList.remove('active'));
-      cardIds.forEach(id => document.getElementById(id).classList.remove('visible'));
+      const step = STEPS[index];
+      currentStep = index;
 
-      btn.disabled = true;
-      status.textContent = 'Building the stack from the bottom...';
-      status.classList.remove('done');
+      // Activate layer
+      document.getElementById(step.layer).classList.add('active');
 
-      // Reveal from bottom to top
-      layerIds.forEach((lid, i) => {
-        setTimeout(() => {
-          document.getElementById(lid).classList.add('active');
-          document.getElementById(cardIds[i]).classList.add('visible');
-          status.textContent = messages[i];
+      // Create card and insert at TOP
+      const section = document.getElementById('infoSection');
+      section.querySelectorAll('.info-card').forEach(c => c.classList.remove('current'));
 
-          if (i === layerIds.length - 1) {
-            setTimeout(() => {
-              status.textContent = '✓ Stack complete — Spring Boot rests on everything below';
-              status.classList.add('done');
-              btn.disabled = false;
-              isRunning = false;
-            }, 600);
-          }
-        }, 450 + i * 700);
-      });
+      const card = document.createElement('div');
+      card.className = 'info-card visible current';
+      card.innerHTML = `<h3>${step.title} <span class="badge">${step.badge}</span></h3>${step.html}`;
+      section.insertBefore(card, section.firstChild);
+
+      document.getElementById('status').textContent = step.status;
+      document.getElementById('status').classList.toggle('done', index === STEPS.length - 1);
+
+      document.getElementById('advanceBtn').disabled = index >= STEPS.length - 1;
+      document.getElementById('startBtn').disabled = true;
+
+      if (index === STEPS.length - 1) {
+        stopAuto();
+        document.getElementById('status').textContent = '✓ Stack complete — Spring Boot rests on everything below';
+      }
     }
 
-    function resetStack() {
-      isRunning = false;
-      document.getElementById('executeBtn').disabled = false;
-      layerIds.forEach(id => document.getElementById(id).classList.remove('active'));
-      cardIds.forEach(id => document.getElementById(id).classList.remove('visible'));
-      document.getElementById('status').textContent = 'Click “Build the Stack” to see each layer appear from the bottom up';
-      document.getElementById('status').classList.remove('done');
+    function advanceStep() {
+      if (currentStep >= STEPS.length - 1) return;
+      showStep(currentStep + 1);
+    }
+
+    function startStack() {
+      resetStack(false);
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('advanceBtn').disabled = false;
+
+      // First step immediately
+      showStep(0);
+
+      // Then every 10 seconds
+      autoTimer = setInterval(() => {
+        if (currentStep < STEPS.length - 1) {
+          showStep(currentStep + 1);
+        } else {
+          stopAuto();
+        }
+      }, 10000);
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    }
+
+    function resetStack(clearStatus = true) {
+      stopAuto();
+      currentStep = -1;
+
+      for (let i = 1; i <= 7; i++) {
+        document.getElementById('layer' + i).classList.remove('active');
+      }
+      document.getElementById('infoSection').innerHTML = '';
+
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('advanceBtn').disabled = true;
+
+      if (clearStatus) {
+        document.getElementById('status').textContent = 'Click “Start Auto” or use “Next” to advance manually';
+        document.getElementById('status').classList.remove('done');
+      }
     }
   </script>
 
