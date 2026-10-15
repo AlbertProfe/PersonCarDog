@@ -70,4 +70,11 @@ public class Utils {
         System.out.println("2. Find transaction by ID");
         System.out.println("3. Back");
     }
+
+    public static void dogAdoptionMenu() {
+        System.out.println("\n===== DOG ADOPTION (READ ONLY) =====");
+        System.out.println("1. List all adoptions");
+        System.out.println("2. Find adoption by ID");
+        System.out.println("3. Back");
+    }
 }

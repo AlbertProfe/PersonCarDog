@@ -5,7 +5,6 @@ import java.util.UUID;
 
 public class CarTransaction {
 
-    private String id;
     private Person buyer;
     private Person seller;
     private Date date;

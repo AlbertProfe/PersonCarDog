@@ -8,23 +8,34 @@ public class Dog {
     private String name;
     private String breed;
     private int age;
+    private Person person;
 
     public Dog() {}
 
-    public Dog(String name, String breed, int age) {
+    public Dog(String name, String breed, int age, Person person) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.breed = breed;
         this.age = age;
+        this.person=person;
     }
 
     public String getName() {
         return name;
     }
 
+    public Person getPerson() {
+        return person;
+    }
+
+
     public void setName(String name) {
         this.name = name;
     }
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
 
     public String getBreed() {
         return breed;

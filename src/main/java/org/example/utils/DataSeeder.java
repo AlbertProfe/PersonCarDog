@@ -10,6 +10,7 @@ import org.example.repository.Repository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class DataSeeder {
 
@@ -31,13 +32,25 @@ public class DataSeeder {
         }
 
         // 2. Generate 3 People (Objects 4, 5 y 6)
-        for (int i = 0; i < 3; i++) {
+      /*  for (int i = 0; i < 3; i++) {
             Person person = new Person(
                     faker.name().fullName(),
                     faker.number().numberBetween(18, 80)
             );
             temporaryPeople.add(person);
-        }
+        }*/
+        Person person = new Person(
+                faker.name().fullName(),
+                faker.number().numberBetween(18, 80)
+        );
+        temporaryPeople.add(person);
+        Dog dog = new Dog("faker","breed", 18, "aaaa");
+        Person person2 = new Person(
+                faker.name().fullName(),
+                faker.number().numberBetween(18, 80),
+                dog
+        );
+        temporaryPeople.add(person);
 
         // Service.buyCar needs a valid seller and buyer
         // so we assign the first car to the first person

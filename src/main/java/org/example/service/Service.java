@@ -1,10 +1,7 @@
 package org.example.service;
 
+import org.example.model.*;
 import org.example.repository.Repository;
-import org.example.model.Car;
-import org.example.model.CarTransaction;
-import org.example.model.Dog;
-import org.example.model.Person;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +20,8 @@ public class Service {
             System.out.println("Age cannot be negative.");
             return null;
         }
-        Person p = new Person(name.trim(), age);
+        Dog dog = new Dog();
+        Person p = new Person(name.trim(), age, dog);
         repo.addPerson(p);
         System.out.println("Person created: " + p);
         return p;
@@ -210,7 +208,8 @@ public class Service {
             System.out.println("Age cannot be negative.");
             return null;
         }
-        Dog d = new Dog(name.trim(), breed.trim(), age);
+        Person owner = new Person();
+        Dog d = new Dog(name.trim(), breed.trim(), age, owner);
         repo.addDog(d);
         System.out.println("Dog created: " + d);
         return d;
@@ -310,6 +309,31 @@ public class Service {
         return list;
     }
 
+    public static DogAdoption getDogAdoptionById(String id, Repository repo) {
+        System.out.println("Welcome to GET ADOPTION BY ID");
+        if (id == null || id.trim().isEmpty()) {
+            System.out.println("ID cannot be empty.");
+            return null;
+        }
+        DogAdoption dg= repo.getDogAdoptionById(id.trim());
+        if (dg == null) {
+            System.out.println("DogAdoption not found with id: " + id);
+        } else {
+            System.out.println("Found: " + dg);
+        }
+        return dg;
+    }
+
+    public static ArrayList<DogAdoption> getAllDogAdoptions(Repository repo) {
+        System.out.println("Welcome to LIST ALL DOG ADOPTIONS");
+        ArrayList<DogAdoption> list = repo.getAllDogAdoptions();
+        System.out.println("Total adoptions: " + list.size());
+        for (DogAdoption dg : list) {
+            System.out.println(dg);
+        }
+        return list;
+    }
+
     // ========== BUYCAR (PERSON TO PERSON > CARTRANSACTION) ==========
 
     public static boolean buyCar(Person buyer, Person seller, int price, Repository repo){
@@ -364,4 +388,53 @@ public class Service {
 
         return true;
     }
+    // ========== ADOPTDOG (PERSON TO DOG > DOGADOPTION) ==========
+
+    public static boolean adoptDog(Person owner, Dog dogAdopted, Repository repo){
+
+        System.out.println("Welcome to ADOPT MENU");
+        // person owner exists at array
+        if (!repo.getAllPeople().contains(owner)) {
+            System.out.println("Owner not found in repository.");
+            return false;
+        }
+        System.out.println("Owner exits: " + owner);
+
+        // Dod dog exists at array
+        if (!repo.getAllDogs().contains(dogAdopted)) {
+            System.out.println("DogAdopted not found in repository.");
+            return false;
+        }
+        System.out.println("DogAdopted exits: " + dogAdopted);
+
+        // owner owns a dog already?
+        if (owner.getDog() == null) {
+            System.out.println("Owner does not have a dog.");
+            return true;
+        }
+
+        if (dogAdopted.getPerson() == null) {
+            System.out.println("DogAdopted does not have an owner.");
+            return true;
+        }
+
+        System.out.println("Owner can adopt a dog.");
+
+        // personB.setCar (bmw)
+        owner.setDog(dogAdopted);
+        dogAdopted.setPerson(owner);
+
+        System.out.println("Settings done, now creating dogAdoption ...");
+
+        // create object DogAdoption
+        DogAdoption dogAdoption = new DogAdoption(owner, dogAdopted);
+        // save object DogAdoption at repo
+        repo.addDogAdoption(dogAdoption);
+
+        // PRINT
+        System.out.println(dogAdoption);
+
+        return true;
+    }
+
 }

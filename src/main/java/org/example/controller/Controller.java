@@ -5,11 +5,11 @@ import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.Person;
-import org.example.model.Dog;
+
 
 import org.example.repository.Repository;
 import org.example.service.Service;
-import org.example.utils.DataSeeder;
+//import org.example.utils.DataSeeder;
 import org.example.utils.Utils;
 
 import java.util.List;
@@ -224,4 +224,25 @@ public class Controller {
 
         Service.buyCar(buyer, seller, price, repo);
     }
+    private static void dogAdoptionSubMenu(Scanner scan, Repository repo) {
+        while (true) {
+            Utils.dogAdoptionMenu();
+            String opt = Utils.askMenuOption(scan);
+            switch (opt) {
+                case "1":
+                    Service.getAllDogAdoptions(repo);
+                    break;
+                case "2":
+                   // String tid = Utils.askString(scan, "Enter adoption ID: ");
+                   // Service.getDogAdoptionById(tid, repo);
+                    break;
+                case "3":
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+            }
+        }
+
+    }
 }
+
