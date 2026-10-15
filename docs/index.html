@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Java Project Progression – Java SE → Maven → Spring Boot</title>
+  <title>Java SE → Spring Boot – Learning Diagrams</title>
   <style>
     * {
       margin: 0;
@@ -18,529 +18,162 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 20px 60px;
+      padding: 48px 20px 60px;
       color: #334155;
     }
 
     h1 {
-      font-size: 1.75rem;
+      font-size: 1.9rem;
       font-weight: 700;
-      margin-bottom: 6px;
-      text-align: center;
       color: #1e293b;
+      margin-bottom: 8px;
+      text-align: center;
     }
 
     .subtitle {
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: #64748b;
-      margin-bottom: 36px;
+      margin-bottom: 48px;
       text-align: center;
+      max-width: 520px;
+      line-height: 1.5;
     }
 
-    /* ===== DIAGRAM ===== */
-    .diagram {
-      width: 100%;
-      max-width: 880px;
-      position: relative;
-      padding: 30px 0 10px;
-    }
-
-    .line {
-      position: absolute;
-      top: 58px;
-      left: 12%;
-      right: 12%;
-      height: 3px;
-      background: #cbd5e1;
-      border-radius: 2px;
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    .line-progress {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #3b82f6, #14b8a6, #22c55e);
-      border-radius: 2px;
-      transition: width 1.6s ease-in-out;
-    }
-
-    .line-progress.active {
-      width: 100%;
-    }
-
-    .points {
+    .cards {
       display: flex;
-      justify-content: space-between;
-      position: relative;
-      z-index: 2;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      width: 100%;
     }
 
-    .point {
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 28px 26px;
+      width: 340px;
+      box-shadow: 0 4px 14px rgba(148, 163, 184, 0.12);
+      transition: all 0.25s ease;
+      text-decoration: none;
+      color: inherit;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      width: 28%;
-      text-align: center;
-      opacity: 0.4;
-      transform: scale(0.94);
-      transition: all 0.45s ease;
     }
 
-    .point.active {
-      opacity: 1;
-      transform: scale(1);
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(148, 163, 184, 0.22);
+      border-color: #cbd5e1;
     }
 
-    .circle {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      color: #f8fafc;
-      background: #94a3b8;
-      box-shadow: 0 4px 14px rgba(100, 116, 139, 0.25);
-      margin-bottom: 14px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      color: white;
+      margin-bottom: 18px;
     }
 
-    .point:nth-child(1).active .circle {
+    .card:nth-child(1) .card-icon {
       background: linear-gradient(135deg, #3b82f6, #2563eb);
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-      transform: scale(1.06);
     }
 
-    .point:nth-child(2).active .circle {
+    .card:nth-child(2) .card-icon {
       background: linear-gradient(135deg, #14b8a6, #0d9488);
-      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
-      transform: scale(1.06);
     }
 
-    .point:nth-child(3).active .circle {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
-      transform: scale(1.06);
-    }
-
-    .label {
-      font-size: 1.1rem;
+    .card h2 {
+      font-size: 1.2rem;
       font-weight: 700;
-      margin-bottom: 4px;
       color: #1e293b;
+      margin-bottom: 10px;
     }
 
-    .desc {
-      font-size: 0.82rem;
-      color: #64748b;
-      line-height: 1.4;
-      max-width: 180px;
-    }
-
-    .arrow {
-      position: absolute;
-      top: 52px;
-      font-size: 1.35rem;
-      color: #94a3b8;
-      z-index: 3;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .arrow.visible {
-      opacity: 1;
-      color: #475569;
-    }
-
-    .arrow-1.visible { color: #3b82f6; }
-    .arrow-2.visible { color: #14b8a6; }
-
-    .arrow-1 { left: 33%; }
-    .arrow-2 { left: 64%; }
-
-    /* ===== CONTROLS ===== */
-    .controls {
-      margin-top: 36px;
-      display: flex;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .btn {
-      padding: 12px 28px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-execute {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: #f8fafc;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-    }
-
-    .btn-execute:hover {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
-    }
-
-    .btn-execute:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-reset {
-      background: #f8fafc;
-      color: #475569;
-      border: 1.5px solid #cbd5e1;
-    }
-
-    .btn-reset:hover {
-      background: #f1f5f9;
-      border-color: #94a3b8;
-    }
-
-    .status {
-      margin-top: 18px;
+    .card p {
       font-size: 0.9rem;
       color: #64748b;
-      min-height: 22px;
-      text-align: center;
-      font-weight: 500;
+      line-height: 1.5;
+      flex-grow: 1;
     }
 
-    .status.done {
-      color: #475569;
-    }
-
-    /* ===== INFO CARDS ===== */
-    .info-section {
-      width: 100%;
-      max-width: 880px;
-      margin-top: 36px;
-    }
-
-    .info-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 22px 26px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(148, 163, 184, 0.12);
-      opacity: 0;
-      transform: translateY(12px);
-      transition: all 0.45s ease;
-      display: none;
-    }
-
-    .info-card.visible {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .info-card h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 12px;
+    .card .cta {
+      margin-top: 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #3b82f6;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
     }
 
-    .info-card h3 .badge {
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: #e2e8f0;
-      color: #475569;
-      padding: 3px 9px;
-      border-radius: 20px;
-      letter-spacing: 0.3px;
+    .card:nth-child(2) .cta {
+      color: #0d9488;
     }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 24px;
-    }
-
-    .info-item {
-      font-size: 0.88rem;
-      line-height: 1.5;
-    }
-
-    .info-item strong {
-      display: block;
-      color: #334155;
-      font-weight: 600;
-      margin-bottom: 3px;
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .info-item p {
-      color: #64748b;
-    }
-
-    .info-item.full {
-      grid-column: 1 / -1;
-    }
-
-    /* Footer */
-    .note {
-      margin-top: 28px;
+    .footer {
+      margin-top: 56px;
       font-size: 0.82rem;
       color: #94a3b8;
       text-align: center;
-      max-width: 640px;
-      line-height: 1.5;
     }
 
-    /* Responsive */
-    @media (max-width: 700px) {
-      .points {
+    @media (max-width: 760px) {
+      .cards {
         flex-direction: column;
-        gap: 28px;
         align-items: center;
       }
-      .line, .arrow { display: none; }
-      .point { width: 80%; }
-      .info-grid { grid-template-columns: 1fr; }
-      h1 { font-size: 1.4rem; }
-      .controls { flex-direction: column; }
+      .card {
+        width: 100%;
+        max-width: 380px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>Java Project Progression</h1>
-  <p class="subtitle">From plain Java SE → Maven → Spring Boot (for students)</p>
-
-  <!-- Diagram -->
-  <div class="diagram">
-    <div class="line">
-      <div class="line-progress" id="progress"></div>
-    </div>
-
-    <div class="arrow arrow-1" id="arrow1">→</div>
-    <div class="arrow arrow-2" id="arrow2">→</div>
-
-    <div class="points">
-      <div class="point" id="point1">
-        <div class="circle">SE</div>
-        <div class="label">Java SE</div>
-        <div class="desc">Plain Java projects<br>Manual build &amp; jars</div>
-      </div>
-
-      <div class="point" id="point2">
-        <div class="circle">M</div>
-        <div class="label">Maven</div>
-        <div class="desc">Build tool + dependencies<br>Standard structure</div>
-      </div>
-
-      <div class="point" id="point3">
-        <div class="circle">SB</div>
-        <div class="label">Spring Boot Maven</div>
-        <div class="desc">Production-ready apps<br>Auto-config &amp; starters</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Buttons -->
-  <div class="controls">
-    <button class="btn btn-execute" id="executeBtn" onclick="executeProgression()">
-      ▶ Execute Progression
-    </button>
-    <button class="btn btn-reset" id="resetBtn" onclick="resetProgression()">
-      Reset
-    </button>
-  </div>
-
-  <div class="status" id="status">Click “Execute Progression” to explore each stage in detail</div>
-
-  <!-- Detailed Info Cards -->
-  <div class="info-section">
-
-    <!-- Java SE Card -->
-    <div class="info-card" id="card1">
-      <h3>Java SE <span class="badge">Foundation</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>The core Java platform (Standard Edition). You write classes, compile with <code>javac</code>, and run with the <code>java</code> command. No frameworks, just pure language features.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it is relevant</strong>
-          <p>Everything in the Java ecosystem is built on top of Java SE. You must understand OOP, collections, exceptions, and the JVM before any framework makes sense.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it is a good idea to start here</strong>
-          <p>Starting with plain Java forces you to understand the fundamentals. You learn how the language actually works without “magic” from tools or frameworks.</p>
-        </div>
-        <div class="info-item">
-          <strong>How it works in practice</strong>
-          <p>You create <code>.java</code> files, compile them manually, manage jars yourself, and run the main class. Good for small utilities and learning, but painful for larger projects.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Maven Card -->
-    <div class="info-card" id="card2">
-      <h3>Maven <span class="badge">Build Tool</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>A build automation and dependency management tool. You describe your project in a <code>pom.xml</code> file and Maven handles downloading libraries, compiling, testing, and packaging.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it is relevant</strong>
-          <p>Almost every professional Java project uses Maven or Gradle. It gives you a standard directory layout (<code>src/main/java</code>, <code>src/test/java</code>) that the whole industry understands.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it is a good idea</strong>
-          <p>Manual jar management becomes impossible as soon as you need 5–10 libraries. Maven solves “dependency hell”, ensures reproducible builds, and makes collaboration easy.</p>
-        </div>
-        <div class="info-item">
-          <strong>How it works</strong>
-          <p>You declare dependencies and plugins in <code>pom.xml</code>. Running <code>mvn clean package</code> downloads everything, compiles your code, runs tests, and produces a jar/war. The project structure is standardized.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Spring Boot Card -->
-    <div class="info-card" id="card3">
-      <h3>Spring Boot Maven <span class="badge">Modern Apps</span></h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <strong>What it is</strong>
-          <p>A framework that sits on top of Spring and Maven. It gives you opinionated defaults, auto-configuration, embedded servers (Tomcat/Jetty), and “starters” that pull in the right dependencies with one line.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it is relevant</strong>
-          <p>Spring Boot is the de-facto standard for building production Java (and especially web/microservices) applications today. Most companies hiring Java developers expect Spring Boot experience.</p>
-        </div>
-        <div class="info-item">
-          <strong>Why it is a good idea</strong>
-          <p>It removes huge amounts of boilerplate. You can have a working REST API with a database in minutes instead of hours of XML/configuration. It follows best practices by default.</p>
-        </div>
-        <div class="info-item">
-          <strong>How it works</strong>
-          <p>You create a project (often via start.spring.io) with a Maven <code>pom.xml</code> that inherits from <code>spring-boot-starter-parent</code>. Add starters, write annotated classes, and run with <code>mvn spring-boot:run</code> or a single executable jar.</p>
-        </div>
-        <div class="info-item full">
-          <strong>Typical student path</strong>
-          <p>Master Java SE first → learn Maven so you can manage real projects cleanly → move to Spring Boot so you can build the kind of applications companies actually use.</p>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <p class="note">
-    Typical learning path for Java students:<br>
-    Start with core Java SE → add Maven for dependency &amp; build management → move to Spring Boot for modern enterprise / web applications.
+  <h1>Java SE → Spring Boot</h1>
+  <p class="subtitle">
+    Interactive diagrams for students.<br>
+    Understand the progression and the full technology stack.
   </p>
 
-  <script>
-    let isRunning = false;
+  <div class="cards">
 
-    function executeProgression() {
-      if (isRunning) return;
-      isRunning = true;
+    <!-- Card 1 -->
+    <a href="java-project-progression.html" class="card">
+      <div class="card-icon">1</div>
+      <h2>Project Progression</h2>
+      <p>
+        Horizontal path showing how a student moves from plain Java SE projects → Maven → Spring Boot Maven projects.
+      </p>
+      <div class="cta">Open diagram →</div>
+    </a>
 
-      const btn = document.getElementById('executeBtn');
-      const status = document.getElementById('status');
-      const progress = document.getElementById('progress');
+    <!-- Card 2 -->
+    <a href="java-stack-pyramid.html" class="card">
+      <div class="card-icon">2</div>
+      <h2>Technology Stack Pyramid</h2>
+      <p>
+        Vertical layers from Hardware up to Spring Boot. See what sits on top of what and why each layer exists.
+      </p>
+      <div class="cta">Open diagram →</div>
+    </a>
 
-      const points = [
-        document.getElementById('point1'),
-        document.getElementById('point2'),
-        document.getElementById('point3')
-      ];
-      const arrows = [
-        document.getElementById('arrow1'),
-        document.getElementById('arrow2')
-      ];
-      const cards = [
-        document.getElementById('card1'),
-        document.getElementById('card2'),
-        document.getElementById('card3')
-      ];
+  </div>
 
-      // Reset everything first
-      points.forEach(p => p.classList.remove('active'));
-      arrows.forEach(a => a.classList.remove('visible'));
-      cards.forEach(c => c.classList.remove('visible'));
-      progress.classList.remove('active');
-      progress.style.width = '0%';
-
-      btn.disabled = true;
-      status.textContent = 'Starting from Java SE...';
-      status.classList.remove('done');
-
-      // Step 1 – Java SE
-      setTimeout(() => {
-        points[0].classList.add('active');
-        cards[0].classList.add('visible');
-        status.textContent = '① Java SE — the foundation of everything';
-      }, 250);
-
-      // Step 2 – Maven
-      setTimeout(() => {
-        progress.classList.add('active');
-        arrows[0].classList.add('visible');
-        points[1].classList.add('active');
-        cards[1].classList.add('visible');
-        status.textContent = '② Maven — professional build & dependency management';
-      }, 1100);
-
-      // Step 3 – Spring Boot
-      setTimeout(() => {
-        arrows[1].classList.add('visible');
-        points[2].classList.add('active');
-        cards[2].classList.add('visible');
-        status.textContent = '③ Spring Boot Maven — building real-world applications';
-        status.classList.add('done');
-      }, 2100);
-
-      // Done
-      setTimeout(() => {
-        status.textContent = '✓ Complete — you now understand the full progression';
-        btn.disabled = false;
-        isRunning = false;
-      }, 2900);
-    }
-
-    function resetProgression() {
-      isRunning = false;
-      document.getElementById('executeBtn').disabled = false;
-      document.getElementById('progress').classList.remove('active');
-      document.getElementById('progress').style.width = '0%';
-
-      ['point1','point2','point3'].forEach(id => {
-        document.getElementById(id).classList.remove('active');
-      });
-      ['arrow1','arrow2'].forEach(id => {
-        document.getElementById(id).classList.remove('visible');
-      });
-      ['card1','card2','card3'].forEach(id => {
-        document.getElementById(id).classList.remove('visible');
-      });
-
-      document.getElementById('status').textContent = 'Click “Execute Progression” to explore each stage in detail';
-      document.getElementById('status').classList.remove('done');
-    }
-  </script>
+  <p class="footer">
+    Made for teaching Java students · Click a card to explore
+  </p>
 
 </body>
 </html>
