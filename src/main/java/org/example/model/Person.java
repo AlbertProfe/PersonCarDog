@@ -8,6 +8,7 @@ public class Person {
     private String name;
     private int age;
     private Car car;
+    private Dog dog;
 
     public Person(){
         this.id = UUID.randomUUID().toString();
@@ -49,6 +50,14 @@ public class Person {
 
     public void setCar(Car car) {
         this.car = car;
+    }
+
+    public Dog getDog(){
+        return this.dog;
+    }
+
+    public  void setDog(Dog dog){
+        this.dog = dog;
     }
 
     @Override

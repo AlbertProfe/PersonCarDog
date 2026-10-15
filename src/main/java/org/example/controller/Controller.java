@@ -120,7 +120,7 @@ public class Controller {
                     ResultOperation resCreateDog = Service.createDog(name, breed, age, repo);
                     if (resCreateDog == null) {
                         if (Utils.askString(scan, "Do u wanna create fake dog?").toLowerCase().equals("yes")) {
-                            resCreatePerson= DataSeeder.createFakeDog(repo);
+                            resCreateDog= DataSeeder.createFakeDog(repo);
                         }
                     }
                     System.out.println("resultOperation: " + resCreateDog);
@@ -169,7 +169,7 @@ public class Controller {
                     if (resCreateCar == null) {
                         if (Utils.askString(scan, "Do u wanna create fake car?").toLowerCase().equals("yes")) {
                             String id = Utils.askString(scan, "Which person need this car? Write ID ");
-                            resCreatePerson = DataSeeder.createFakeCar(id,repo);
+                            resCreateCar = DataSeeder.createFakeCar(id,repo);
                             String pid = Utils.askString(scan, "Enter person ID: ");
                             Service.getPersonById(pid, repo);
                             System.out.println("Car assigned successfully!");

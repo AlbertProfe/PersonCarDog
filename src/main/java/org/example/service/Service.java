@@ -1,10 +1,8 @@
 package org.example.service;
 
+import jdk.swing.interop.SwingInterOpUtils;
+import org.example.model.*;
 import org.example.repository.Repository;
-import org.example.model.Car;
-import org.example.model.CarTransaction;
-import org.example.model.Dog;
-import org.example.model.Person;
 import org.example.utils.ResultOperation;
 
 import java.util.ArrayList;
@@ -399,5 +397,91 @@ public class Service {
         System.out.println(transaction);
 
         return result.setter(true, "Car purchased successfully.", "CarTransaction", System.currentTimeMillis(), transaction);
+    }
+
+    // ==========  ADOPT A DOG (PERSON <- DOG) ==========
+    public static ResultOperation adoptDog (Person adopter, Dog dog, int fee, Repository repo){
+
+        System.out.println("Welcome to BUY MENU");
+        ResultOperation result = new ResultOperation();
+        // person adopter a exists at array
+        if (!repo.getAllPeople().contains(adopter)) {
+            System.out.println("Adopter wasn´t found in repository.");
+            return result.setter(false, "Adopter was not found in repository.", "DogAdoption", System.currentTimeMillis());
+        }
+        System.out.println("Adopter exits: " + adopter);
+
+        // dog adopted exist?
+        if (!repo.getAllDogs().contains(dog)) {
+            System.out.println("dog not found in repository.");
+            return result.setter(false, "dog not found in repository.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // adopter has dog??
+        if (adopter.getDog() != null) {
+            System.out.println("Adopter has dog.");
+            return result.setter(false, "Adopter has dog.", "DogAdoption", System.currentTimeMillis());
+        }
+        // dog has adopter??
+        if (dog.getOwner() != null) {
+            System.out.println("dog has adopter");
+            return result.setter(false, "Dog has adopter.", "DogAdoption", System.currentTimeMillis());
+        }
+        //Adult is minor?
+        if (adopter.getAge() < 18) {
+            System.out.println("Adopter is not an adult" );
+            return result.setter(false, "adopter is not an adult.", "DogAdoption", System.currentTimeMillis());
+        }
+
+        // is the fee >=0?
+        if (fee <0){
+            System.out.println("Fee is negative");
+            return result.setter(false, "Fee is negative", "DogAdoption", System.currentTimeMillis());
+        }
+
+        System.out.println("Adopter can adopt a dog.");
+
+        // adopt dog to adopter
+        adopter.setDog(dog);
+
+        System.out.println("Settings done, now creating DogAdoption ...");
+
+        // create object DogAdoption
+        DogAdoption dogAdoption = new DogAdoption(adopter, dog, new Date(), fee, "Dog adopted for " + fee);
+        // save object dogAdoption at repo
+        repo.addDogAdoption(dogAdoption);
+
+        // PRINT
+        System.out.println(dogAdoption);
+
+        return result.setter(true, "Dog adopted successfully.", "DogAdoption", System.currentTimeMillis(), transaction);
+    }
+
+
+    public ResultOperation getDogAdoptionById(String id, Repository repo) {
+        System.out.println("Welcome to GET adoption BY ID");
+        ResultOperation result = new ResultOperation();
+        if (id == null || id.trim().isEmpty()) {
+            System.out.println("ID cannot be empty.");
+            return result.setter(false, "ID cannot be empty.", "DogAdoption", System.currentTimeMillis());
+        }
+        DogAdoption d = repo.getDogAdoptionById(id.trim());
+        if (d == null) {
+            System.out.println("adoption not found with id: " + id);
+            return result.setter(false, "adoption not found.", "DogAdoption", System.currentTimeMillis());
+        }
+        System.out.println("Found: " + d);
+        return result.setter(true, "Person found.", "Person", System.currentTimeMillis(), d);
+    }
+
+    public ResultOperation getAllDogAdoptions(Repository repo) {
+        System.out.println("Welcome to LIST ALL DOG ADOPTIONS");
+        ResultOperation result = new ResultOperation();
+        ArrayList<DogAdoption> list = repo.getAllDogAdoptions();
+        System.out.println("Total Dog Adoptions: " + list.size());
+        for (DogAdoption exercise: list) {
+            System.out.println(exercise);
+        }
+        return result.setter(true, "Retrieved all DogAdoption.", "DogAdoption", System.currentTimeMillis(), list);
     }
 }
