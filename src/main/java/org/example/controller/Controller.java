@@ -199,10 +199,14 @@ public class Controller {
         java.util.ArrayList<Person> people = repo.getAllPeople();
         if (people.size() < 2) {
             System.out.println("Need at least two people. Creating demo people...");
-            Person seller = Service.createPerson("DemoSeller", 30, repo);
-            Person buyer = Service.createPerson("DemoBuyer", 25, repo);
-            Car demoCar = Service.createCar("DemoMake", "DemoModel", 2020, repo);
-            if (seller != null) seller.setCar(demoCar);
+            org.example.utils.ResultOperation rsSeller = Service.createPerson("DemoSeller", 30, repo);
+            org.example.utils.ResultOperation rsBuyer = Service.createPerson("DemoBuyer", 25, repo);
+            org.example.utils.ResultOperation rsCar = Service.createCar("DemoMake", "DemoModel", 2020, repo);
+            Person seller = rsSeller.isSuccess() ? (Person) rsSeller.getUpdatedObject() : null;
+            Car demoCar = rsCar.isSuccess() ? (Car) rsCar.getUpdatedObject() : null;
+            if (seller != null && demoCar != null) {
+                seller.setCar(demoCar);
+            }
             people = repo.getAllPeople();
         }
 

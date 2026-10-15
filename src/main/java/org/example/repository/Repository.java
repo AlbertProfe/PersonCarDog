@@ -15,6 +15,7 @@ public class Repository {
     private ArrayList<Car> cars;
     private ArrayList<Dog> dogs;
     private ArrayList<CarTransaction> carTransactions;
+    private ArrayList<org.example.model.DogAdoption> dogAdoptions;
 
     public Repository(){
         this.id = UUID.randomUUID().toString();
@@ -22,6 +23,7 @@ public class Repository {
         this.cars = new ArrayList<>();
         this.dogs = new ArrayList<>();
         this.carTransactions = new ArrayList<>();
+        this.dogAdoptions = new ArrayList<>();
     }
 
     // ===== Person =====
@@ -110,5 +112,27 @@ public class Repository {
 
     public boolean removeCarTransaction(String id) {
         return carTransactions.removeIf(ct -> ct.getId().equals(id));
+    }
+
+    // ===== DogAdoption =====
+    public void addDogAdoption(org.example.model.DogAdoption adoption) {
+        dogAdoptions.add(adoption);
+    }
+
+    public org.example.model.DogAdoption getDogAdoptionById(String id) {
+        for (org.example.model.DogAdoption da : dogAdoptions) {
+            if (da.getId().equals(id)) {
+                return da;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<org.example.model.DogAdoption> getAllDogAdoptions() {
+        return dogAdoptions;
+    }
+
+    public boolean removeDogAdoption(String id) {
+        return dogAdoptions.removeIf(da -> da.getId().equals(id));
     }
 }

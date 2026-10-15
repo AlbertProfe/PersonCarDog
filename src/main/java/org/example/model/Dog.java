@@ -8,6 +8,7 @@ public class Dog {
     private String name;
     private String breed;
     private int age;
+    private Person owner;
 
     public Dog() {}
 
@@ -50,8 +51,18 @@ public class Dog {
         this.id = id;
     }
 
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
     @Override
     public String toString() {
-        return "Dog{id='" + id + "', name='" + name + "', breed='" + breed + "', age=" + age + "}";
+        return "Dog{id='" + id + "', name='" + name + "', breed='" + breed + "', age=" + age +
+                (owner != null ? ", ownerName='" + owner.getName() + "'" : "") +
+                "}";
     }
 }
