@@ -69,3 +69,17 @@
 - JUnit 3 → JUnit 5 upgrade is optional / deferred.
 
 > **Outcome:** Dual interface (CLI backoffice + REST API) over the same in-memory service layer.
+
+### Realistic minimal path (pom + tiny code)
+
+1. **pom.xml** (necessary):
+    - Spring Boot parent BOM.
+    - `spring-boot-maven-plugin`.
+    - `spring-boot-starter`.
+
+2. **Code** (unavoidable for actual Spring Boot execution):
+    - Annotate [App](https://github.com/AlbertProfe/PersonCarDog/blob/8ec69afbefc6ef29a2f2909fd26a89725db37e79/src/main/java/org/example/App.java) with `@SpringBootApplication`.
+    - Change its [main](cci:9://file:///home/albert/MyProjects/Sandbox/PersonCarDog/src/main:0:0-0:0) to [SpringApplication.run(App.class, args);](https://github.com/AlbertProfe/PersonCarDog/blob/8ec69afbefc6ef29a2f2909fd26a89725db37e79/src/main/java/org/example/App.java#L9).
+
+
+

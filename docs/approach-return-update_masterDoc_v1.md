@@ -1,8 +1,8 @@
-# Approach: Return Update Wrapper (`ResultUpdateOperation`)
+# Approach: Return Update Wrapper (`ResultOperation`)
 
 ## Purpose
 
-`ResultUpdateOperation` is a lightweight **return-value wrapper** designed to pack structured result information from CRUD update operations (and potentially other mutating operations) into a single object.
+`ResultOperation` is a lightweight **return-value wrapper** designed to pack structured result information from CRUD update operations (and potentially other mutating operations) into a single object.
 
 Instead of returning only `boolean` or the updated entity (or `null`), the wrapper carries:
 
@@ -51,7 +51,7 @@ Trade-offs:
 
 ## Example Implementation — Service Layer
 
-`Service.updatePerson(...)` is the first method converted to return `ResultUpdateOperation`.
+`Service.updatePerson(...)` is the first method converted to return `ResultOperation`.
 
 ```java
 // src/main/java/org/example/service/Service.java
@@ -84,7 +84,7 @@ public static ResultUpdateOperation updatePerson(String id, String newName, int 
 ```
 
 Key patterns:
-- Always create a `ResultUpdateOperation` (even for failure paths).
+- Always create a `ResultOperation` (even for failure paths).
 - Use the convenience `setter(...)` fluent-style method.
 - On validation or lookup failure → `success=false`, `updatedObject=null`.
 - On success → `success=true` and attach the mutated entity.
@@ -99,8 +99,8 @@ case "4":
     String uid = Utils.askString(scan, "Enter person ID to update: ");
     String newName = Utils.askString(scan, "New name (leave blank to keep): ");
     int newAge = Utils.askInt(scan, "New age (-1 to keep): ");
-    ResultUpdateOperation resultUpdateOperation = Service.updatePerson(uid, newName, newAge, repo);
-    System.out.println("resultUpdateOperation: " + resultUpdateOperation);
+    ResultUpdateOperation resultOperation = Service.updatePerson(uid, newName, newAge, repo);
+    System.out.println("resultOperation: " + resultOperation);
     break;
 ```
 
@@ -136,4 +136,4 @@ The controller:
 
 ---
 **Document version:** approach-return-update v1  
-**Last major change:** Introduction of `ResultUpdateOperation` wrapper for update results (Person example)
+**Last major change:** Introduction of `ResultOperation` wrapper for update results (Person example)
