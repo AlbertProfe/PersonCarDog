@@ -3,6 +3,7 @@ package org.example.repository;
 import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
+import org.example.model.DogAdoption;
 import org.example.model.Person;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class Repository {
     private ArrayList<Car> cars;
     private ArrayList<Dog> dogs;
     private ArrayList<CarTransaction> carTransactions;
+    private ArrayList<DogAdoption> dogAdoptions;
 
     public Repository(){
         this.id = UUID.randomUUID().toString();
@@ -22,6 +24,7 @@ public class Repository {
         this.cars = new ArrayList<>();
         this.dogs = new ArrayList<>();
         this.carTransactions = new ArrayList<>();
+        this.dogAdoptions = new ArrayList<>();
     }
 
     // ===== Person =====
@@ -110,5 +113,27 @@ public class Repository {
 
     public boolean removeCarTransaction(String id) {
         return carTransactions.removeIf(ct -> ct.getId().equals(id));
+    }
+
+    // ===== DogAdoption =====
+    public void addDogAdoption(DogAdoption dogAdoption) {
+        dogAdoptions.add(dogAdoption);
+    }
+
+    public DogAdoption getDogAdoptionById(String id) {
+        for (DogAdoption da : dogAdoptions) {
+            if (da.getId().equals(id)) {
+                return da;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<DogAdoption> getAllDogAdoptions() {
+        return dogAdoptions;
+    }
+
+    public boolean removeDogAdoption(String id) {
+        return dogAdoptions.removeIf(da -> da.getId().equals(id));
     }
 }

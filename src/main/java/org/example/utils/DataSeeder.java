@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import org.example.model.Car;
 import org.example.model.CarTransaction;
 import org.example.model.Dog;
+import org.example.model.DogAdoption;
 import org.example.model.Person;
 import org.example.repository.Repository;
 
@@ -53,6 +54,7 @@ public class DataSeeder {
         }
 
         // 3. Generate 2 Dogs (Objects 7 and 8)
+        List<Dog> temporaryDogs = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             Dog dog = new Dog(
                     faker.dog().name(),
@@ -60,6 +62,24 @@ public class DataSeeder {
                     faker.number().numberBetween(1, 15)
             );
             repo.addDog(dog);
+            temporaryDogs.add(dog);
+        }
+
+        // 3b. Pre-adopt the 2 seeded dogs so the "already has an owner" rule can be tested.
+        //     People are seeded with age 18-80, so the adult rule holds.
+        //     Both sides of the relation are set, mirroring Service.adoptDog.
+        for (int i = 0; i < 2; i++) {
+            Person adopter = temporaryPeople.get(i);
+            Dog dog = temporaryDogs.get(i);
+            adopter.setDog(dog);
+            dog.setOwner(adopter);
+            repo.addDogAdoption(new DogAdoption(
+                    adopter,
+                    dog,
+                    new Date(),
+                    faker.number().numberBetween(0, 300),
+                    faker.lorem().sentence()
+            ));
         }
 
         // 4. Generate 2 fake transactions (Objects 9 and 10)
@@ -87,8 +107,8 @@ public class DataSeeder {
 
         // Print verification
         System.out.println("=== DATA SEEDING COMPLETE ===");
-        System.out.println("People: 3 | Cars: 3 | Dogs: 2 | Transactions: 2");
-        System.out.println("TOTAL NEW INSTANCIES AT REPO: 10");
+        System.out.println("People: 3 | Cars: 3 | Dogs: 2 | Transactions: 2 | Adoptions: 2");
+        System.out.println("TOTAL NEW INSTANCIES AT REPO: 12");
         System.out.println("=============================");
     }
 }
