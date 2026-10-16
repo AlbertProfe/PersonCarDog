@@ -91,4 +91,41 @@ public class DataSeeder {
         System.out.println("TOTAL NEW INSTANCIES AT REPO: 10");
         System.out.println("=============================");
     }
+
+    public static void createFakePerson(Repository repo){
+        Faker faker = new Faker();
+        Person person = new Person(
+        faker.name().fullName(),
+        faker.number().numberBetween(18, 80));
+        repo.addPerson(person);
+        System.out.println("Was created:" + person.toString());
+        }
+
+        // this is the new faker for DOG
+    public static void createFakeDog(Repository repo) {
+        Faker faker = new Faker();
+
+        Dog dog = new Dog(
+                faker.dog().name(),
+                faker.dog().breed(),
+                faker.number().numberBetween(1, 15));
+        repo.addDog(dog);
+        System.out.println("Was created:" + dog.toString());
+    }
+    public static void createFakeCar(String id, Repository repo) {
+        Faker faker = new Faker();
+
+        Car car = new Car(
+                faker.company().name(),
+                faker.commerce().productName(),
+                faker.number().numberBetween(1995, 2025)
+        );
+        repo.addCar(car);
+
+        Person person = repo.getPersonById(id);
+        person.setCar (car);
+        System.out.println("Car assigned successfully!");
+
+    }
 }
+

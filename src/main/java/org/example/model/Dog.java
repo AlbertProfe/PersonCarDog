@@ -8,6 +8,7 @@ public class Dog {
     private String name;
     private String breed;
     private int age;
+    private Person owner;
 
     public Dog() {}
 
@@ -48,6 +49,10 @@ public class Dog {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Person getOwner() {
+        return owner;
     }
 
     @Override

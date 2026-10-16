@@ -68,6 +68,13 @@ public class Controller {
                     String name = Utils.askString(scan, "Enter name: ");
                     int age = Utils.askInt(scan, "Enter age: ");
                     ResultOperation resCreatePerson = Service.createPerson(name, age, repo);
+                    if (resCreatePerson == null){
+                        if (Utils.askString(scan, "Do u wanna create fake Person?").toLowerCase().equals("yes")){
+                            resCreatePerson = DataSeeder.createFakePerson(repo);
+                        }
+                    }
+
+                   
                     System.out.println("resultOperation: " + resCreatePerson);
                     break;
                 case "2":
@@ -109,7 +116,13 @@ public class Controller {
                     String name = Utils.askString(scan, "Enter dog name: ");
                     String breed = Utils.askString(scan, "Enter breed: ");
                     int age = Utils.askInt(scan, "Enter age: ");
+
                     ResultOperation resCreateDog = Service.createDog(name, breed, age, repo);
+                    if (resCreateDog == null) {
+                        if (Utils.askString(scan, "Do u wanna create fake dog?").toLowerCase().equals("yes")) {
+                            resCreateDog= DataSeeder.createFakeDog(repo);
+                        }
+                    }
                     System.out.println("resultOperation: " + resCreateDog);
                     break;
                 case "2":
@@ -153,6 +166,16 @@ public class Controller {
                     String model = Utils.askString(scan, "Enter model: ");
                     int year = Utils.askInt(scan, "Enter year: ");
                     ResultOperation resCreateCar = Service.createCar(make, model, year, repo);
+                    if (resCreateCar == null) {
+                        if (Utils.askString(scan, "Do u wanna create fake car?").toLowerCase().equals("yes")) {
+                            String id = Utils.askString(scan, "Which person need this car? Write ID ");
+                            resCreateCar = DataSeeder.createFakeCar(id,repo);
+                            String pid = Utils.askString(scan, "Enter person ID: ");
+                            Service.getPersonById(pid, repo);
+                            System.out.println("Car assigned successfully!");
+                        }
+                    }
+
                     System.out.println("resultOperation: " + resCreateCar);
                     break;
                 case "2":
