@@ -1,0 +1,80 @@
+{
+  "people" : [ {
+    "id" : "36d3765a-5614-4750-86df-3500f5c71bf0",
+    "name" : "Shona Lind MD",
+    "age" : 40,
+    "carId" : "0fe1c348-4a19-4e1c-9889-4ea3bdd8f677",
+    "dogId" : "37df6b4f-a3b2-46d1-a44e-586fb1e000e7"
+  }, {
+    "id" : "c1f8e1ca-1530-4f81-98e0-11e53007f509",
+    "name" : "Hwa Heathcote",
+    "age" : 67,
+    "carId" : null,
+    "dogId" : "2e0b8278-f638-424a-bd64-4e6e6379000b"
+  }, {
+    "id" : "ee718a78-9ff4-4d43-9586-1148e38839bc",
+    "name" : "Ms. Arlene Nitzsche",
+    "age" : 27,
+    "carId" : "2780fafb-a591-4d16-8eaa-d832b5a47547",
+    "dogId" : null
+  } ],
+  "cars" : [ {
+    "id" : "0fe1c348-4a19-4e1c-9889-4ea3bdd8f677",
+    "make" : "Kunde, McLaughlin and Orn",
+    "model" : "Heavy Duty Aluminum Coat",
+    "year" : 1995
+  }, {
+    "id" : "2780fafb-a591-4d16-8eaa-d832b5a47547",
+    "make" : "Ruecker-O'Kon",
+    "model" : "Synergistic Concrete Lamp",
+    "year" : 2016
+  }, {
+    "id" : "3c9f8813-15a0-41b1-8689-d43083d77ce4",
+    "make" : "Grant-Wintheiser",
+    "model" : "Aerodynamic Granite Chair",
+    "year" : 2003
+  } ],
+  "dogs" : [ {
+    "id" : "37df6b4f-a3b2-46d1-a44e-586fb1e000e7",
+    "name" : "Tyson",
+    "breed" : "Doberman",
+    "age" : 12,
+    "ownerId" : "36d3765a-5614-4750-86df-3500f5c71bf0"
+  }, {
+    "id" : "2e0b8278-f638-424a-bd64-4e6e6379000b",
+    "name" : "Buddy",
+    "breed" : "Pug",
+    "age" : 9,
+    "ownerId" : "c1f8e1ca-1530-4f81-98e0-11e53007f509"
+  } ],
+  "carTransactions" : [ {
+    "id" : "b100028c-140b-4c3d-9fe2-d2c7ad773f47",
+    "buyerId" : "c1f8e1ca-1530-4f81-98e0-11e53007f509",
+    "sellerId" : "ee718a78-9ff4-4d43-9586-1148e38839bc",
+    "carId" : "3c9f8813-15a0-41b1-8689-d43083d77ce4",
+    "date" : 1792131476458,
+    "contract" : "Voluptas rerum dolores."
+  }, {
+    "id" : "38ca5cbb-d8ec-49ba-971a-202976e18fc5",
+    "buyerId" : "ee718a78-9ff4-4d43-9586-1148e38839bc",
+    "sellerId" : "36d3765a-5614-4750-86df-3500f5c71bf0",
+    "carId" : "3c9f8813-15a0-41b1-8689-d43083d77ce4",
+    "date" : 1792131476458,
+    "contract" : "Impedit voluptatem est a eaque et omnis."
+  } ],
+  "dogAdoptions" : [ {
+    "id" : "8df400b5-6afe-45c3-9f6d-ee03d353cff7",
+    "adopterId" : "36d3765a-5614-4750-86df-3500f5c71bf0",
+    "dogId" : "37df6b4f-a3b2-46d1-a44e-586fb1e000e7",
+    "date" : 1792131476450,
+    "fee" : 286,
+    "contract" : "Aut et expedita possimus ea est quia."
+  }, {
+    "id" : "b4eb3b67-5b00-4517-8cbc-348c9db6cfaf",
+    "adopterId" : "c1f8e1ca-1530-4f81-98e0-11e53007f509",
+    "dogId" : "2e0b8278-f638-424a-bd64-4e6e6379000b",
+    "date" : 1792131476457,
+    "fee" : 166,
+    "contract" : "Sed aliquam rem nam odio."
+  } ]
+}
