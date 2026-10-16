@@ -1,0 +1,132 @@
+{
+  "people" : [ {
+    "id" : "587adcf9-155b-4c2c-9435-69379f77f292",
+    "name" : "Ms. Mervin Mraz",
+    "age" : 24,
+    "carId" : "6965eb54-5b04-4098-8d2c-912008b76f1c",
+    "dogIds" : [ "cbaedb53-9a15-4aa8-b2c2-f497eceac97e", "51d372fd-cc6c-41a6-ad49-c14594eb8eef" ]
+  }, {
+    "id" : "9cbe232a-a7da-4a37-9156-ac21ffa6b6bc",
+    "name" : "Christian Prohaska",
+    "age" : 59,
+    "carId" : null,
+    "dogIds" : [ "cbaedb53-9a15-4aa8-b2c2-f497eceac97e" ]
+  }, {
+    "id" : "79cb5c0d-9fff-46f4-9d4c-ad4a6eb13322",
+    "name" : "Ashley Windler Jr.",
+    "age" : 34,
+    "carId" : "eff02a48-f8a3-475c-b313-57cadc4e86c8",
+    "dogIds" : [ ]
+  }, {
+    "id" : "06cf8224-b8d8-4aea-9f31-cdb93a35f14c",
+    "name" : "Laura",
+    "age" : 25,
+    "carId" : null,
+    "dogIds" : [ "49b98b03-1aae-464f-813d-9d07b62c478b", "68fcaf8d-8b77-46d4-8c66-ac5f9d67ef92" ]
+  }, {
+    "id" : "ec65fe1d-49dd-4858-adf5-4cfd3f2e1ea6",
+    "name" : "Toni",
+    "age" : 25,
+    "carId" : null,
+    "dogIds" : [ "49b98b03-1aae-464f-813d-9d07b62c478b" ]
+  } ],
+  "cars" : [ {
+    "id" : "6965eb54-5b04-4098-8d2c-912008b76f1c",
+    "make" : "Bashirian-McDermott",
+    "model" : "Lightweight Wooden Computer",
+    "year" : 2006
+  }, {
+    "id" : "eff02a48-f8a3-475c-b313-57cadc4e86c8",
+    "make" : "Wuckert, Swift and Pouros",
+    "model" : "Mediocre Cotton Bag",
+    "year" : 2003
+  }, {
+    "id" : "3f05510f-81dc-4c74-9d0e-c5891440f03b",
+    "make" : "Walker and Sons",
+    "model" : "Awesome Marble Shoes",
+    "year" : 2008
+  } ],
+  "dogs" : [ {
+    "id" : "cbaedb53-9a15-4aa8-b2c2-f497eceac97e",
+    "name" : "Annie",
+    "breed" : "Entlebucher",
+    "age" : 9,
+    "ownerIds" : [ "587adcf9-155b-4c2c-9435-69379f77f292", "9cbe232a-a7da-4a37-9156-ac21ffa6b6bc" ]
+  }, {
+    "id" : "51d372fd-cc6c-41a6-ad49-c14594eb8eef",
+    "name" : "Jack",
+    "breed" : "Toy Poodle",
+    "age" : 7,
+    "ownerIds" : [ "587adcf9-155b-4c2c-9435-69379f77f292" ]
+  }, {
+    "id" : "49b98b03-1aae-464f-813d-9d07b62c478b",
+    "name" : "Tobby",
+    "breed" : "pastor",
+    "age" : 5,
+    "ownerIds" : [ "06cf8224-b8d8-4aea-9f31-cdb93a35f14c", "ec65fe1d-49dd-4858-adf5-4cfd3f2e1ea6" ]
+  }, {
+    "id" : "68fcaf8d-8b77-46d4-8c66-ac5f9d67ef92",
+    "name" : "Nano",
+    "breed" : "pastor",
+    "age" : 9,
+    "ownerIds" : [ "06cf8224-b8d8-4aea-9f31-cdb93a35f14c" ]
+  } ],
+  "carTransactions" : [ {
+    "id" : "66d5d730-0e0a-453d-a6a1-3d8b41c62f52",
+    "buyerId" : "9cbe232a-a7da-4a37-9156-ac21ffa6b6bc",
+    "sellerId" : "79cb5c0d-9fff-46f4-9d4c-ad4a6eb13322",
+    "carId" : "3f05510f-81dc-4c74-9d0e-c5891440f03b",
+    "date" : 1792144474287,
+    "contract" : "Velit ab asperiores provident voluptatem voluptate aut molestias."
+  }, {
+    "id" : "998c7a92-1c90-45ee-ba59-d029ab97afac",
+    "buyerId" : "79cb5c0d-9fff-46f4-9d4c-ad4a6eb13322",
+    "sellerId" : "587adcf9-155b-4c2c-9435-69379f77f292",
+    "carId" : "3f05510f-81dc-4c74-9d0e-c5891440f03b",
+    "date" : 1792144474288,
+    "contract" : "Tempore eligendi quia quaerat."
+  } ],
+  "dogAdoptions" : [ {
+    "id" : "85f6e5dd-6b6f-40dd-a558-ff77dd079f77",
+    "adopterId" : "587adcf9-155b-4c2c-9435-69379f77f292",
+    "dogId" : "cbaedb53-9a15-4aa8-b2c2-f497eceac97e",
+    "date" : 1792144474278,
+    "fee" : 107,
+    "contract" : "In eum est et."
+  }, {
+    "id" : "b4b48810-ddec-4976-96be-cb94993f43ea",
+    "adopterId" : "9cbe232a-a7da-4a37-9156-ac21ffa6b6bc",
+    "dogId" : "cbaedb53-9a15-4aa8-b2c2-f497eceac97e",
+    "date" : 1792144474286,
+    "fee" : 88,
+    "contract" : "Nihil doloremque et corrupti inventore explicabo consequatur."
+  }, {
+    "id" : "fbabdadb-62e2-4fe0-821d-740e03f883db",
+    "adopterId" : "587adcf9-155b-4c2c-9435-69379f77f292",
+    "dogId" : "51d372fd-cc6c-41a6-ad49-c14594eb8eef",
+    "date" : 1792144474286,
+    "fee" : 117,
+    "contract" : "Et harum adipisci soluta et aperiam."
+  }, {
+    "id" : "86eb1218-84a2-4802-a007-7a577d0e0cca",
+    "adopterId" : "06cf8224-b8d8-4aea-9f31-cdb93a35f14c",
+    "dogId" : "49b98b03-1aae-464f-813d-9d07b62c478b",
+    "date" : 1792144762816,
+    "fee" : 50,
+    "contract" : "Dog adopted for 50"
+  }, {
+    "id" : "fade0743-560f-433d-97fd-f907000c9594",
+    "adopterId" : "06cf8224-b8d8-4aea-9f31-cdb93a35f14c",
+    "dogId" : "68fcaf8d-8b77-46d4-8c66-ac5f9d67ef92",
+    "date" : 1792144796492,
+    "fee" : 89,
+    "contract" : "Dog adopted for 89"
+  }, {
+    "id" : "92b74b4f-d828-48f4-8f1d-dc056b3a25d3",
+    "adopterId" : "ec65fe1d-49dd-4858-adf5-4cfd3f2e1ea6",
+    "dogId" : "49b98b03-1aae-464f-813d-9d07b62c478b",
+    "date" : 1792144827630,
+    "fee" : 45,
+    "contract" : "Dog adopted for 45"
+  } ]
+}
