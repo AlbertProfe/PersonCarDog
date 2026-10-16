@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What is Serialization? – Learning Diagram</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 16px 60px;
+      color: #334155;
+    }
+    h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-align: center;
+      color: #1e293b;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 28px;
+      text-align: center;
+      max-width: 560px;
+      line-height: 1.45;
+    }
+
+    /* ===== DIAGRAM ===== */
+    .diagram {
+      width: 100%;
+      max-width: 920px;
+      position: relative;
+      padding: 28px 0 8px;
+    }
+    .line {
+      position: absolute;
+      top: 58px;
+      left: 8%;
+      right: 8%;
+      height: 3px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .line-progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #14b8a6, #22c55e);
+      border-radius: 2px;
+      transition: width 0.8s ease;
+    }
+    .points {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+    .point {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 22%;
+      text-align: center;
+      opacity: 0.35;
+      transform: scale(0.94);
+      transition: all 0.45s ease;
+    }
+    .point.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #f8fafc;
+      background: #94a3b8;
+      box-shadow: 0 4px 14px rgba(100, 116, 139, 0.25);
+      margin-bottom: 12px;
+      transition: all 0.35s ease;
+    }
+    .point:nth-child(1).active .circle {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+      transform: scale(1.06);
+    }
+    .point:nth-child(2).active .circle {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+      transform: scale(1.06);
+    }
+    .point:nth-child(3).active .circle {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+      transform: scale(1.06);
+    }
+    .point:nth-child(4).active .circle {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+      transform: scale(1.06);
+    }
+    .label {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #1e293b;
+    }
+    .desc {
+      font-size: 0.8rem;
+      color: #64748b;
+      line-height: 1.35;
+      max-width: 160px;
+    }
+    .arrow {
+      position: absolute;
+      top: 52px;
+      font-size: 1.3rem;
+      color: #94a3b8;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .arrow.visible { opacity: 1; }
+    .arrow-1 { left: 28%; }
+    .arrow-1.visible { color: #3b82f6; }
+    .arrow-2 { left: 50%; }
+    .arrow-2.visible { color: #8b5cf6; }
+    .arrow-3 { left: 72%; }
+    .arrow-3.visible { color: #14b8a6; }
+
+    /* ===== CONTROLS ===== */
+    .controls {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-start {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #f8fafc;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-start:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+    }
+    .btn-start:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-advance {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      color: #f8fafc;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+    }
+    .btn-advance:hover {
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      transform: translateY(-1px);
+    }
+    .btn-advance:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-reset {
+      background: #f8fafc;
+      color: #475569;
+      border: 1.5px solid #cbd5e1;
+    }
+    .btn-reset:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .status {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: #64748b;
+      min-height: 22px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .status.done { color: #16a34a; }
+
+    /* ===== INFO CARDS ===== */
+    .info-section {
+      width: 100%;
+      max-width: 920px;
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+    }
+    .info-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(148, 163, 184, 0.12);
+      opacity: 0;
+      transform: translateY(-12px);
+      transition: all 0.5s ease;
+      display: none;
+    }
+    .info-card.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .info-card.current {
+      border-color: #94a3b8;
+      box-shadow: 0 4px 16px rgba(100, 116, 139, 0.18);
+    }
+    .info-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .info-card h3 .badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 22px;
+    }
+    .info-item {
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+    .info-item strong {
+      display: block;
+      color: #334155;
+      font-weight: 600;
+      margin-bottom: 2px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .info-item p { color: #64748b; }
+    .info-item.full { grid-column: 1 / -1; }
+    .info-item code, .info-card code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.84em;
+      color: #0f766e;
+    }
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      overflow-x: auto;
+      white-space: pre;
+      margin-top: 8px;
+    }
+    .analogy-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 8px;
+      font-size: 0.86rem;
+      color: #166534;
+      line-height: 1.5;
+    }
+    .note {
+      margin-top: 24px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 750px) {
+      .points { flex-direction: column; gap: 26px; align-items: center; }
+      .line, .arrow { display: none; }
+      .point { width: 80%; }
+      .info-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.35rem; }
+      .controls { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <h1>What is Serialization?</h1>
+  <p class="subtitle">
+    Turning live objects in memory into a format that can be stored or sent — and back again
+  </p>
+
+  <div class="diagram">
+    <div class="line"><div class="line-progress" id="progress"></div></div>
+    <div class="arrow arrow-1" id="arrow1">→</div>
+    <div class="arrow arrow-2" id="arrow2">→</div>
+    <div class="arrow arrow-3" id="arrow3">→</div>
+    <div class="points">
+      <div class="point" id="point1">
+        <div class="circle">Obj</div>
+        <div class="label">Object</div>
+        <div class="desc">Live in RAM<br>with references</div>
+      </div>
+      <div class="point" id="point2">
+        <div class="circle">Ser</div>
+        <div class="label">Serialize</div>
+        <div class="desc">Convert to bytes<br>or text (JSON)</div>
+      </div>
+      <div class="point" id="point3">
+        <div class="circle">Store</div>
+        <div class="label">Store / Send</div>
+        <div class="desc">File, DB, or<br>network</div>
+      </div>
+      <div class="point" id="point4">
+        <div class="circle">Des</div>
+        <div class="label">Deserialize</div>
+        <div class="desc">Rebuild the<br>live object</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-start" id="startBtn" onclick="startProgression()">▶ Start Auto (8s)</button>
+    <button class="btn btn-advance" id="advanceBtn" onclick="advanceStep()" disabled>Next →</button>
+    <button class="btn btn-reset" id="resetBtn" onclick="resetProgression()">Reset</button>
+  </div>
+  <div class="status" id="status">Click “Start Auto” or use “Next” to learn what serialization means</div>
+
+  <div class="info-section" id="infoSection"></div>
+
+  <p class="note">
+    Serialization is the foundation of saving data to a file, sending it over HTTP, and loading it again.<br>
+    In PersonCarDog we serialize the whole Repository to JSON; in Spring Boot the same idea appears in REST APIs and JPA.
+  </p>
+
+  <script>
+    const STEPS = [
+      {
+        point: 'point1',
+        arrow: null,
+        progress: '0%',
+        title: 'Live Object in Memory',
+        badge: 'Starting point',
+        status: '① Objects live in RAM — they have identity, fields, and references',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What it is</strong><p>A Java object (e.g. a <code>Person</code>) exists in the heap. It has an identity, fields (<code>name</code>, <code>age</code>), and may point to other objects (<code>car</code>, <code>dog</code>).</p></div>
+            <div class="info-item"><strong>The problem</strong><p>RAM is volatile. When the program stops, every object disappears. You also cannot send a Java object reference over the network or write it directly to a text file.</p></div>
+            <div class="info-item full"><strong>Example</strong>
+              <div class="code-block">Person alice = new Person("Alice", 30);
+alice.setCar(toyota);   // reference to another object
+alice.setDog(buddy);    // another reference
+
+// alice lives only in this JVM process.
+// You cannot "save" the variable itself.</div>
+            </div>
+            <div class="info-item full">
+              <div class="analogy-box">
+                <strong>Analogy:</strong> Think of a live object as a person standing in a room. You can talk to them, but you cannot put the person into an envelope and mail them. You need a description (a letter) instead.
+              </div>
+            </div>
+          </div>`
+      },
+      {
+        point: 'point2',
+        arrow: 'arrow1',
+        progress: '33%',
+        title: 'Serialize = Object → Data',
+        badge: 'The core idea',
+        status: '② Serialization turns the object into a portable format (bytes or text)',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>Definition</strong><p><strong>Serialization</strong> is the process of converting a live object graph into a sequence of bytes or a text format (JSON, XML, …) that can be stored or transmitted.</p></div>
+            <div class="info-item"><strong>What is produced</strong><p>A flat representation: field names + values. Object references become IDs (or are nested). The result no longer depends on the JVM’s memory addresses.</p></div>
+            <div class="info-item full"><strong>In PersonCarDog</strong>
+              <div class="code-block">// toSnapshot() does the conceptual work:
+PersonDto dto = new PersonDto();
+dto.id    = alice.getId();
+dto.name  = alice.getName();
+dto.age   = alice.getAge();
+dto.carId = idOf(alice.getCar());  // reference → ID
+dto.dogId = idOf(alice.getDog());
+
+// Then Jackson turns the Snapshot into JSON text.</div>
+            </div>
+            <div class="info-item full">
+              <div class="analogy-box">
+                <strong>Analogy:</strong> Writing a letter that describes the person (name, age, “owns car #C1”) so someone else can reconstruct who they are later.
+              </div>
+            </div>
+          </div>`
+      },
+      {
+        point: 'point3',
+        arrow: 'arrow2',
+        progress: '66%',
+        title: 'Store or Send the Data',
+        badge: 'Persistence / Network',
+        status: '③ The serialized form can travel — file, database, or HTTP',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>File</strong><p>Write the JSON (or bytes) to disk. Example: <code>data/repo.json</code>. The program can exit; the data survives.</p></div>
+            <div class="info-item"><strong>Network</strong><p>Send the same JSON as the body of an HTTP request/response. This is exactly what a REST API does.</p></div>
+            <div class="info-item"><strong>Database</strong><p>In Spring Boot + JPA the “serialized” form is rows and foreign-key columns. Hibernate maps objects ↔ tables for you.</p></div>
+            <div class="info-item"><strong>Why it matters</strong><p>Once data is in a neutral format, any program (even in another language) can read it. The original Java object is no longer required.</p></div>
+            <div class="info-item full"><strong>PersonCarDog example</strong>
+              <div class="code-block">MAPPER.writerWithDefaultPrettyPrinter()
+      .writeValue(path.toFile(), snapshot);
+// → creates / updates data/repo.json</div>
+            </div>
+          </div>`
+      },
+      {
+        point: 'point4',
+        arrow: 'arrow3',
+        progress: '100%',
+        title: 'Deserialize = Data → Object',
+        badge: 'The reverse trip',
+        status: '④ Deserialization rebuilds live objects from the stored format',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>Definition</strong><p><strong>Deserialization</strong> is the opposite process: read the bytes/text and reconstruct live objects in memory, including re-wiring the references.</p></div>
+            <div class="info-item"><strong>In PersonCarDog</strong><p><code>JsonStore.load()</code> uses Jackson to read the JSON into a <code>RepositorySnapshot</code>, then <code>fromSnapshot()</code> creates entities (pass 1) and sets the relations (pass 2).</p></div>
+            <div class="info-item full"><strong>Two-pass rebuild (why?)</strong>
+              <div class="code-block">// Pass 1 – create every object with its ID
+Car c = new Car(...); c.setId(dto.id); cars.put(id, c);
+
+// Pass 2 – wire references using the IDs
+person.setCar(cars.get(dto.carId));
+dog.setOwner(people.get(dto.ownerId));</div>
+            </div>
+            <div class="info-item full">
+              <div class="analogy-box">
+                <strong>Analogy:</strong> Someone receives your letter and uses the description to introduce a new person who has the same name, age, and owns the same car. The new person is a different instance, but equivalent.
+              </div>
+            </div>
+            <div class="info-item full"><strong>Spring Boot parallel</strong><p>Jackson deserializes HTTP request bodies into Java objects (<code>@RequestBody</code>). JPA/Hibernate deserializes database rows into entity instances. Same idea, different media.</p></div>
+          </div>`
+      }
+    ];
+
+    let currentStep = -1;
+    let autoTimer = null;
+
+    function showStep(index) {
+      if (index < 0 || index >= STEPS.length) return;
+      const step = STEPS[index];
+      currentStep = index;
+
+      document.getElementById(step.point).classList.add('active');
+      if (step.arrow) document.getElementById(step.arrow).classList.add('visible');
+      document.getElementById('progress').style.width = step.progress;
+
+      const section = document.getElementById('infoSection');
+      section.querySelectorAll('.info-card').forEach(c => c.classList.remove('current'));
+
+      const card = document.createElement('div');
+      card.className = 'info-card visible current';
+      card.innerHTML = `<h3>${step.title} <span class="badge">${step.badge}</span></h3>${step.html}`;
+      section.insertBefore(card, section.firstChild);
+
+      document.getElementById('status').textContent = step.status;
+      document.getElementById('status').classList.toggle('done', index === STEPS.length - 1);
+
+      document.getElementById('advanceBtn').disabled = index >= STEPS.length - 1;
+      document.getElementById('startBtn').disabled = true;
+
+      if (index === STEPS.length - 1) {
+        stopAuto();
+        document.getElementById('status').textContent = '✓ Complete — you now understand serialize & deserialize';
+      }
+    }
+
+    function advanceStep() {
+      if (currentStep >= STEPS.length - 1) return;
+      showStep(currentStep + 1);
+    }
+
+    function startProgression() {
+      resetProgression(false);
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('advanceBtn').disabled = false;
+      showStep(0);
+      autoTimer = setInterval(() => {
+        if (currentStep < STEPS.length - 1) {
+          showStep(currentStep + 1);
+        } else {
+          stopAuto();
+        }
+      }, 8000);
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    }
+
+    function resetProgression(clearStatus = true) {
+      stopAuto();
+      currentStep = -1;
+      ['point1','point2','point3','point4'].forEach(id =>
+        document.getElementById(id).classList.remove('active'));
+      ['arrow1','arrow2','arrow3'].forEach(id =>
+        document.getElementById(id).classList.remove('visible'));
+      document.getElementById('progress').style.width = '0%';
+      document.getElementById('infoSection').innerHTML = '';
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('advanceBtn').disabled = true;
+      if (clearStatus) {
+        document.getElementById('status').textContent = 'Click “Start Auto” or use “Next” to learn what serialization means';
+        document.getElementById('status').classList.remove('done');
+      }
+    }
+  </script>
+</body>
+</html>

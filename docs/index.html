@@ -85,6 +85,9 @@
     .card:nth-child(4) .card-icon {
       background: linear-gradient(135deg, #f59e0b, #d97706);
     }
+    .card:nth-child(5) .card-icon {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+    }
     .card h2 {
       font-size: 1.2rem;
       font-weight: 700;
@@ -106,15 +109,10 @@
       align-items: center;
       gap: 6px;
     }
-    .card:nth-child(2) .cta {
-      color: #0d9488;
-    }
-    .card:nth-child(3) .cta {
-      color: #7c3aed;
-    }
-    .card:nth-child(4) .cta {
-      color: #d97706;
-    }
+    .card:nth-child(2) .cta { color: #0d9488; }
+    .card:nth-child(3) .cta { color: #7c3aed; }
+    .card:nth-child(4) .cta { color: #d97706; }
+    .card:nth-child(5) .cta { color: #db2777; }
     .footer {
       margin-top: 56px;
       font-size: 0.82rem;
@@ -176,6 +174,15 @@
       <h2>JSON SAVE Flow</h2>
       <p>
         Step-by-step interactive walkthrough: Service → JsonStore → toSnapshot → Jackson → data/repo.json.
+      </p>
+      <div class="cta">Open diagram →</div>
+    </a>
+    <!-- Card 5 -->
+    <a href="what-is-serialize.html" class="card">
+      <div class="card-icon">5</div>
+      <h2>What is Serialization?</h2>
+      <p>
+        Object → data → store/send → object again. The core idea behind saving to JSON and loading it back.
       </p>
       <div class="cta">Open diagram →</div>
     </a>
