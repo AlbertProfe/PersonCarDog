@@ -1,10 +1,10 @@
 package org.example.controller;
 
-
 import org.example.model.Car;
 import org.example.model.Dog;
 import org.example.model.Person;
 
+import org.example.persistence.JsonStore;
 import org.example.repository.Repository;
 import org.example.service.Service;
 import org.example.utils.DataSeeder;
@@ -23,9 +23,13 @@ public class Controller {
         //    and we need it in the service, so we create it here
         Repository repo = new Repository();
 
-        // 2. We populate the repo with dummy data using DataSeeder and Java Faker
-        //    This is just for demo purposes
-        DataSeeder.seedRepository(repo);
+        // 2. If a saved JSON file exists we load it (repo survives restarts),
+        //    otherwise we populate the repo with dummy data using DataSeeder and Java Faker
+        if (org.example.persistence.JsonStore.exists(org.example.persistence.JsonStore.DEFAULT_PATH)) {
+            Service.loadRepository(org.example.persistence.JsonStore.DEFAULT_PATH, repo);
+        } else {
+            DataSeeder.seedRepository(repo);
+        }
         Scanner scan = new Scanner(System.in);
 
         while (true) {
@@ -54,9 +58,18 @@ public class Controller {
                     runAdoptDog(scan, repo);
                     break;
                 case "7":
-                    dogAdoptionSubMenu(scan, repo);
+                    runReturnDog(scan, repo);
                     break;
                 case "8":
+                    dogAdoptionSubMenu(scan, repo);
+                    break;
+                case "9":
+                    Service.saveRepository(org.example.persistence.JsonStore.DEFAULT_PATH, repo);
+                    break;
+                case "10":
+                    Service.loadRepository(org.example.persistence.JsonStore.DEFAULT_PATH, repo);
+                    break;
+                case "11":
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -268,6 +281,18 @@ public class Controller {
                     System.out.println("resultOperation: " + resGetAdoption);
                     break;
                 case "3":
+                    String pid = Utils.askString(scan, "Enter person ID: ");
+                    Person p = repo.getPersonById(pid.trim());
+                    ResultOperation resDogs = Service.getDogsByOwner(p, repo);
+                    System.out.println("resultOperation: " + resDogs);
+                    break;
+                case "4":
+                    String did = Utils.askString(scan, "Enter dog ID: ");
+                    Dog dg = repo.getDogById(did.trim());
+                    ResultOperation resOwners = Service.getOwnersByDog(dg, repo);
+                    System.out.println("resultOperation: " + resOwners);
+                    break;
+                case "5":
                     return;
                 default:
                     System.out.println("Invalid option.");
@@ -275,19 +300,32 @@ public class Controller {
         }
     }
 
-    // Adopt a dog: unlike runBuyCarDemo, the user picks person and dog BY ID
+    // Adopt a dog (shared custody): user picks person and dog BY ID
     private static void runAdoptDog(Scanner scan, Repository repo) {
-        System.out.println("Welcome to ADOPT A DOG (person <- dog)");
+        System.out.println("Welcome to ADOPT A DOG (shared custody)");
 
         String personId = Utils.askString(scan, "Enter adopter (person) ID: ");
         String dogId = Utils.askString(scan, "Enter dog ID: ");
         int fee = Utils.askInt(scan, "Enter adoption fee: ");
 
-        // Resolve objects here; Service validates nulls/ownership/age/fee
         Person adopter = repo.getPersonById(personId.trim());
         Dog dog = repo.getDogById(dogId.trim());
 
         ResultOperation resAdopt = Service.adoptDog(adopter, dog, fee, repo);
         System.out.println("resultOperation: " + resAdopt);
+    }
+
+    // Return a dog: end only this person's custody for the dog
+    private static void runReturnDog(Scanner scan, Repository repo) {
+        System.out.println("Welcome to RETURN A DOG (end one adoption)");
+
+        String personId = Utils.askString(scan, "Enter person ID: ");
+        String dogId = Utils.askString(scan, "Enter dog ID: ");
+
+        Person person = repo.getPersonById(personId.trim());
+        Dog dog = repo.getDogById(dogId.trim());
+
+        ResultOperation resReturn = Service.returnDog(person, dog, repo);
+        System.out.println("resultOperation: " + resReturn);
     }
 }

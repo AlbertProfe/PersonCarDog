@@ -65,22 +65,30 @@ public class DataSeeder {
             temporaryDogs.add(dog);
         }
 
-        // 3b. Pre-adopt the 2 seeded dogs so the "already has an owner" rule can be tested.
-        //     People are seeded with age 18-80, so the adult rule holds.
-        //     Both sides of the relation are set, mirroring Service.adoptDog.
-        for (int i = 0; i < 2; i++) {
-            Person adopter = temporaryPeople.get(i);
-            Dog dog = temporaryDogs.get(i);
-            adopter.setDog(dog);
-            dog.setOwner(adopter);
-            repo.addDogAdoption(new DogAdoption(
-                    adopter,
-                    dog,
-                    new Date(),
-                    faker.number().numberBetween(0, 300),
-                    faker.lorem().sentence()
-            ));
-        }
+        // 3b. Pre-adopt using many-to-many shared custody.
+        //     Seed a shared-custody example:
+        //       - Dog0 adopted by Person0 and Person1 (two owners)
+        //       - Person0 also adopts Dog1 (person with two active dogs)
+        //     People are adults; fee >=0.
+        Person p0 = temporaryPeople.get(0);
+        Person p1 = temporaryPeople.get(1);
+        Dog d0 = temporaryDogs.get(0);
+        Dog d1 = temporaryDogs.get(1);
+
+        // p0 adopts d0
+        p0.addDog(d0);
+        d0.addOwner(p0);
+        repo.addDogAdoption(new DogAdoption(p0, d0, new Date(), faker.number().numberBetween(0, 300), faker.lorem().sentence()));
+
+        // p1 also adopts d0 (shared custody)
+        p1.addDog(d0);
+        d0.addOwner(p1);
+        repo.addDogAdoption(new DogAdoption(p1, d0, new Date(), faker.number().numberBetween(0, 300), faker.lorem().sentence()));
+
+        // p0 adopts d1 (p0 now has two dogs)
+        p0.addDog(d1);
+        d1.addOwner(p0);
+        repo.addDogAdoption(new DogAdoption(p0, d1, new Date(), faker.number().numberBetween(0, 300), faker.lorem().sentence()));
 
         // 4. Generate 2 fake transactions (Objects 9 and 10)
         // We use car 2, people 1 and 2
@@ -107,8 +115,11 @@ public class DataSeeder {
 
         // Print verification
         System.out.println("=== DATA SEEDING COMPLETE ===");
-        System.out.println("People: 3 | Cars: 3 | Dogs: 2 | Transactions: 2 | Adoptions: 2");
-        System.out.println("TOTAL NEW INSTANCIES AT REPO: 12");
+        System.out.println("People: " + repo.getAllPeople().size()
+                + " | Cars: " + repo.getAllCars().size()
+                + " | Dogs: " + repo.getAllDogs().size()
+                + " | Transactions: " + repo.getAllCarTransactions().size()
+                + " | Adoptions: " + repo.getAllDogAdoptions().size());
         System.out.println("=============================");
     }
 }
