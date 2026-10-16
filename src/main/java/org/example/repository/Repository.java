@@ -1,9 +1,6 @@
 package org.example.repository;
 
-import org.example.model.Car;
-import org.example.model.CarTransaction;
-import org.example.model.Dog;
-import org.example.model.Person;
+import org.example.model.*;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -15,6 +12,7 @@ public class Repository {
     private ArrayList<Car> cars;
     private ArrayList<Dog> dogs;
     private ArrayList<CarTransaction> carTransactions;
+    private ArrayList<DogAdoption> dogAdoptions;
 
     public Repository(){
         this.id = UUID.randomUUID().toString();
@@ -22,6 +20,7 @@ public class Repository {
         this.cars = new ArrayList<>();
         this.dogs = new ArrayList<>();
         this.carTransactions = new ArrayList<>();
+        this.dogAdoptions = new ArrayList<>();
     }
 
     // ===== Person =====
@@ -44,6 +43,18 @@ public class Repository {
 
     public boolean removePerson(String id) {
         return people.removeIf(p -> p.getId().equals(id));
+    }
+
+    public Dog getPersonDogById(Person person, String idDog) {
+
+        return person.getDogs().stream()
+                .filter(dog -> dog.getId().equalsIgnoreCase(idDog))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Boolean deleteDogAtPerson(Person person, String idDog){
+        return person.getDogs().removeIf(p -> p.getId().equals(idDog));
     }
 
     // ===== Car =====
@@ -89,6 +100,10 @@ public class Repository {
     public boolean removeDog(String id) {
         return dogs.removeIf(d -> d.getId().equals(id));
     }
+    public Boolean deletePersonAtDog(Dog dog){
+        dog.setOwner(null);
+        return true;
+    }
 
     // ===== CarTransaction =====
     public void addCarTransaction(CarTransaction carTransaction) {
@@ -111,4 +126,27 @@ public class Repository {
     public boolean removeCarTransaction(String id) {
         return carTransactions.removeIf(ct -> ct.getId().equals(id));
     }
+
+    // ===== DogAdoption =====
+    public void addDogAdoption(DogAdoption dogAdoption) {
+        dogAdoptions.add(dogAdoption);
+    }
+
+    public DogAdoption getDogAdoptionById(String id) {
+        for (DogAdoption da : dogAdoptions) {
+            if (da.getId().equals(id)) {
+                return da;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<DogAdoption> getAllDogAdoptions() {
+        return dogAdoptions;
+    }
+
+    public boolean removeDogAdoption(String id) {
+        return dogAdoptions.removeIf(da -> da.getId().equals(id));
+    }
+
 }

@@ -1,6 +1,8 @@
 package org.example.model;
 
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Person {
 
@@ -8,6 +10,7 @@ public class Person {
     private String name;
     private int age;
     private Car car;
+    private ArrayList<Dog> dogs;
 
     public Person(){
         this.id = UUID.randomUUID().toString();
@@ -17,6 +20,7 @@ public class Person {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.age = age;
+        this.dogs = new ArrayList<>();
     }
 
     public String getName() {
@@ -51,8 +55,16 @@ public class Person {
         this.car = car;
     }
 
+    public ArrayList<Dog> getDogs() {
+        return dogs;
+    }
+
+    public void setDog(Dog dog) {
+        this.dogs.add(dog);
+    }
+
     @Override
     public String toString() {
-        return "Person{id='" + id + "', name='" + name + "', age=" + age + "}";
+        return "Person{id='" + id + "', name='" + name + "', age=" + age + ", dogs='" + dogs.stream().map(Dog::getName).collect(Collectors.joining(", ")) +"'}";
     }
 }

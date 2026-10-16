@@ -50,6 +50,15 @@ public class Controller {
                     carTransactionSubMenu(scan, repo);
                     break;
                 case "6":
+                    runDogAdopt(scan, repo);
+                    break;
+                case "7":
+                    runReturnDog(scan, repo);
+                    break;
+                case "8":
+                    dogAdoptionSubMenu(scan, repo);
+                    break;
+                case "9":
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -244,4 +253,48 @@ public class Controller {
         ResultOperation resBuyCar = Service.buyCar(buyer, seller, price, repo);
         System.out.println("resultOperation: " + resBuyCar);
     }
+
+    // ===== DOG ADOPTIONS (READ ONLY) SUBMENU =====
+    private static void dogAdoptionSubMenu(Scanner scan, Repository repo) {
+        while (true) {
+            Utils.dogAdoptionMenu();
+            String opt = Utils.askMenuOption(scan);
+            switch (opt) {
+                case "1":
+                    ResultOperation resAllTx = Service.getAllDogAdoptions(repo);
+                    System.out.println("resultOperation: " + resAllTx);
+                    break;
+                case "2":
+                    String tid = Utils.askString(scan, "Enter transaction ID: ");
+                    ResultOperation resGetTx = Service.getDogAdoptionById(tid, repo);
+                    System.out.println("resultOperation: " + resGetTx);
+                    break;
+                case "3":
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private static void runDogAdopt(Scanner scan, Repository repo) {
+        System.out.println("Welcome to DOG ADOPT (person <- dog)");
+
+        String idPerson = Utils.askString(scan, "Write the adopter ID:");
+        String idDog = Utils.askString(scan, "Write the dog ID:");
+        long fee = Utils.askInt(scan, "Enter fee: ");
+
+        ResultOperation resDogAdopt = Service.adoptDog(idPerson, idDog, fee, repo);
+        System.out.println("resultOperation: " + resDogAdopt);
+    }
+
+    private static void runReturnDog(Scanner scan, Repository repo) {
+        System.out.println("Welcome to DOG RETURN (<- dog)");
+
+        String idDog = Utils.askString(scan, "Write the dog ID:");
+
+        ResultOperation resReturnDog = Service.returnDog(idDog, repo);
+        System.out.println("resultOperation: " + resReturnDog);
+    }
+
 }
