@@ -10,6 +10,7 @@ public class DogAdoption {
     private Date date;
     private int fee;
     private String contract;
+    private String Status;
 
     public DogAdoption(){}
 
@@ -20,6 +21,7 @@ public class DogAdoption {
         this.dog = dog;
         this.contract = contract;
         this.fee = fee;
+        this.Status = "ACTIVE";
     }
     public String getId() {
         return id;
@@ -68,10 +70,16 @@ public class DogAdoption {
         this.fee = fee;
     }
 
+    public  String getStatus() {
+        return this.Status;
+    }
+    public  void setStatus() {
+        this.Status = "RETURNED";
+    }
     @Override
     public String toString() {
         return "DogAdoption{id='" + id + "', adopter=" + adopter + ", dog=" +
-                dog + ", date=" + date + ", fee=" + fee + ", contract='" + contract + "'}";
+                dog + ", date=" + date + ", fee=" + fee + ", contract='" + contract + ", status='" + Status + "'}";
     }
 
 

@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jdk.jshell.Snippet;
 import jdk.swing.interop.SwingInterOpUtils;
 import org.example.model.*;
 import org.example.repository.Repository;
@@ -439,15 +440,33 @@ public class Service {
             return result.setter(false, "Fee is negative", "DogAdoption", System.currentTimeMillis());
         }
 
+        // Check ACTIVE status
+        ArrayList<DogAdoption> list = repo.getDogAdoptionsByPersonId(adopter.getId());
+        for (DogAdoption i: list){
+            i.getDog().equals(dog);
+            System.out.println(" Person" + adopter + " yet has this dog");
+            return result.setter(false, "Person yet has this dog", "DogAdoption", System.currentTimeMillis());
+        }
+
+       if (adopter.getDog().size()>=3) {
+           System.out.println(" Person" + adopter + " yet has 3 dog");
+           return result.setter(false, "Person yet has 3 dog", "DogAdoption", System.currentTimeMillis());
+       }
+       if (dog.getOwner().size()>=2) {
+            System.out.println(" Dog" + dog + " yet has 2 owners");
+            return result.setter(false, "Dog yet has 2 owners", "DogAdoption", System.currentTimeMillis());
+        }
+
         System.out.println("Adopter can adopt a dog.");
 
         // adopt dog to adopter
         adopter.setDog(dog);
+        dog.setOwner(adopter);
 
         System.out.println("Settings done, now creating DogAdoption ...");
 
         // create object DogAdoption
-        DogAdoption dogAdoption = new DogAdoption(adopter, dog, new Date(), fee, "Dog adopted for " + fee);
+        DogAdoption dogAdoption = new DogAdoption(adopter, dog, new Date(), fee, "Dog adopted for " + fee + " status is ACTIVATE");
         // save object dogAdoption at repo
         repo.addDogAdoption(dogAdoption);
 
@@ -483,5 +502,55 @@ public class Service {
             System.out.println(exercise);
         }
         return result.setter(true, "Retrieved all DogAdoption.", "DogAdoption", System.currentTimeMillis(), list);
+    }
+
+    // Lists DogsByOwner and OwnersByDog
+    public ResultOperation getDogsByOwner (Person person, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        if(repo.getPersonById(person.getId())==null){
+            System.out.println("repository doesn't have person with id: " + person.getId());
+            return result.setter(false, "repository doesn't have person with id.", "DogAdoption", System.currentTimeMillis(), list);
+        }
+        ArrayList<Person> dogs = person.getDog();
+        if (dogs==null){
+            System.out.println(" Dog doesn't have owners");
+            return result.setter(false, "Dog doesn't have owners for list", "DogAdoption", System.currentTimeMillis(), list);
+        }
+        System.out.println(dogs);
+        return result.setter(true, "list dogs by owner ", "DogAdoption", System.currentTimeMillis(), list)
+    }
+    public ResultOperation getOwnersByDog (Dog dog, Repository repo) {
+        ResultOperation result = new ResultOperation();
+        if(repo.getDogById(dog.getId())==null){
+            System.out.println("Repository doesn't have person with id: " + dog.getId());
+            return result.setter(false, "repository doesn't have dog with id.", "DogAdoption", System.currentTimeMillis(), list);
+        }
+        ArrayList<Person> owners = dog.getOwner();
+        if (owners==null){
+            System.out.println(" Dog doesn't have owners");
+            return result.setter(false, "Dog doesn't have owners for list", "DogAdoption", System.currentTimeMillis(), list);
+        }
+        System.out.println(owners);
+        return result.setter(true, "list owners by dog ", "DogAdoption", System.currentTimeMillis(), list)
+    }
+    public static ResultOperation returnDog (Person person, Dog dog, Repository repo){
+        ResultOperation result = new ResultOperation();
+        ArrayList<DogAdoption> list = repo.getDogAdoptionsByPersonId(person.getId());
+        if (list == null){
+            System.out.println("There aren't dog adoptions with person");
+            return result.setter(false, "There aren't dog adoptions with person", "DogAdoption", System.currentTimeMillis(), list);
+        }
+        for (DogAdoption dA: list){
+            if(dA.getDog().equals(dog)) {
+                dA.getStatus();
+                person.removeDog(dog);
+                dog.removeOwner(person);
+                dA.setContract(dA.getContract() + " - RETURNED");
+                System.out.println(dA);
+                return result.setter(false, "There aren't dog adoptions with person", "DogAdoption", System.currentTimeMillis(), list);
+            }
+        }
+        System.out.println("Person doesn't have this dog");
+        return result.setter(false, "Person doesn't have this dog", "DogAdoption", System.currentTimeMillis(), list);
     }
 }

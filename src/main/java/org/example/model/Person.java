@@ -1,5 +1,6 @@
 package org.example.model;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Person {
@@ -8,7 +9,7 @@ public class Person {
     private String name;
     private int age;
     private Car car;
-    private Dog dog;
+    private ArrayList<Dog> dog;
 
     public Person(){
         this.id = UUID.randomUUID().toString();
@@ -52,16 +53,34 @@ public class Person {
         this.car = car;
     }
 
-    public Dog getDog(){
+    public ArrayList getDog(){
         return this.dog;
     }
 
     public  void setDog(Dog dog){
-        this.dog = dog;
+        if (this.dog == null){
+            this.dog = new ArrayList<>();
+            this.dog.add(dog);
+        } else if (this.dog.size()<3){
+            if (this.dog.contains (dog)){
+                System.out.println("Person yet has " + dog );
+            }
+            this.dog.add(dog);
+        } else if (this.dog.size()>=3){
+            System.out.println(" Person yet has 3 dogs");
+        }
     }
-
+    public void removeDog( Dog dog){
+        if (this.dog.contains(dog)){
+            this.dog.remove(dog);
+        }
+    }
     @Override
     public String toString() {
-        return "Person{id='" + id + "', name='" + name + "', age=" + age + "}";
+        ArrayList<String> namesDog = new ArrayList<>();
+        for (Dog i : this.dog){
+            namesDog.add(i.getName());
+        }
+        return "Person{id='" + id + "', name='" + name + "', age=" + age + "', dog" + namesDog+ "}";
     }
 }

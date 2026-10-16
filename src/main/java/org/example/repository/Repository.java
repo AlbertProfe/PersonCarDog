@@ -122,6 +122,25 @@ public class Repository {
         }
         return null;
     }
+    public ArrayList<DogAdoption> getDogAdoptionsByPersonId (String personId){
+        ArrayList<DogAdoption> dogAdoptionsForPerson = new ArrayList<>();
+        for (DogAdoption dA : dogAdoptions) {
+            if (dA.getAdopter().getId().equals(id)) {
+                dogAdoptionsForPerson.add(dA);
+            }
+        }
+        return dogAdoptionsForPerson;
+    }
+
+    public ArrayList<DogAdoption> getDogAdoptionsByDogId (String dogId) {
+        ArrayList<DogAdoption> dogAdoptionsForDog = new ArrayList<>();
+        for (DogAdoption dA : dogAdoptions) {
+            if (dA.getDog().getId().equals(id)) {
+                dogAdoptionsForDog.add(dA);
+            }
+        }
+        return dogAdoptionsForDog;
+    }
 
     public ArrayList<DogAdoption> getAllDogAdoptions() {
         return dogAdoptions;
