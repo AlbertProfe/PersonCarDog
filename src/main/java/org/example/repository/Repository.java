@@ -27,6 +27,20 @@ public class Repository {
         this.dogAdoptions = new ArrayList<>();
     }
 
+    // ===== Whole repository =====
+    public void clear() {
+        people.clear();
+        cars.clear();
+        dogs.clear();
+        carTransactions.clear();
+        dogAdoptions.clear();
+    }
+
+    public boolean isEmpty() {
+        return people.isEmpty() && cars.isEmpty() && dogs.isEmpty()
+                && carTransactions.isEmpty() && dogAdoptions.isEmpty();
+    }
+
     // ===== Person =====
     public void addPerson(Person person) {
         people.add(person);

@@ -1,5 +1,7 @@
 package org.example.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Dog {
@@ -8,8 +10,8 @@ public class Dog {
     private String name;
     private String breed;
     private int age;
-    // Back-reference to the adopter (bidirectional with Person.dog)
-    private Person owner;
+    // Many-to-many: a dog can have multiple owners (shared custody via DogAdoption)
+    private List<Person> owners = new ArrayList<>();
 
     public Dog() {}
 
@@ -52,18 +54,30 @@ public class Dog {
         this.id = id;
     }
 
-    public Person getOwner() {
-        return owner;
+    public List<Person> getOwners() {
+        return owners;
     }
 
-    public void setOwner(Person owner) {
-        this.owner = owner;
+    public void setOwners(List<Person> owners) {
+        this.owners = owners != null ? owners : new ArrayList<>();
+    }
+
+    // Convenience for Service to maintain both sides safely
+    public void addOwner(Person person) {
+        if (person != null && !owners.contains(person)) {
+            owners.add(person);
+        }
+    }
+
+    public void removeOwner(Person person) {
+        owners.remove(person);
     }
 
     @Override
     public String toString() {
-        // Print only the owner's name, never the full Person, to avoid infinite recursion
-        String ownerName = (owner == null) ? "none" : owner.getName();
-        return "Dog{id='" + id + "', name='" + name + "', breed='" + breed + "', age=" + age + ", owner='" + ownerName + "'}";
+        // Avoid recursion: list only owner names
+        String ownersInfo = owners == null || owners.isEmpty() ? "none" :
+                owners.stream().map(Person::getName).reduce((a, b) -> a + ", " + b).orElse("none");
+        return "Dog{id='" + id + "', name='" + name + "', breed='" + breed + "', age=" + age + ", owners=[" + ownersInfo + "]}";
     }
 }
