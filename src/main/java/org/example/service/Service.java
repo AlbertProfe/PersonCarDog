@@ -6,8 +6,11 @@ import org.example.model.CarTransaction;
 import org.example.model.Dog;
 import org.example.model.DogAdoption;
 import org.example.model.Person;
+import org.example.persistence.JsonStore;
 import org.example.utils.ResultOperation;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -501,5 +504,43 @@ public class Service {
         System.out.println(adoption);
 
         return result.setter(true, "Dog adopted successfully.", "DogAdoption", System.currentTimeMillis(), adoption);
+    }
+
+    // ========== PERSISTENCE (JSON FILE) ==========
+
+    public static ResultOperation saveRepository(Path path, Repository repo) {
+        System.out.println("Welcome to SAVE REPOSITORY");
+        ResultOperation result = new ResultOperation();
+        try {
+            JsonStore.save(repo, path);
+            System.out.println("Repository saved to " + path.toAbsolutePath());
+            return result.setter(true, "Repository saved.", "Repository", System.currentTimeMillis(), path.toString());
+        } catch (IOException e) {
+            System.out.println("Could not save repository: " + e.getMessage());
+            return result.setter(false, "Could not save repository: " + e.getMessage(), "Repository", System.currentTimeMillis());
+        }
+    }
+
+    public static ResultOperation loadRepository(Path path, Repository repo) {
+        System.out.println("Welcome to LOAD REPOSITORY");
+        ResultOperation result = new ResultOperation();
+        if (!JsonStore.exists(path)) {
+            System.out.println("File not found: " + path.toAbsolutePath());
+            return result.setter(false, "File not found.", "Repository", System.currentTimeMillis());
+        }
+        try {
+            repo.clear();
+            JsonStore.load(repo, path);
+            System.out.println("Repository loaded from " + path.toAbsolutePath());
+            System.out.println("People: " + repo.getAllPeople().size()
+                    + " | Cars: " + repo.getAllCars().size()
+                    + " | Dogs: " + repo.getAllDogs().size()
+                    + " | Transactions: " + repo.getAllCarTransactions().size()
+                    + " | Adoptions: " + repo.getAllDogAdoptions().size());
+            return result.setter(true, "Repository loaded.", "Repository", System.currentTimeMillis(), path.toString());
+        } catch (IOException e) {
+            System.out.println("Could not load repository: " + e.getMessage());
+            return result.setter(false, "Could not load repository: " + e.getMessage(), "Repository", System.currentTimeMillis());
+        }
     }
 }

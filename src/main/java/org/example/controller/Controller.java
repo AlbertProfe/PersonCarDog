@@ -5,6 +5,7 @@ import org.example.model.Car;
 import org.example.model.Dog;
 import org.example.model.Person;
 
+import org.example.persistence.JsonStore;
 import org.example.repository.Repository;
 import org.example.service.Service;
 import org.example.utils.DataSeeder;
@@ -23,9 +24,13 @@ public class Controller {
         //    and we need it in the service, so we create it here
         Repository repo = new Repository();
 
-        // 2. We populate the repo with dummy data using DataSeeder and Java Faker
-        //    This is just for demo purposes
-        DataSeeder.seedRepository(repo);
+        // 2. If a saved JSON file exists we load it (repo survives restarts),
+        //    otherwise we populate the repo with dummy data using DataSeeder and Java Faker
+        if (JsonStore.exists(JsonStore.DEFAULT_PATH)) {
+            Service.loadRepository(JsonStore.DEFAULT_PATH, repo);
+        } else {
+            DataSeeder.seedRepository(repo);
+        }
         Scanner scan = new Scanner(System.in);
 
         while (true) {
@@ -57,6 +62,12 @@ public class Controller {
                     dogAdoptionSubMenu(scan, repo);
                     break;
                 case "8":
+                    Service.saveRepository(JsonStore.DEFAULT_PATH, repo);
+                    break;
+                case "9":
+                    Service.loadRepository(JsonStore.DEFAULT_PATH, repo);
+                    break;
+                case "10":
                     System.out.println("Goodbye!");
                     return;
                 default:
