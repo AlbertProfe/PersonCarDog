@@ -25,8 +25,8 @@ public class Controller {
 
         // 2. If a saved JSON file exists we load it (repo survives restarts),
         //    otherwise we populate the repo with dummy data using DataSeeder and Java Faker
-        if (org.example.persistence.JsonStore.exists(org.example.persistence.JsonStore.DEFAULT_PATH)) {
-            Service.loadRepository(org.example.persistence.JsonStore.DEFAULT_PATH, repo);
+        if (JsonStore.exists(JsonStore.DEFAULT_PATH)) {
+            Service.loadRepository(JsonStore.DEFAULT_PATH, repo);
         } else {
             DataSeeder.seedRepository(repo);
         }
