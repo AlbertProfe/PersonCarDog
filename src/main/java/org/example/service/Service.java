@@ -473,7 +473,7 @@ public class Service {
         // PRINT
         System.out.println(dogAdoption);
 
-        return result.setter(true, "Dog adopted successfully.", "DogAdoption", System.currentTimeMillis(), transaction);
+        return result.setter(true, "Dog adopted successfully.", "DogAdoption", System.currentTimeMillis(), dogAdoption);
     }
 
 
@@ -509,30 +509,30 @@ public class Service {
         ResultOperation result = new ResultOperation();
         if(repo.getPersonById(person.getId())==null){
             System.out.println("repository doesn't have person with id: " + person.getId());
-            return result.setter(false, "repository doesn't have person with id.", "DogAdoption", System.currentTimeMillis(), list);
+            return result.setter(false, "repository doesn't have person with id.", "DogAdoption", System.currentTimeMillis(), repo);
         }
         ArrayList<Person> dogs = person.getDog();
         if (dogs==null){
             System.out.println(" Dog doesn't have owners");
-            return result.setter(false, "Dog doesn't have owners for list", "DogAdoption", System.currentTimeMillis(), list);
+            return result.setter(false, "Dog doesn't have owners for list", "DogAdoption", System.currentTimeMillis(), repo);
         }
         System.out.println(dogs);
-        return result.setter(true, "list dogs by owner ", "DogAdoption", System.currentTimeMillis(), list)
+        return result.setter(true, "list dogs by owner ", "DogAdoption", System.currentTimeMillis(), repo);
     }
     public ResultOperation getOwnersByDog (Dog dog, Repository repo) {
         ResultOperation result = new ResultOperation();
         if(repo.getDogById(dog.getId())==null){
             System.out.println("Repository doesn't have person with id: " + dog.getId());
-            return result.setter(false, "repository doesn't have dog with id.", "DogAdoption", System.currentTimeMillis(), list);
+            return result.setter(false, "repository doesn't have dog with id.", "DogAdoption", System.currentTimeMillis(), repo);
         }
         ArrayList<Person> owners = dog.getOwner();
         if (owners==null){
             System.out.println(" Dog doesn't have owners");
-            return result.setter(false, "Dog doesn't have owners for list", "DogAdoption", System.currentTimeMillis(), list);
+            return result.setter(false, "Dog doesn't have owners for list", "DogAdoption", System.currentTimeMillis(), repo);
         }
         System.out.println(owners);
-        return result.setter(true, "list owners by dog ", "DogAdoption", System.currentTimeMillis(), list)
-    }
+        return result.setter(true, "list owners by dog ", "DogAdoption", System.currentTimeMillis(), repo);
+            }
     public static ResultOperation returnDog (Person person, Dog dog, Repository repo){
         ResultOperation result = new ResultOperation();
         ArrayList<DogAdoption> list = repo.getDogAdoptionsByPersonId(person.getId());
