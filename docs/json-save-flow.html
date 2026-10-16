@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Persistence – SAVE Flow</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 16px 60px;
+      color: #334155;
+    }
+    h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-align: center;
+      color: #1e293b;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    /* ===== DIAGRAM ===== */
+    .diagram {
+      width: 100%;
+      max-width: 960px;
+      position: relative;
+      padding: 28px 0 8px;
+    }
+    .line {
+      position: absolute;
+      top: 58px;
+      left: 6%;
+      right: 6%;
+      height: 3px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .line-progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #14b8a6, #f59e0b, #22c55e);
+      border-radius: 2px;
+      transition: width 0.8s ease;
+    }
+    .points {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+    .point {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 18%;
+      text-align: center;
+      opacity: 0.35;
+      transform: scale(0.94);
+      transition: all 0.45s ease;
+    }
+    .point.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f8fafc;
+      background: #94a3b8;
+      box-shadow: 0 4px 14px rgba(100, 116, 139, 0.25);
+      margin-bottom: 10px;
+      transition: all 0.35s ease;
+    }
+    .point:nth-child(1).active .circle {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+      transform: scale(1.06);
+    }
+    .point:nth-child(2).active .circle {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+      transform: scale(1.06);
+    }
+    .point:nth-child(3).active .circle {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+      transform: scale(1.06);
+    }
+    .point:nth-child(4).active .circle {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
+      transform: scale(1.06);
+    }
+    .point:nth-child(5).active .circle {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+      transform: scale(1.06);
+    }
+    .label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+      color: #1e293b;
+    }
+    .desc {
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.35;
+      max-width: 140px;
+    }
+    .arrow {
+      position: absolute;
+      top: 52px;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .arrow.visible { opacity: 1; }
+    .arrow-1 { left: 22%; }
+    .arrow-1.visible { color: #3b82f6; }
+    .arrow-2 { left: 40.5%; }
+    .arrow-2.visible { color: #8b5cf6; }
+    .arrow-3 { left: 59%; }
+    .arrow-3.visible { color: #14b8a6; }
+    .arrow-4 { left: 77.5%; }
+    .arrow-4.visible { color: #f59e0b; }
+
+    /* ===== CONTROLS ===== */
+    .controls {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-start {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #f8fafc;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-start:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+    }
+    .btn-start:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-advance {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      color: #f8fafc;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+    }
+    .btn-advance:hover {
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      transform: translateY(-1px);
+    }
+    .btn-advance:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-reset {
+      background: #f8fafc;
+      color: #475569;
+      border: 1.5px solid #cbd5e1;
+    }
+    .btn-reset:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .status {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: #64748b;
+      min-height: 22px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .status.done { color: #16a34a; }
+
+    /* ===== INFO CARDS ===== */
+    .info-section {
+      width: 100%;
+      max-width: 960px;
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+    }
+    .info-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(148, 163, 184, 0.12);
+      opacity: 0;
+      transform: translateY(-12px);
+      transition: all 0.5s ease;
+      display: none;
+    }
+    .info-card.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .info-card.current {
+      border-color: #94a3b8;
+      box-shadow: 0 4px 16px rgba(100, 116, 139, 0.18);
+    }
+    .info-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .info-card h3 .badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 22px;
+    }
+    .info-item {
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+    .info-item strong {
+      display: block;
+      color: #334155;
+      font-weight: 600;
+      margin-bottom: 2px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .info-item p { color: #64748b; }
+    .info-item.full { grid-column: 1 / -1; }
+    .info-item code, .info-card code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.84em;
+      color: #0f766e;
+    }
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      overflow-x: auto;
+      white-space: pre;
+      margin-top: 8px;
+    }
+    .note {
+      margin-top: 24px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      text-align: center;
+      max-width: 640px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 800px) {
+      .points { flex-direction: column; gap: 24px; align-items: center; }
+      .line, .arrow { display: none; }
+      .point { width: 80%; }
+      .info-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.35rem; }
+      .controls { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <h1>JSON Persistence – SAVE Flow</h1>
+  <p class="subtitle">Repository → Snapshot → JSON file &nbsp;·&nbsp; PersonCarDog teaching diagram</p>
+
+  <div class="diagram">
+    <div class="line"><div class="line-progress" id="progress"></div></div>
+    <div class="arrow arrow-1" id="arrow1">→</div>
+    <div class="arrow arrow-2" id="arrow2">→</div>
+    <div class="arrow arrow-3" id="arrow3">→</div>
+    <div class="arrow arrow-4" id="arrow4">→</div>
+    <div class="points">
+      <div class="point" id="point1">
+        <div class="circle">Svc</div>
+        <div class="label">Service</div>
+        <div class="desc">saveRepository()</div>
+      </div>
+      <div class="point" id="point2">
+        <div class="circle">JS</div>
+        <div class="label">JsonStore</div>
+        <div class="desc">save(repo, path)</div>
+      </div>
+      <div class="point" id="point3">
+        <div class="circle">DTO</div>
+        <div class="label">toSnapshot</div>
+        <div class="desc">Entities → DTOs</div>
+      </div>
+      <div class="point" id="point4">
+        <div class="circle">Jack</div>
+        <div class="label">Jackson</div>
+        <div class="desc">writeValue()</div>
+      </div>
+      <div class="point" id="point5">
+        <div class="circle">JSON</div>
+        <div class="label">repo.json</div>
+        <div class="desc">data/repo.json</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-start" id="startBtn" onclick="startProgression()">▶ Start Auto (8s)</button>
+    <button class="btn btn-advance" id="advanceBtn" onclick="advanceStep()" disabled>Next →</button>
+    <button class="btn btn-reset" id="resetBtn" onclick="resetProgression()">Reset</button>
+  </div>
+  <div class="status" id="status">Click “Start Auto” or use “Next” to walk through the SAVE flow</div>
+
+  <div class="info-section" id="infoSection"></div>
+
+  <p class="note">
+    This is the path data takes when the user chooses “Save repository”.<br>
+    In Spring Boot the same responsibility is handled by the database + JPA/Hibernate.
+  </p>
+
+  <script>
+    const STEPS = [
+      {
+        point: 'point1',
+        arrow: null,
+        progress: '0%',
+        title: 'Service.saveRepository()',
+        badge: 'Entry point',
+        status: '① Service — the public API the Controller calls',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What happens</strong><p>The Controller (or menu) calls <code>Service.saveRepository(path, repo)</code>. This is the only method the UI talks to for persistence.</p></div>
+            <div class="info-item"><strong>Responsibilities</strong><p>Print a welcome message, catch any <code>IOException</code>, and wrap the result in a <code>ResultOperation</code> (success / failure + message).</p></div>
+            <div class="info-item"><strong>Why this layer</strong><p>Keeps the Controller free of file-system details. Later, in Spring Boot, this becomes a <code>@Service</code> method that may also start a transaction.</p></div>
+            <div class="info-item"><strong>Code sketch</strong>
+              <div class="code-block">public static ResultOperation saveRepository(Path path, Repository repo) {
+  try {
+    JsonStore.save(repo, path);
+    return result.setter(true, "Repository saved.", ...);
+  } catch (IOException e) {
+    return result.setter(false, "Could not save: " + e.getMessage(), ...);
+  }
+}</div>
+            </div>
+          </div>`
+      },
+      {
+        point: 'point2',
+        arrow: 'arrow1',
+        progress: '25%',
+        title: 'JsonStore.save()',
+        badge: 'Persistence layer',
+        status: '② JsonStore.save — orchestrates the whole write',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What happens</strong><p><code>JsonStore.save(repo, path)</code> is the real persistence entry. It converts the live object graph into a Snapshot and then writes it to disk.</p></div>
+            <div class="info-item"><strong>Key lines</strong><p>1. <code>RepositorySnapshot snapshot = toSnapshot(repo);</code><br>2. Create parent directories if needed<br>3. <code>MAPPER.writerWithDefaultPrettyPrinter().writeValue(...)</code></p></div>
+            <div class="info-item"><strong>Analogy</strong><p>This class plays the role that a real database + JDBC/Hibernate play in Spring Boot: it is the bridge between the in-memory Repository and durable storage.</p></div>
+            <div class="info-item"><strong>Default path</strong><p><code>Path.of("data", "repo.json")</code> — relative to the working directory. The <code>data/</code> folder is created automatically.</p></div>
+          </div>`
+      },
+      {
+        point: 'point3',
+        arrow: 'arrow2',
+        progress: '50%',
+        title: 'toSnapshot() — Entities → DTOs',
+        badge: 'Mapping',
+        status: '③ toSnapshot — break the object graph into flat DTOs',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>Problem it solves</strong><p>Domain objects contain references (Person → Car, Person ↔ Dog). Serializing them directly produces cycles and duplicated objects. A Snapshot stores only IDs (like foreign keys).</p></div>
+            <div class="info-item"><strong>What it does</strong><p>Walks every list in the Repository (<code>cars</code>, <code>people</code>, <code>dogs</code>, <code>carTransactions</code>, <code>dogAdoptions</code>) and builds simple DTO objects that hold scalar fields + foreign-key IDs.</p></div>
+            <div class="info-item full"><strong>Example transformation</strong>
+              <div class="code-block">// Live object
+Person p = ...;          // p.getCar() → Car instance
+p.getDog() → Dog instance
+
+// Snapshot DTO
+PersonDto dto = new PersonDto();
+dto.id    = p.getId();
+dto.name  = p.getName();
+dto.age   = p.getAge();
+dto.carId = idOf(p.getCar());   // "c-uuid-..." or null
+dto.dogId = idOf(p.getDog());   // "d-uuid-..." or null</div>
+            </div>
+            <div class="info-item full"><strong>Spring Boot parallel</strong><p>In JPA you annotate the relation with <code>@ManyToOne</code> / <code>@OneToOne</code> and the ORM stores the foreign-key column for you. Here you write the mapping by hand so students see exactly what happens under the hood.</p></div>
+          </div>`
+      },
+      {
+        point: 'point4',
+        arrow: 'arrow3',
+        progress: '75%',
+        title: 'Jackson writeValue()',
+        badge: 'Serialization',
+        status: '④ Jackson — turn the Snapshot into pretty JSON',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>What happens</strong><p>A static <code>ObjectMapper</code> (Jackson) receives the <code>RepositorySnapshot</code> and writes it as a human-readable JSON file.</p></div>
+            <div class="info-item"><strong>Why pretty printer</strong><p><code>writerWithDefaultPrettyPrinter()</code> adds indentation and line breaks so students can open <code>repo.json</code> in an editor and understand the structure.</p></div>
+            <div class="info-item"><strong>What is written</strong><p>Five top-level arrays: <code>people</code>, <code>cars</code>, <code>dogs</code>, <code>carTransactions</code>, <code>dogAdoptions</code>. Each element is a plain DTO with IDs instead of nested objects.</p></div>
+            <div class="info-item"><strong>Spring Boot parallel</strong><p>Jackson is the same library Spring uses for HTTP JSON. In a real app the “write” step is performed by the database driver writing rows; Jackson is used only for the REST layer.</p></div>
+          </div>`
+      },
+      {
+        point: 'point5',
+        arrow: 'arrow4',
+        progress: '100%',
+        title: 'data/repo.json',
+        badge: 'Durable storage',
+        status: '⑤ JSON file on disk — the “database” for this project',
+        html: `
+          <div class="info-grid">
+            <div class="info-item"><strong>Result</strong><p>A single file contains the complete state of the Repository. When the application restarts, <code>JsonStore.load()</code> can rebuild the entire object graph from this file.</p></div>
+            <div class="info-item"><strong>File shape (simplified)</strong>
+              <div class="code-block">{
+  "people": [ { "id":"p1", "name":"Alice", "carId":"c1", "dogId":"d2" } ],
+  "cars":   [ { "id":"c1", "make":"Toyota", "model":"Corolla", "year":2020 } ],
+  "dogs":   [ { "id":"d2", "name":"Buddy", "ownerId":"p1" } ],
+  "carTransactions": [ ... ],
+  "dogAdoptions":    [ ... ]
+}</div>
+            </div>
+            <div class="info-item full"><strong>Teaching takeaway</strong><p>You have implemented the essential persistence cycle by hand: live object graph → flat ID-based representation → durable file. In Spring Boot + JPA the same cycle exists, but the framework performs the mapping and the two-pass loading automatically.</p></div>
+          </div>`
+      }
+    ];
+
+    let currentStep = -1;
+    let autoTimer = null;
+    let isAuto = false;
+
+    function showStep(index) {
+      if (index < 0 || index >= STEPS.length) return;
+      const step = STEPS[index];
+      currentStep = index;
+
+      document.getElementById(step.point).classList.add('active');
+      if (step.arrow) document.getElementById(step.arrow).classList.add('visible');
+      document.getElementById('progress').style.width = step.progress;
+
+      const section = document.getElementById('infoSection');
+      section.querySelectorAll('.info-card').forEach(c => c.classList.remove('current'));
+
+      const card = document.createElement('div');
+      card.className = 'info-card visible current';
+      card.innerHTML = `<h3>${step.title} <span class="badge">${step.badge}</span></h3>${step.html}`;
+      section.insertBefore(card, section.firstChild);
+
+      document.getElementById('status').textContent = step.status;
+      document.getElementById('status').classList.toggle('done', index === STEPS.length - 1);
+
+      document.getElementById('advanceBtn').disabled = index >= STEPS.length - 1;
+      document.getElementById('startBtn').disabled = true;
+
+      if (index === STEPS.length - 1) {
+        stopAuto();
+        document.getElementById('status').textContent = '✓ Complete — the whole Repository is now persisted as JSON';
+      }
+    }
+
+    function advanceStep() {
+      if (currentStep >= STEPS.length - 1) return;
+      showStep(currentStep + 1);
+    }
+
+    function startProgression() {
+      resetProgression(false);
+      isAuto = true;
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('advanceBtn').disabled = false;
+      showStep(0);
+      autoTimer = setInterval(() => {
+        if (currentStep < STEPS.length - 1) {
+          showStep(currentStep + 1);
+        } else {
+          stopAuto();
+        }
+      }, 8000);
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+      isAuto = false;
+    }
+
+    function resetProgression(clearStatus = true) {
+      stopAuto();
+      currentStep = -1;
+      ['point1','point2','point3','point4','point5'].forEach(id =>
+        document.getElementById(id).classList.remove('active'));
+      ['arrow1','arrow2','arrow3','arrow4'].forEach(id =>
+        document.getElementById(id).classList.remove('visible'));
+      document.getElementById('progress').style.width = '0%';
+      document.getElementById('infoSection').innerHTML = '';
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('advanceBtn').disabled = true;
+      if (clearStatus) {
+        document.getElementById('status').textContent = 'Click “Start Auto” or use “Next” to walk through the SAVE flow';
+        document.getElementById('status').classList.remove('done');
+      }
+    }
+  </script>
+</body>
+</html>

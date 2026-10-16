@@ -10,7 +10,6 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: #f1f5f9;
@@ -21,7 +20,6 @@
       padding: 48px 20px 60px;
       color: #334155;
     }
-
     h1 {
       font-size: 1.9rem;
       font-weight: 700;
@@ -29,7 +27,6 @@
       margin-bottom: 8px;
       text-align: center;
     }
-
     .subtitle {
       font-size: 1rem;
       color: #64748b;
@@ -38,16 +35,14 @@
       max-width: 520px;
       line-height: 1.5;
     }
-
     .cards {
       display: flex;
       gap: 28px;
       flex-wrap: wrap;
       justify-content: center;
-      max-width: 900px;
+      max-width: 1100px;
       width: 100%;
     }
-
     .card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -61,13 +56,11 @@
       display: flex;
       flex-direction: column;
     }
-
     .card:hover {
       transform: translateY(-4px);
       box-shadow: 0 10px 28px rgba(148, 163, 184, 0.22);
       border-color: #cbd5e1;
     }
-
     .card-icon {
       width: 52px;
       height: 52px;
@@ -80,29 +73,30 @@
       color: white;
       margin-bottom: 18px;
     }
-
     .card:nth-child(1) .card-icon {
       background: linear-gradient(135deg, #3b82f6, #2563eb);
     }
-
     .card:nth-child(2) .card-icon {
       background: linear-gradient(135deg, #14b8a6, #0d9488);
     }
-
+    .card:nth-child(3) .card-icon {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+    .card:nth-child(4) .card-icon {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
     .card h2 {
       font-size: 1.2rem;
       font-weight: 700;
       color: #1e293b;
       margin-bottom: 10px;
     }
-
     .card p {
       font-size: 0.9rem;
       color: #64748b;
       line-height: 1.5;
       flex-grow: 1;
     }
-
     .card .cta {
       margin-top: 20px;
       font-size: 0.88rem;
@@ -112,18 +106,21 @@
       align-items: center;
       gap: 6px;
     }
-
     .card:nth-child(2) .cta {
       color: #0d9488;
     }
-
+    .card:nth-child(3) .cta {
+      color: #7c3aed;
+    }
+    .card:nth-child(4) .cta {
+      color: #d97706;
+    }
     .footer {
       margin-top: 56px;
       font-size: 0.82rem;
       color: #94a3b8;
       text-align: center;
     }
-
     @media (max-width: 760px) {
       .cards {
         flex-direction: column;
@@ -140,15 +137,12 @@
   </style>
 </head>
 <body>
-
   <h1>Java SE → Spring Boot</h1>
   <p class="subtitle">
     Interactive diagrams for students.<br>
-    Understand the progression and the full technology stack.
+    Understand the progression, the stack, and JSON persistence.
   </p>
-
   <div class="cards">
-
     <!-- Card 1 -->
     <a href="java-project-progression.html" class="card">
       <div class="card-icon">1</div>
@@ -158,7 +152,6 @@
       </p>
       <div class="cta">Open diagram →</div>
     </a>
-
     <!-- Card 2 -->
     <a href="java-stack-pyramid.html" class="card">
       <div class="card-icon">2</div>
@@ -168,22 +161,27 @@
       </p>
       <div class="cta">Open diagram →</div>
     </a>
-
     <!-- Card 3 -->
     <a href="json-persistence-diagram.html" class="card">
       <div class="card-icon">3</div>
       <h2>JSON Persistence Explained</h2>
       <p>
-        How PersonCarDog saves the in-memory Repository to a JSON file and why this is the perfect bridge to Spring Boot + JPA
+        How PersonCarDog saves the in-memory Repository to a JSON file and why this is the perfect bridge to Spring Boot + JPA.
       </p>
       <div class="cta">Open diagram →</div>
     </a>
-
+    <!-- Card 4 -->
+    <a href="json-save-flow.html" class="card">
+      <div class="card-icon">4</div>
+      <h2>JSON SAVE Flow</h2>
+      <p>
+        Step-by-step interactive walkthrough: Service → JsonStore → toSnapshot → Jackson → data/repo.json.
+      </p>
+      <div class="cta">Open diagram →</div>
+    </a>
   </div>
-
   <p class="footer">
     Made for teaching Java students · Click a card to explore
   </p>
-
 </body>
 </html>
