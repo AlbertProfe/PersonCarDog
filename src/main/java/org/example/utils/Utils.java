@@ -33,7 +33,9 @@ public class Utils {
         System.out.println("5. View car transactions (read only)");
         System.out.println("6. Adopt a dog (person <- dog)");
         System.out.println("7. View dog adoptions (read only)");
-        System.out.println("8. Quit");
+        System.out.println("8. Save repository to JSON file");
+        System.out.println("9. Load repository from JSON file");
+        System.out.println("10. Quit");
     }
 
     public static void personMenu() {
