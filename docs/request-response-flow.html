@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request → Response Flow – PersonCarDog</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 50px;
+      color: #334155;
+    }
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+    .subtitle {
+      font-size: 0.92rem;
+      color: #64748b;
+      margin-bottom: 22px;
+      text-align: center;
+      max-width: 580px;
+      line-height: 1.45;
+    }
+
+    /* ===== SCENARIO BUTTONS ===== */
+    .scenarios {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+    .scenario-btn {
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .scenario-btn:hover {
+      border-color: #94a3b8;
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+    .scenario-btn.active {
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .scenario-btn[data-id="adopt"].active {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+    .scenario-btn[data-id="buy"].active {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+    .scenario-btn[data-id="list"].active {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+    }
+    .scenario-btn[data-id="save"].active {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    /* ===== DIAGRAM CANVAS ===== */
+    .diagram-wrap {
+      width: 100%;
+      max-width: 820px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 28px 24px 20px;
+      box-shadow: 0 4px 16px rgba(148,163,184,0.12);
+      position: relative;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 14px 18px;
+      position: relative;
+      min-height: 340px;
+    }
+
+    /* Layer boxes */
+    .box {
+      border-radius: 12px;
+      padding: 14px 12px;
+      text-align: center;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      transition: all 0.4s ease;
+      opacity: 0.38;
+      transform: scale(0.96);
+      position: relative;
+      z-index: 2;
+    }
+    .box .box-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 3px;
+      transition: color 0.3s;
+    }
+    .box .box-sub {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.3;
+    }
+    .box.active {
+      opacity: 1;
+      transform: scale(1);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .box.active .box-title { color: #1e293b; }
+    .box.active .box-sub { color: #64748b; }
+
+    /* Colours when active */
+    .box.cli.active {
+      border-color: #3b82f6;
+      background: linear-gradient(160deg, #eff6ff, #dbeafe);
+    }
+    .box.controller.active {
+      border-color: #6366f1;
+      background: linear-gradient(160deg, #eef2ff, #e0e7ff);
+    }
+    .box.service.active {
+      border-color: #8b5cf6;
+      background: linear-gradient(160deg, #f5f3ff, #ede9fe);
+    }
+    .box.repo.active {
+      border-color: #14b8a6;
+      background: linear-gradient(160deg, #f0fdfa, #ccfbf1);
+    }
+    .box.persistence.active {
+      border-color: #f59e0b;
+      background: linear-gradient(160deg, #fffbeb, #fef3c7);
+    }
+    .box.response.active {
+      border-color: #22c55e;
+      background: linear-gradient(160deg, #f0fdf4, #dcfce7);
+    }
+
+    /* Grid placement */
+    .box.cli         { grid-column: 1; grid-row: 1; }
+    .box.controller  { grid-column: 1; grid-row: 2; }
+    .box.service     { grid-column: 2; grid-row: 2; }
+    .box.repo        { grid-column: 3; grid-row: 1 / 3; display: flex; flex-direction: column; justify-content: center; }
+    .box.persistence { grid-column: 2; grid-row: 3; }
+    .box.response    { grid-column: 1; grid-row: 3; }
+
+    /* Arrows (SVG overlay) */
+    .arrows {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .arrows path {
+      fill: none;
+      stroke: #cbd5e1;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.4s, opacity 0.4s;
+      opacity: 0.35;
+    }
+    .arrows path.lit {
+      opacity: 1;
+      stroke-width: 3;
+    }
+    .arrows path.lit.req { stroke: #3b82f6; }
+    .arrows path.lit.res { stroke: #22c55e; }
+    .arrows path.lit.persist { stroke: #f59e0b; }
+
+    /* Data packet */
+    .packet {
+      position: absolute;
+      z-index: 10;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+      background: #3b82f6;
+      box-shadow: 0 3px 10px rgba(59,130,246,0.4);
+      white-space: nowrap;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+    .packet.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .packet.response {
+      background: #22c55e;
+      box-shadow: 0 3px 10px rgba(34,197,94,0.4);
+    }
+    .packet.persist {
+      background: #f59e0b;
+      box-shadow: 0 3px 10px rgba(245,158,11,0.4);
+    }
+
+    /* ===== CONTROLS ===== */
+    .controls {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-play {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(37,99,235,0.3);
+    }
+    .btn-play:hover { transform: translateY(-1px); }
+    .btn-play:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .btn-next {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(13,148,136,0.25);
+    }
+    .btn-next:hover { transform: translateY(-1px); }
+    .btn-next:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .btn-reset {
+      background: #fff;
+      color: #475569;
+      border: 1.5px solid #cbd5e1;
+    }
+    .btn-reset:hover { background: #f8fafc; }
+
+    .status {
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: #64748b;
+      text-align: center;
+      min-height: 22px;
+      font-weight: 500;
+    }
+    .status.done { color: #16a34a; }
+
+    /* ===== STEP CARDS (stack: newest on top) ===== */
+    .cards-section {
+      width: 100%;
+      max-width: 820px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .step-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(148,163,184,0.1);
+      opacity: 0;
+      transform: translateY(-12px);
+      transition: all 0.45s ease;
+      display: none;
+    }
+    .step-card.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .step-card.current {
+      border-color: #94a3b8;
+      box-shadow: 0 4px 16px rgba(100, 116, 139, 0.18);
+    }
+    .step-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .step-card .badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .step-card p {
+      font-size: 0.88rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    .step-card code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.84em;
+      color: #0f766e;
+    }
+    .step-card .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.76rem;
+      line-height: 1.4;
+      overflow-x: auto;
+      white-space: pre;
+      margin-top: 8px;
+    }
+    .step-card .spring {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #7c3aed;
+      font-weight: 500;
+    }
+
+    .legend {
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        min-height: auto;
+      }
+      .box.cli, .box.controller, .box.service,
+      .box.repo, .box.persistence, .box.response {
+        grid-column: 1;
+        grid-row: auto;
+      }
+      .arrows { display: none; }
+      h1 { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Request → Response Flow</h1>
+  <p class="subtitle">
+    How a console action travels through the layers and comes back as a ResultOperation.<br>
+    Pick a scenario, then Play or step through.
+  </p>
+
+  <!-- Scenario buttons -->
+  <div class="scenarios">
+    <button class="scenario-btn" data-id="adopt" onclick="selectScenario('adopt')">Adopt a dog</button>
+    <button class="scenario-btn" data-id="buy" onclick="selectScenario('buy')">Buy a car</button>
+    <button class="scenario-btn" data-id="list" onclick="selectScenario('list')">List people</button>
+    <button class="scenario-btn" data-id="save" onclick="selectScenario('save')">Save repository</button>
+  </div>
+
+  <!-- Diagram -->
+  <div class="diagram-wrap" id="diagramWrap">
+    <div class="grid" id="grid">
+      <div class="box cli" id="box-cli">
+        <div class="box-title">CLI / Utils</div>
+        <div class="box-sub">menus · askString · askInt<br>print result</div>
+      </div>
+      <div class="box controller" id="box-controller">
+        <div class="box-title">Controller</div>
+        <div class="box-sub">parse choice · resolve IDs<br>call Service</div>
+      </div>
+      <div class="box service" id="box-service">
+        <div class="box-title">Service</div>
+        <div class="box-sub">business rules<br>ResultOperation</div>
+      </div>
+      <div class="box repo" id="box-repo">
+        <div class="box-title">Repository + Model</div>
+        <div class="box-sub">ArrayLists (tables)<br>Person · Car · Dog · …</div>
+      </div>
+      <div class="box persistence" id="box-persistence">
+        <div class="box-title">Persistence</div>
+        <div class="box-sub">JsonStore · Snapshot<br>data/repo.json</div>
+      </div>
+      <div class="box response" id="box-response">
+        <div class="box-title">Response</div>
+        <div class="box-sub">ResultOperation<br>printed to console</div>
+      </div>
+    </div>
+
+    <!-- SVG arrows (approximate positions relative to the grid) -->
+    <svg class="arrows" id="arrows" viewBox="0 0 800 360" preserveAspectRatio="none">
+      <!-- CLI → Controller (down) -->
+      <path id="arr-cli-ctrl" d="M 130 95 L 130 140" />
+      <!-- Controller → Service (right) -->
+      <path id="arr-ctrl-svc" d="M 220 190 L 300 190" />
+      <!-- Service → Repo (right) -->
+      <path id="arr-svc-repo" d="M 500 190 L 580 190" />
+      <!-- Service → Persistence (down) -->
+      <path id="arr-svc-pers" d="M 400 230 L 400 280" />
+      <!-- Persistence → Response path (left then up-ish) - simplified return -->
+      <path id="arr-pers-back" d="M 300 310 L 130 310" />
+      <!-- Repo → Service return (left) -->
+      <path id="arr-repo-back" d="M 580 210 L 500 210" />
+      <!-- Service → Controller return (left) -->
+      <path id="arr-svc-back" d="M 300 210 L 220 210" />
+      <!-- Controller → Response (down) -->
+      <path id="arr-ctrl-resp" d="M 130 240 L 130 280" />
+    </svg>
+
+    <div class="packet" id="packet"></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-play" id="playBtn" onclick="playFlow()" disabled>▶ Play</button>
+    <button class="btn btn-next" id="nextBtn" onclick="nextStep()" disabled>Next →</button>
+    <button class="btn btn-reset" id="resetBtn" onclick="resetFlow()">Reset</button>
+  </div>
+  <div class="status" id="status">Choose a scenario above to begin</div>
+
+  <!-- Step cards stack (newest on top) -->
+  <div class="cards-section" id="cardsSection"></div>
+
+  <p class="legend">
+    Coloured boxes = used by this scenario &nbsp;·&nbsp; Grey boxes = not used<br>
+    Blue path = request &nbsp;·&nbsp; Green path = response &nbsp;·&nbsp; Amber = persistence
+  </p>
+
+  <script>
+    /* ============================================================
+       FLOW DEFINITIONS
+       ============================================================ */
+    const FLOWS = {
+      adopt: {
+        name: 'Adopt a dog',
+        used: ['cli', 'controller', 'service', 'repo', 'response'],
+        steps: [
+          {
+            boxes: ['cli'],
+            arrows: [],
+            packet: { text: 'user input', x: 12, y: 8 },
+            title: 'CLI / Utils – user chooses “Adopt a dog”',
+            badge: 'Request starts',
+            body: `<p>Utils prints the main menu. User selects option 6 and enters <code>personId</code>, <code>dogId</code> and <code>fee</code> via <code>askString</code> / <code>askInt</code>.</p>
+                   <div class="code-block">Utils.mainMenu();
+String personId = Utils.askString(scan, "Adopter ID: ");
+String dogId    = Utils.askString(scan, "Dog ID: ");
+int fee         = Utils.askInt(scan, "Fee: ");</div>
+                   <p class="spring">Spring parallel: @RestController receives a POST body</p>`
+          },
+          {
+            boxes: ['cli', 'controller'],
+            arrows: ['arr-cli-ctrl'],
+            packet: { text: '{personId, dogId, fee}', x: 12, y: 28 },
+            title: 'Controller – resolve objects & delegate',
+            badge: 'Orchestration',
+            body: `<p>Controller looks up the Person and Dog by ID from the Repository, then calls the Service. All validation stays in the Service.</p>
+                   <div class="code-block">Person adopter = repo.getPersonById(personId);
+Dog dog = repo.getDogById(dogId);
+ResultOperation result = Service.adoptDog(adopter, dog, fee, repo);</div>
+                   <p class="spring">Spring parallel: @PostMapping("/adoptions") → service.adoptDog(...)</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc'],
+            packet: { text: 'adopter, dog, fee', x: 42, y: 42 },
+            title: 'Service – business rules (6 validations)',
+            badge: 'Business logic',
+            body: `<p>Service checks: exists, free, adult, fee ≥ 0. On success it sets both sides of the bidirectional relation and creates a <code>DogAdoption</code> record.</p>
+                   <div class="code-block">adopter.setDog(dog);
+dog.setOwner(adopter);
+repo.addDogAdoption(new DogAdoption(...));
+return result.setter(true, "Dog adopted.", adoption);</div>
+                   <p class="spring">Spring parallel: @Service + @Transactional</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'repo'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-repo'],
+            packet: { text: 'write DogAdoption', x: 72, y: 38 },
+            title: 'Repository + Model – persist the change in memory',
+            badge: 'Data layer',
+            body: `<p>Repository stores the new <code>DogAdoption</code> in its ArrayList. The Person and Dog objects now reference each other (shared instances).</p>
+                   <div class="code-block">repo.addDogAdoption(adoption);
+// people / dogs lists already contain the updated objects</div>
+                   <p class="spring">Spring parallel: JpaRepository.save(...) + @OneToOne</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'repo', 'response'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-repo', 'arr-repo-back', 'arr-svc-back', 'arr-ctrl-resp'],
+            packet: { text: 'ResultOperation ✓', x: 12, y: 78, response: true },
+            title: 'Response – ResultOperation printed to console',
+            badge: 'Response',
+            body: `<p>The <code>ResultOperation</code> travels back up: Service → Controller → CLI. Controller prints success/failure and any message.</p>
+                   <div class="code-block">// Controller
+System.out.println(result.getMessage());
+// "Dog adopted."  or  validation error message</div>
+                   <p class="spring">Spring parallel: ResponseEntity&lt;ApiResponse&gt;</p>`
+          }
+        ]
+      },
+
+      buy: {
+        name: 'Buy a car',
+        used: ['cli', 'controller', 'service', 'repo', 'response'],
+        steps: [
+          {
+            boxes: ['cli'],
+            arrows: [],
+            packet: { text: 'user input', x: 12, y: 8 },
+            title: 'CLI / Utils – user chooses “Buy a car”',
+            badge: 'Request starts',
+            body: `<p>User selects option 4. In the current demo the Controller picks two people from the list; a full UI would ask for buyer/seller IDs.</p>
+                   <div class="code-block">// demo style
+Person buyer  = repo.getAllPeople().get(0);
+Person seller = repo.getAllPeople().get(1);</div>
+                   <p class="spring">Spring parallel: POST /cars/buy with buyerId & sellerId</p>`
+          },
+          {
+            boxes: ['cli', 'controller'],
+            arrows: ['arr-cli-ctrl'],
+            packet: { text: 'buyer, seller', x: 12, y: 28 },
+            title: 'Controller – prepare parties & call Service',
+            badge: 'Orchestration',
+            body: `<p>Controller obtains the two Person objects and delegates the transfer to <code>Service.buyCar</code>.</p>
+                   <div class="code-block">ResultOperation result = Service.buyCar(buyer, seller, price, repo);</div>
+                   <p class="spring">Spring parallel: @RestController → service.buyCar(...)</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc'],
+            packet: { text: 'transfer car', x: 42, y: 42 },
+            title: 'Service – ownership transfer + CarTransaction',
+            badge: 'Business logic',
+            body: `<p>Service moves the car from seller to buyer and records a read-only <code>CarTransaction</code>.</p>
+                   <div class="code-block">buyer.setCar(car);
+seller.setCar(null);
+repo.addCarTransaction(new CarTransaction(buyer, seller, ...));
+return result.setter(true, "Car bought.", tx);</div>
+                   <p class="spring">Spring parallel: @Transactional service method</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'repo'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-repo'],
+            packet: { text: 'write CarTransaction', x: 72, y: 38 },
+            title: 'Repository + Model – update in-memory tables',
+            badge: 'Data layer',
+            body: `<p>Person objects are updated in place; a new CarTransaction is added to the repository list.</p>
+                   <div class="code-block">repo.addCarTransaction(tx);
+// cars list unchanged; ownership lives on Person.car</div>
+                   <p class="spring">Spring parallel: entityManager.persist(tx)</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'repo', 'response'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-repo', 'arr-repo-back', 'arr-svc-back', 'arr-ctrl-resp'],
+            packet: { text: 'ResultOperation ✓', x: 12, y: 78, response: true },
+            title: 'Response – result printed',
+            badge: 'Response',
+            body: `<p>Controller receives the ResultOperation and prints the outcome to the console.</p>
+                   <div class="code-block">System.out.println(result.getMessage()); // "Car bought."</div>
+                   <p class="spring">Spring parallel: ResponseEntity with status 200</p>`
+          }
+        ]
+      },
+
+      list: {
+        name: 'List people',
+        used: ['cli', 'controller', 'service', 'repo', 'response'],
+        steps: [
+          {
+            boxes: ['cli'],
+            arrows: [],
+            packet: { text: 'option “list”', x: 12, y: 8 },
+            title: 'CLI / Utils – user chooses “List all people”',
+            badge: 'Request starts',
+            body: `<p>From the Person submenu the user picks “List all”. No extra input is needed.</p>
+                   <div class="code-block">Utils.personMenu();
+// user selects "List all people"</div>
+                   <p class="spring">Spring parallel: GET /people</p>`
+          },
+          {
+            boxes: ['cli', 'controller'],
+            arrows: ['arr-cli-ctrl'],
+            packet: { text: 'list request', x: 12, y: 28 },
+            title: 'Controller – call Service read method',
+            badge: 'Orchestration',
+            body: `<p>Controller simply forwards the request; no IDs to resolve.</p>
+                   <div class="code-block">ResultOperation result = Service.getAllPeople(repo);</div>
+                   <p class="spring">Spring parallel: @GetMapping → service.findAll()</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc'],
+            packet: { text: 'getAllPeople()', x: 42, y: 42 },
+            title: 'Service – thin pass-through to Repository',
+            badge: 'Business logic',
+            body: `<p>For a pure read the Service mainly wraps the repository call in a ResultOperation. No validation rules fire.</p>
+                   <div class="code-block">List&lt;Person&gt; people = repo.getAllPeople();
+return result.setter(true, "People listed.", people);</div>
+                   <p class="spring">Spring parallel: service method returning List&lt;PersonDto&gt;</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'repo'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-repo'],
+            packet: { text: 'read ArrayList', x: 72, y: 38 },
+            title: 'Repository – return the people list',
+            badge: 'Data layer',
+            body: `<p>Repository returns its internal <code>ArrayList&lt;Person&gt;</code>. No mutation occurs.</p>
+                   <div class="code-block">public ArrayList&lt;Person&gt; getAllPeople() {
+  return people;
+}</div>
+                   <p class="spring">Spring parallel: jpaRepository.findAll()</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'repo', 'response'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-repo', 'arr-repo-back', 'arr-svc-back', 'arr-ctrl-resp'],
+            packet: { text: 'List&lt;Person&gt; ✓', x: 12, y: 78, response: true },
+            title: 'Response – print each person',
+            badge: 'Response',
+            body: `<p>Controller iterates the list and prints every Person to the console.</p>
+                   <div class="code-block">for (Person p : (List&lt;Person&gt;) result.getUpdatedObject()) {
+  System.out.println(p);
+}</div>
+                   <p class="spring">Spring parallel: JSON array in the HTTP response body</p>`
+          }
+        ]
+      },
+
+      save: {
+        name: 'Save repository',
+        used: ['cli', 'controller', 'service', 'persistence', 'response'],
+        steps: [
+          {
+            boxes: ['cli'],
+            arrows: [],
+            packet: { text: 'option “save”', x: 12, y: 8 },
+            title: 'CLI / Utils – user chooses “Save repository”',
+            badge: 'Request starts',
+            body: `<p>User selects the save action. The path defaults to <code>data/repo.json</code>.</p>
+                   <div class="code-block">Path path = JsonStore.DEFAULT_PATH; // data/repo.json</div>
+                   <p class="spring">Spring parallel: usually automatic via JPA; or explicit export endpoint</p>`
+          },
+          {
+            boxes: ['cli', 'controller'],
+            arrows: ['arr-cli-ctrl'],
+            packet: { text: 'save request', x: 12, y: 28 },
+            title: 'Controller – call Service.saveRepository',
+            badge: 'Orchestration',
+            body: `<p>Controller passes the current Repository and the target path to the Service.</p>
+                   <div class="code-block">ResultOperation result = Service.saveRepository(path, repo);</div>
+                   <p class="spring">Spring parallel: admin endpoint or scheduled job</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc'],
+            packet: { text: 'whole repo', x: 42, y: 42 },
+            title: 'Service – delegate to JsonStore',
+            badge: 'Business logic',
+            body: `<p>Service wraps the call, catches IOException and returns a ResultOperation. No domain validation needed.</p>
+                   <div class="code-block">JsonStore.save(repo, path);
+return result.setter(true, "Repository saved.", path);</div>
+                   <p class="spring">Spring parallel: @Service method that triggers a flush / export</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'persistence'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-pers'],
+            packet: { text: 'Snapshot → JSON', x: 42, y: 78, persist: true },
+            title: 'Persistence – toSnapshot + Jackson write',
+            badge: 'Disk layer',
+            body: `<p>JsonStore converts the live object graph into a flat RepositorySnapshot (IDs instead of references), then Jackson writes pretty JSON to disk.</p>
+                   <div class="code-block">RepositorySnapshot s = toSnapshot(repo);
+MAPPER.writerWithDefaultPrettyPrinter()
+      .writeValue(path.toFile(), s);
+// → data/repo.json</div>
+                   <p class="spring">Spring parallel: database flush / JDBC write</p>`
+          },
+          {
+            boxes: ['cli', 'controller', 'service', 'persistence', 'response'],
+            arrows: ['arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-pers', 'arr-pers-back', 'arr-ctrl-resp'],
+            packet: { text: 'ResultOperation ✓', x: 12, y: 78, response: true },
+            title: 'Response – “Repository saved” printed',
+            badge: 'Response',
+            body: `<p>Success (or error) message travels back to the Controller and is printed. Notice: Repository box stayed grey — this flow only <em>reads</em> it to build the Snapshot.</p>
+                   <div class="code-block">System.out.println("Repository saved to " + path);</div>
+                   <p class="spring">Spring parallel: 200 OK with a simple message body</p>`
+          }
+        ]
+      }
+    };
+
+    /* ============================================================
+       ENGINE
+       ============================================================ */
+    let currentFlow = null;
+    let stepIndex = -1;
+    let autoTimer = null;
+
+    const ALL_BOXES = ['cli', 'controller', 'service', 'repo', 'persistence', 'response'];
+    const ALL_ARROWS = [
+      'arr-cli-ctrl', 'arr-ctrl-svc', 'arr-svc-repo', 'arr-svc-pers',
+      'arr-pers-back', 'arr-repo-back', 'arr-svc-back', 'arr-ctrl-resp'
+    ];
+
+    function selectScenario(id) {
+      resetFlow(false);
+      currentFlow = FLOWS[id];
+      stepIndex = -1;
+
+      // highlight scenario button
+      document.querySelectorAll('.scenario-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.id === id);
+      });
+
+      // show used boxes in colour (rest stay grey)
+      ALL_BOXES.forEach(b => {
+        const el = document.getElementById('box-' + b);
+        el.classList.remove('active');
+        if (currentFlow.used.includes(b)) {
+          el.style.opacity = '0.55';
+          el.style.transform = 'scale(0.98)';
+        } else {
+          el.style.opacity = '0.28';
+          el.style.transform = 'scale(0.94)';
+        }
+      });
+
+      document.getElementById('playBtn').disabled = false;
+      document.getElementById('nextBtn').disabled = false;
+      document.getElementById('status').textContent =
+        `Scenario “${currentFlow.name}” selected — press Play or Next`;
+      document.getElementById('status').classList.remove('done');
+      document.getElementById('cardsSection').innerHTML = '';
+      hidePacket();
+      clearArrows();
+    }
+
+    function showStep(i) {
+      if (!currentFlow || i < 0 || i >= currentFlow.steps.length) return;
+      stepIndex = i;
+      const step = currentFlow.steps[i];
+
+      // boxes
+      ALL_BOXES.forEach(b => {
+        const el = document.getElementById('box-' + b);
+        if (step.boxes.includes(b)) {
+          el.classList.add('active');
+          el.style.opacity = '1';
+          el.style.transform = 'scale(1)';
+        } else if (currentFlow.used.includes(b)) {
+          el.classList.remove('active');
+          el.style.opacity = '0.5';
+          el.style.transform = 'scale(0.97)';
+        } else {
+          el.classList.remove('active');
+          el.style.opacity = '0.28';
+          el.style.transform = 'scale(0.94)';
+        }
+      });
+
+      // arrows
+      clearArrows();
+      step.arrows.forEach(id => {
+        const p = document.getElementById(id);
+        if (!p) return;
+        p.classList.add('lit');
+        if (id.includes('pers')) p.classList.add('persist');
+        else if (id.includes('back') || id.includes('resp')) p.classList.add('res');
+        else p.classList.add('req');
+      });
+
+      // packet
+      if (step.packet) {
+        showPacket(step.packet);
+      } else {
+        hidePacket();
+      }
+
+      // card stack: newest on top, previous cards push down
+      const section = document.getElementById('cardsSection');
+      section.querySelectorAll('.step-card').forEach(c => c.classList.remove('current'));
+      const card = document.createElement('div');
+      card.className = 'step-card visible current';
+      card.innerHTML = `<h3>${step.title} <span class="badge">${step.badge}</span></h3>${step.body}`;
+      section.insertBefore(card, section.firstChild);
+
+      // status & buttons
+      document.getElementById('status').textContent =
+        `Step ${i + 1} / ${currentFlow.steps.length} — ${currentFlow.name}`;
+      document.getElementById('nextBtn').disabled = i >= currentFlow.steps.length - 1;
+      document.getElementById('playBtn').disabled = true;
+
+      if (i === currentFlow.steps.length - 1) {
+        stopAuto();
+        document.getElementById('status').textContent =
+          `✓ “${currentFlow.name}” complete`;
+        document.getElementById('status').classList.add('done');
+      }
+    }
+
+    function nextStep() {
+      if (!currentFlow) return;
+      if (stepIndex < currentFlow.steps.length - 1) {
+        showStep(stepIndex + 1);
+      }
+    }
+
+    function playFlow() {
+      if (!currentFlow) return;
+      stopAuto();
+      showStep(0);
+      autoTimer = setInterval(() => {
+        if (stepIndex < currentFlow.steps.length - 1) {
+          showStep(stepIndex + 1);
+        } else {
+          stopAuto();
+        }
+      }, 2800);
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    }
+
+    function resetFlow(clearScenario = true) {
+      stopAuto();
+      stepIndex = -1;
+      if (clearScenario) {
+        currentFlow = null;
+        document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('status').textContent = 'Choose a scenario above to begin';
+      }
+      document.getElementById('status').classList.remove('done');
+      document.getElementById('playBtn').disabled = !currentFlow;
+      document.getElementById('nextBtn').disabled = !currentFlow;
+      document.getElementById('cardsSection').innerHTML = '';
+
+      ALL_BOXES.forEach(b => {
+        const el = document.getElementById('box-' + b);
+        el.classList.remove('active');
+        el.style.opacity = '';
+        el.style.transform = '';
+      });
+      clearArrows();
+      hidePacket();
+    }
+
+    function clearArrows() {
+      ALL_ARROWS.forEach(id => {
+        const p = document.getElementById(id);
+        if (p) p.className = ''; // remove lit / req / res / persist
+      });
+    }
+
+    function showPacket(cfg) {
+      const el = document.getElementById('packet');
+      el.textContent = cfg.text;
+      el.className = 'packet visible';
+      if (cfg.response) el.classList.add('response');
+      if (cfg.persist) el.classList.add('persist');
+      // position as % of diagram-wrap
+      el.style.left = cfg.x + '%';
+      el.style.top = cfg.y + '%';
+    }
+
+    function hidePacket() {
+      const el = document.getElementById('packet');
+      el.className = 'packet';
+    }
+  </script>
+</body>
+</html>

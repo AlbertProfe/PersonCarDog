@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Java SE → Spring Boot – Learning Diagrams</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: #f1f5f9;
@@ -73,21 +69,12 @@
       color: white;
       margin-bottom: 18px;
     }
-    .card:nth-child(1) .card-icon {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-    }
-    .card:nth-child(2) .card-icon {
-      background: linear-gradient(135deg, #14b8a6, #0d9488);
-    }
-    .card:nth-child(3) .card-icon {
-      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-    }
-    .card:nth-child(4) .card-icon {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-    }
-    .card:nth-child(5) .card-icon {
-      background: linear-gradient(135deg, #ec4899, #db2777);
-    }
+    .card:nth-child(1) .card-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .card:nth-child(2) .card-icon { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .card:nth-child(3) .card-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .card:nth-child(4) .card-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .card:nth-child(5) .card-icon { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .card:nth-child(6) .card-icon { background: linear-gradient(135deg, #6366f1, #4f46e5); }
     .card h2 {
       font-size: 1.2rem;
       font-weight: 700;
@@ -113,6 +100,7 @@
     .card:nth-child(3) .cta { color: #7c3aed; }
     .card:nth-child(4) .cta { color: #d97706; }
     .card:nth-child(5) .cta { color: #db2777; }
+    .card:nth-child(6) .cta { color: #4f46e5; }
     .footer {
       margin-top: 56px;
       font-size: 0.82rem;
@@ -120,17 +108,9 @@
       text-align: center;
     }
     @media (max-width: 760px) {
-      .cards {
-        flex-direction: column;
-        align-items: center;
-      }
-      .card {
-        width: 100%;
-        max-width: 380px;
-      }
-      h1 {
-        font-size: 1.5rem;
-      }
+      .cards { flex-direction: column; align-items: center; }
+      .card { width: 100%; max-width: 380px; }
+      h1 { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -138,52 +118,43 @@
   <h1>Java SE → Spring Boot</h1>
   <p class="subtitle">
     Interactive diagrams for students.<br>
-    Understand the progression, the stack, and JSON persistence.
+    Understand the progression, the stack, and how the layers talk.
   </p>
   <div class="cards">
-    <!-- Card 1 -->
     <a href="java-project-progression.html" class="card">
       <div class="card-icon">1</div>
       <h2>Project Progression</h2>
-      <p>
-        Horizontal path showing how a student moves from plain Java SE projects → Maven → Spring Boot Maven projects.
-      </p>
+      <p>Horizontal path showing how a student moves from plain Java SE projects → Maven → Spring Boot Maven projects.</p>
       <div class="cta">Open diagram →</div>
     </a>
-    <!-- Card 2 -->
     <a href="java-stack-pyramid.html" class="card">
       <div class="card-icon">2</div>
       <h2>Technology Stack Pyramid</h2>
-      <p>
-        Vertical layers from Hardware up to Spring Boot. See what sits on top of what and why each layer exists.
-      </p>
+      <p>Vertical layers from Hardware up to Spring Boot. See what sits on top of what and why each layer exists.</p>
       <div class="cta">Open diagram →</div>
     </a>
-    <!-- Card 3 -->
     <a href="json-persistence-diagram.html" class="card">
       <div class="card-icon">3</div>
       <h2>JSON Persistence Explained</h2>
-      <p>
-        How PersonCarDog saves the in-memory Repository to a JSON file and why this is the perfect bridge to Spring Boot + JPA.
-      </p>
+      <p>How PersonCarDog saves the in-memory Repository to a JSON file and why this is the perfect bridge to Spring Boot + JPA.</p>
       <div class="cta">Open diagram →</div>
     </a>
-    <!-- Card 4 -->
     <a href="json-save-flow.html" class="card">
       <div class="card-icon">4</div>
       <h2>JSON SAVE Flow</h2>
-      <p>
-        Step-by-step interactive walkthrough: Service → JsonStore → toSnapshot → Jackson → data/repo.json.
-      </p>
+      <p>Step-by-step interactive walkthrough: Service → JsonStore → toSnapshot → Jackson → data/repo.json.</p>
       <div class="cta">Open diagram →</div>
     </a>
-    <!-- Card 5 -->
     <a href="what-is-serialize.html" class="card">
       <div class="card-icon">5</div>
       <h2>What is Serialization?</h2>
-      <p>
-        Object → data → store/send → object again. The core idea behind saving to JSON and loading it back.
-      </p>
+      <p>Object → data → store/send → object again. The core idea behind saving to JSON and loading it back.</p>
+      <div class="cta">Open diagram →</div>
+    </a>
+    <a href="request-response-flow.html" class="card">
+      <div class="card-icon">6</div>
+      <h2>Request → Response Flow</h2>
+      <p>U-shaped interactive map of four scenarios (Adopt, Buy, List, Save). See which layers light up and which stay grey.</p>
       <div class="cta">Open diagram →</div>
     </a>
   </div>
